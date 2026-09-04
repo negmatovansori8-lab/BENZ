@@ -1,0 +1,2 @@
+-- Demo rows are inserted by the Node seeder so passwords are hashed with bcrypt.
+-- From /server:  npm run seed

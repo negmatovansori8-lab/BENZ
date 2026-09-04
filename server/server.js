@@ -92,8 +92,13 @@ app.use(errorHandler);
 
 fetchLiveRates().catch(() => {});
 
-await initDb();
-
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`BENZ API running on http://0.0.0.0:${PORT} [${dbMode}]`);
+  console.log(`BENZ API running on http://0.0.0.0:${PORT}`);
 });
+
+try {
+  await initDb();
+  console.log(`Database ready [${dbMode}]`);
+} catch (err) {
+  console.error('Database init failed:', err.message);
+}

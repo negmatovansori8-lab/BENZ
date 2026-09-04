@@ -1,11 +1,38 @@
+import dns from 'dns';
 import pg from 'pg';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import './env.js';
 
+dns.setDefaultResultOrder('ipv4first');
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { Pool } = pg;
+
+function sanitizeDatabaseUrl(url) {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete('channel_binding');
+    if (!parsed.searchParams.get('sslmode')) parsed.searchParams.set('sslmode', 'require');
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+function splitSql(sql) {
+  return sql
+    .split(';')
+    .map((part) =>
+      part
+        .split('\n')
+        .map((line) => line.replace(/--.*$/, ''))
+        .join('\n')
+        .trim()
+    )
+    .filter(Boolean);
+}
 
 let impl = null;
 export let dbMode = 'unknown';
@@ -35,9 +62,15 @@ function needsSsl(url) {
   return /neon\.tech|sslmode=require|amazonaws\.com/i.test(url);
 }
 
+async function runSqlFile(poolImpl, filePath) {
+  const schema = fs.readFileSync(filePath, 'utf8');
+  for (const statement of splitSql(schema)) {
+    await poolImpl.query(statement);
+  }
+}
+
 async function bootstrapPostgres(poolImpl) {
-  const schema = fs.readFileSync(schemaPath(), 'utf8');
-  await poolImpl.query(schema);
+  await runSqlFile(poolImpl, schemaPath());
   const { rows } = await poolImpl.query('SELECT COUNT(*)::int AS n FROM users');
   if (Number(rows[0]?.n || 0) > 0) return;
   if (process.env.SKIP_SEED === '1' || process.env.SKIP_SEED === 'true') {
@@ -45,8 +78,12 @@ async function bootstrapPostgres(poolImpl) {
     return;
   }
   console.log('Empty database — loading demo data…');
-  const { seedDatabase } = await import('../scripts/seed.js');
-  await seedDatabase({ close: false, skipSchema: true });
+  try {
+    const { seedDatabase } = await import('../scripts/seed.js');
+    await seedDatabase({ close: false, skipSchema: true });
+  } catch (err) {
+    console.error('Demo seed failed (API still runs):', err.message);
+  }
 }
 
 export async function initDb() {
@@ -61,13 +98,14 @@ export async function initDb() {
   }
 
   if (url && process.env.FORCE_EMBEDDED_DB !== '1') {
+    const connectionString = sanitizeDatabaseUrl(url);
     try {
       const pool = new Pool({
-        connectionString: url,
-        max: Number(process.env.PG_POOL_MAX || 10),
+        connectionString,
+        max: Number(process.env.PG_POOL_MAX || 4),
         idleTimeoutMillis: 30_000,
         connectionTimeoutMillis: Number(process.env.PG_TIMEOUT_MS || 20_000),
-        ssl: needsSsl(url) ? { rejectUnauthorized: false } : undefined,
+        ssl: needsSsl(connectionString) ? { rejectUnauthorized: false } : undefined,
       });
       await pool.query('SELECT 1');
       impl = {
@@ -79,12 +117,17 @@ export async function initDb() {
       dbMode = 'postgres';
       console.log('Database: PostgreSQL / Neon');
       await bootstrapPostgres(pool);
-      const { migrateAndSeedExtras } = await import('../scripts/seedExtras.js');
-      await migrateAndSeedExtras();
+      try {
+        const { migrateAndSeedExtras } = await import('../scripts/seedExtras.js');
+        await migrateAndSeedExtras();
+      } catch (err) {
+        console.error('Extra seed failed (API still runs):', err.message);
+      }
       return impl;
     } catch (err) {
+      console.error('PostgreSQL / Neon error:', err.code || '', err.message);
       if (isProd) throw err;
-      console.warn('PostgreSQL unavailable (%s). Using embedded database.', err.code || err.message);
+      console.warn('PostgreSQL unavailable. Using embedded database.');
     }
   }
 

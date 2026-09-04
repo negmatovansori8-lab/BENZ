@@ -77,6 +77,35 @@ function pickUrl(item: unknown): string | null {
   return null;
 }
 
+export function normalizePhone(raw?: string | null) {
+  if (!raw) return '';
+  let s = String(raw).trim();
+  if (!s || s === 'undefined' || s === 'null') return '';
+  s = s.replace(/[^\d+]/g, '');
+  if (s.startsWith('00')) s = `+${s.slice(2)}`;
+  const digits = s.replace(/\D/g, '');
+  if (digits.length < 7) return '';
+  if (digits.startsWith('992')) return `+${digits}`;
+  if (digits.length === 9) return `+992${digits}`;
+  if (s.startsWith('+')) return `+${digits}`;
+  return `+${digits}`;
+}
+
+export function whatsappLink(raw?: string | null) {
+  const n = normalizePhone(raw).replace(/\D/g, '');
+  return n ? `https://wa.me/${n}` : '';
+}
+
+export function displayPhone(raw?: string | null) {
+  const n = normalizePhone(raw);
+  if (!n) return '';
+  const d = n.replace(/\D/g, '');
+  if (d.startsWith('992') && d.length === 12) {
+    return `+992 ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8)}`;
+  }
+  return n;
+}
+
 export function apiOrigin() {
   return String(import.meta.env.VITE_API_URL || '').replace(/\/$/, '').replace(/\/api$/, '');
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Heart, Mail, Phone, Scale, X, ZoomIn } from 'lucide-react';
+import { ArrowLeft, Heart, Mail, Scale, X, ZoomIn } from 'lucide-react';
 import { Seo } from '../components/Seo';
 import { ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
@@ -13,6 +13,7 @@ import { useToast } from '../context/ToastContext';
 import { useI18n } from '../context/LocaleContext';
 import { cn } from '../utils/format';
 import { SafeImg } from '../components/SafeImg';
+import { ContactActions } from '../components/ContactActions';
 import {
   IconBody, IconCalendar, IconClock, IconCondition, IconDrive, IconEngine,
   IconEye, IconFuel, IconGear, IconOdo, IconPalette, IconPin, IconPower,
@@ -166,9 +167,7 @@ export default function CarDetails() {
             <button type="button" className="btn-ghost" onClick={() => { add(car); push('Added to compare', 'success'); }}>
               <Scale className={cn('h-4 w-4', has(car.id) && 'text-gold-500')} /> {t('compareBtn')}
             </button>
-            <a className="btn-dark col-span-2" href={`tel:${car.phone || car.seller_phone}`}>
-              <Phone className="h-4 w-4" /> {t('contactSeller')}
-            </a>
+            <ContactActions phone={car.phone || car.seller_phone} />
           </div>
 
           <div className="mt-6 rounded-2xl border border-[var(--ah-line)] p-4">

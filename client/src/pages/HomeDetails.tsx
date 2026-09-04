@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { MapPin, Phone } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { Seo } from '../components/Seo';
 import { ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
@@ -9,6 +9,7 @@ import { formatPrice } from '../utils/format';
 import { useCurrency } from '../context/CurrencyContext';
 import { useI18n } from '../context/LocaleContext';
 import { SafeImg } from '../components/SafeImg';
+import { ContactActions } from '../components/ContactActions';
 import type { Msg } from '../i18n/dict';
 
 const KIND_KEY: Record<string, Msg> = {
@@ -51,9 +52,7 @@ export default function HomeDetails() {
             {item.area_m2 ? <div className="flex justify-between"><dt className="text-[var(--ah-muted)]">{t('area')}</dt><dd>{item.area_m2}</dd></div> : null}
             {item.floor ? <div className="flex justify-between"><dt className="text-[var(--ah-muted)]">{t('floor')}</dt><dd>{item.floor} / {item.floors || '—'}</dd></div> : null}
           </dl>
-          <a className="btn-gold mt-6 w-full" href={`tel:${item.phone || item.seller_phone}`}>
-            <Phone className="h-4 w-4" /> {t('contactSeller')}
-          </a>
+          <ContactActions className="mt-6" phone={item.phone || item.seller_phone} />
           <p className="mt-4 text-sm text-[var(--ah-muted)]">{item.seller_name}</p>
         </aside>
       </div>

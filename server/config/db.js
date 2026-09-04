@@ -106,6 +106,53 @@ async function bootstrapPostgres(poolImpl) {
   }
 }
 
+function asDbImpl(pool, type = 'postgres') {
+  return {
+    type,
+    query: (text, params) => pool.query(text, params),
+    connect: () => pool.connect(),
+    end: () => pool.end(),
+  };
+}
+
+async function connectTcp(connectionString) {
+  const pool = new Pool({
+    connectionString,
+    max: Number(process.env.PG_POOL_MAX || 4),
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: Number(process.env.PG_TIMEOUT_MS || 20_000),
+    ssl: needsSsl(connectionString) ? { rejectUnauthorized: false } : undefined,
+  });
+  await connectWithRetry(pool, 2);
+  return pool;
+}
+
+async function connectNeonWebSocket(connectionString) {
+  const [{ Pool: NeonPool, neonConfig }, wsMod] = await Promise.all([
+    import('@neondatabase/serverless'),
+    import('ws'),
+  ]);
+  neonConfig.webSocketConstructor = wsMod.default;
+  const pool = new NeonPool({ connectionString });
+  await connectWithRetry(pool, 3);
+  return pool;
+}
+
+async function finishPostgres(pool, label) {
+  impl = asDbImpl(pool);
+  dbMode = 'postgres';
+  lastDbError = null;
+  console.log(label);
+  await bootstrapPostgres(pool);
+  try {
+    const { migrateAndSeedExtras } = await import('../scripts/seedExtras.js');
+    await migrateAndSeedExtras();
+  } catch (err) {
+    console.error('Extra seed failed (API still runs):', err.message);
+  }
+  return impl;
+}
+
 export async function initDb() {
   if (impl) return impl;
 
@@ -120,35 +167,19 @@ export async function initDb() {
   if (url && process.env.FORCE_EMBEDDED_DB !== '1') {
     const connectionString = sanitizeDatabaseUrl(url);
     try {
-      const pool = new Pool({
-        connectionString,
-        max: Number(process.env.PG_POOL_MAX || 4),
-        idleTimeoutMillis: 30_000,
-        connectionTimeoutMillis: Number(process.env.PG_TIMEOUT_MS || 30_000),
-        ssl: needsSsl(connectionString) ? { rejectUnauthorized: false } : undefined,
-      });
-      await connectWithRetry(pool);
-      impl = {
-        type: 'postgres',
-        query: (text, params) => pool.query(text, params),
-        connect: () => pool.connect(),
-        end: () => pool.end(),
-      };
-      dbMode = 'postgres';
-      console.log('Database: PostgreSQL / Neon');
-      await bootstrapPostgres(pool);
+      const pool = await connectTcp(connectionString);
+      return await finishPostgres(pool, 'Database: PostgreSQL / Neon (TCP)');
+    } catch (tcpErr) {
+      console.error('Neon TCP failed:', tcpErr.code || '', tcpErr.message);
       try {
-        const { migrateAndSeedExtras } = await import('../scripts/seedExtras.js');
-        await migrateAndSeedExtras();
-      } catch (err) {
-        console.error('Extra seed failed (API still runs):', err.message);
+        const pool = await connectNeonWebSocket(connectionString);
+        return await finishPostgres(pool, 'Database: PostgreSQL / Neon (WebSocket)');
+      } catch (wsErr) {
+        lastDbError = wsErr.code || wsErr.message || tcpErr.message;
+        console.error('Neon WebSocket failed:', wsErr.code || '', wsErr.message);
+        if (isProd) throw wsErr;
+        console.warn('PostgreSQL unavailable. Using embedded database.');
       }
-      return impl;
-    } catch (err) {
-      lastDbError = err.code || err.message;
-      console.error('PostgreSQL / Neon error:', err.code || '', err.message);
-      if (isProd) throw err;
-      console.warn('PostgreSQL unavailable. Using embedded database.');
     }
   }
 

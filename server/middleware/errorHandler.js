@@ -15,7 +15,7 @@ export function errorHandler(err, _req, res, _next) {
     });
   }
 
-  if (err.code === 'ECONNREFUSED' || err.code === 'ECONNREFUSED' || err.errors?.[0]?.code === 'ECONNREFUSED') {
+  if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ETIMEDOUT' || err.code === 'ENETUNREACH') {
     return res.status(503).json({
       success: false,
       message: 'Database is not available. Please try again.',

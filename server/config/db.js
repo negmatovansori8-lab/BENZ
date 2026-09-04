@@ -10,15 +10,35 @@ dns.setDefaultResultOrder('ipv4first');
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { Pool } = pg;
 
+export let lastDbError = null;
+
 function sanitizeDatabaseUrl(url) {
+  const trimmed = String(url || '').trim().replace(/^['"]|['"]$/g, '');
   try {
-    const parsed = new URL(url);
+    const parsed = new URL(trimmed);
     parsed.searchParams.delete('channel_binding');
     if (!parsed.searchParams.get('sslmode')) parsed.searchParams.set('sslmode', 'require');
     return parsed.toString();
   } catch {
-    return url;
+    return trimmed;
   }
+}
+
+async function connectWithRetry(pool, attempts = 4) {
+  let lastErr;
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await pool.query('SELECT 1');
+      lastDbError = null;
+      return;
+    } catch (err) {
+      lastErr = err;
+      lastDbError = err.code || err.message;
+      console.error(`Neon connect attempt ${i}/${attempts}:`, err.code || '', err.message);
+      if (i < attempts) await new Promise((r) => setTimeout(r, 1500 * i));
+    }
+  }
+  throw lastErr;
 }
 
 function splitSql(sql) {
@@ -104,10 +124,10 @@ export async function initDb() {
         connectionString,
         max: Number(process.env.PG_POOL_MAX || 4),
         idleTimeoutMillis: 30_000,
-        connectionTimeoutMillis: Number(process.env.PG_TIMEOUT_MS || 20_000),
+        connectionTimeoutMillis: Number(process.env.PG_TIMEOUT_MS || 30_000),
         ssl: needsSsl(connectionString) ? { rejectUnauthorized: false } : undefined,
       });
-      await pool.query('SELECT 1');
+      await connectWithRetry(pool);
       impl = {
         type: 'postgres',
         query: (text, params) => pool.query(text, params),
@@ -125,6 +145,7 @@ export async function initDb() {
       }
       return impl;
     } catch (err) {
+      lastDbError = err.code || err.message;
       console.error('PostgreSQL / Neon error:', err.code || '', err.message);
       if (isProd) throw err;
       console.warn('PostgreSQL unavailable. Using embedded database.');

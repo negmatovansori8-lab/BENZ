@@ -7,7 +7,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import fs from 'fs';
 
-import { pool, initDb, dbMode } from './config/db.js';
+import { pool, initDb, dbMode, lastDbError } from './config/db.js';
 import authRoutes from './routes/auth.js';
 import carRoutes from './routes/cars.js';
 import favoriteRoutes from './routes/favorites.js';
@@ -71,8 +71,13 @@ app.get('/api/health', async (_req, res) => {
   try {
     await pool.query('SELECT 1');
     res.json({ success: true, status: 'ok', db: dbMode });
-  } catch {
-    res.status(503).json({ success: false, status: 'degraded', db: 'disconnected' });
+  } catch (err) {
+    res.status(503).json({
+      success: false,
+      status: 'degraded',
+      db: 'disconnected',
+      error: lastDbError || err.code || 'query_failed',
+    });
   }
 });
 

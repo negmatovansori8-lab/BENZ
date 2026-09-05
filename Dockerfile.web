@@ -6,4 +6,4 @@ COPY client/ ./
 RUN npm run build
 ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["sh", "-c", "npx serve -s dist -l tcp://0.0.0.0:${PORT:-3000}"]
+CMD ["sh", "-c", "exec ./node_modules/.bin/serve -s dist -l tcp://0.0.0.0:${PORT:-3000}"]

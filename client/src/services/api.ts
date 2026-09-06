@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_ROOT = String(import.meta.env.VITE_API_URL || '').replace(/\/$/, '').replace(/\/api$/, '');
+const FALLBACK_API = 'https://benz-production.up.railway.app';
+const API_ROOT = String(import.meta.env.VITE_API_URL || (import.meta.env.PROD ? FALLBACK_API : ''))
+  .replace(/\/$/, '')
+  .replace(/\/api$/, '');
 
 export const api = axios.create({
   baseURL: API_ROOT ? `${API_ROOT}/api` : '/api',

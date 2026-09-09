@@ -91,15 +91,63 @@ async function insertVehicle(c, sellerId, locId) {
        seller_id, brand_id, model_id, year, price_usd, mileage, engine, power,
        fuel, transmission, body, color, location_id, description, phone,
        status, is_featured, views, category
-     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'Manual',$10,$11,$12,$13,$14,'APPROVED',$15,$16,$17)
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,'APPROVED',$16,$17,$18)
      RETURNING id`,
     [
       sellerId, brandId, modelId, c.year, c.price, c.km, c.engine, c.power,
-      c.fuel || 'Diesel', c.body, c.color || 'White', locId, c.desc, '+992 90 555 1000',
+      c.fuel || 'Diesel', c.trans || 'Manual', c.body, c.color || 'White', locId, c.desc, '+992 90 555 1000',
       c.feat || false, c.views || 500, c.cat,
     ]
   );
-  await query(`INSERT INTO car_images (car_id, url, sort_order) VALUES ($1,$2,0)`, [rows[0].id, c.img]);
+  const photos = Array.isArray(c.imgs) && c.imgs.length ? c.imgs : [c.img];
+  for (let p = 0; p < photos.length; p++) {
+    await query(`INSERT INTO car_images (car_id, url, sort_order) VALUES ($1,$2,$3)`, [rows[0].id, photos[p], p]);
+  }
+}
+
+async function seedMorePassenger() {
+  const sellers = await query(`SELECT id FROM users WHERE role IN ('SELLER', 'ADMIN') ORDER BY id LIMIT 6`);
+  const locs = await query('SELECT id FROM locations ORDER BY id');
+  if (!sellers.rows.length || !locs.rows.length) return;
+
+  const car = (i) => [`/cars/${(i % 8) + 1}.jpg`, `/cars/${((i + 2) % 8) + 1}.jpg`, `/cars/${((i + 4) % 8) + 1}.jpg`];
+  const items = [
+    { brand: 'Toyota', model: 'Prado', year: 2018, price: 42500, km: 98000, engine: '2.7L I4', power: 163, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Pearl White', cat: 'passenger', feat: true, views: 3420, desc: 'Land Cruiser Prado 150. 4WD, барои кӯҳҳои Тоҷикистон. Як соҳиб, бе садама.' },
+    { brand: 'Toyota', model: 'Corolla', year: 2019, price: 16800, km: 72000, engine: '1.6L I4', power: 122, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'Silver', cat: 'passenger', feat: true, views: 2890, desc: 'Corolla классик. Сарфаи бензин, хидматрасонии пурра, ҳолати олӣ.' },
+    { brand: 'Mercedes-Benz', model: 'S-Class', year: 2017, price: 38900, km: 86000, engine: '3.0L V6', power: 333, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'Black', cat: 'passenger', feat: true, views: 2100, desc: 'S 400. Салони чармӣ, массаж, панорама. Мошини бизнес-класс.' },
+    { brand: 'BMW', model: '5 Series', year: 2018, price: 27400, km: 91000, engine: '2.0L Diesel', power: 190, fuel: 'Diesel', trans: 'Automatic', body: 'Sedan', color: 'Grey', cat: 'passenger', feat: true, views: 1760, desc: '520d M Sport. Расход паст, салони спорт, LED.' },
+    { brand: 'Honda', model: 'Accord', year: 2017, price: 15200, km: 118000, engine: '2.4L I4', power: 185, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'White', cat: 'passenger', feat: false, views: 1540, desc: 'Accord. Мошини боэътимод барои оила. Кондиционер, камера.' },
+    { brand: 'Hyundai', model: 'Elantra', year: 2021, price: 18600, km: 34000, engine: '1.6L I4', power: 128, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'Blue', cat: 'passenger', feat: false, views: 1320, desc: 'Elantra нав. Гарантия, экрани калон, круиз.' },
+    { brand: 'Hyundai', model: 'Sonata', year: 2020, price: 21400, km: 48000, engine: '2.0L I4', power: 150, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'Black', cat: 'passenger', feat: false, views: 980, desc: 'Sonata. Седани калон, салони зебо, як соҳиб.' },
+    { brand: 'Kia', model: 'Sorento', year: 2019, price: 24800, km: 67000, engine: '2.2L Diesel', power: 200, fuel: 'Diesel', trans: 'Automatic', body: 'SUV', color: 'Dark Grey', cat: 'passenger', feat: true, views: 1210, desc: 'Sorento 7-ҷой. Барои оилаи калон, 4WD.' },
+    { brand: 'Nissan', model: 'Patrol', year: 2016, price: 36500, km: 124000, engine: '5.6L V8', power: 400, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'White', cat: 'passenger', feat: true, views: 1880, desc: 'Patrol Y62. Қувваи баланд, барои роҳҳои вайрон.' },
+    { brand: 'Nissan', model: 'X-Trail', year: 2018, price: 17900, km: 89000, engine: '2.0L I4', power: 144, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Grey', cat: 'passenger', feat: false, views: 870, desc: 'X-Trail. Кроссовери ором, камераи 360.' },
+    { brand: 'Mitsubishi', model: 'Pajero', year: 2015, price: 22800, km: 156000, engine: '3.2L Diesel', power: 190, fuel: 'Diesel', trans: 'Automatic', body: 'SUV', color: 'Black', cat: 'passenger', feat: true, views: 2410, desc: 'Pajero 4. Легендаи кӯҳ. Дизел, 7 ҷой.' },
+    { brand: 'Volkswagen', model: 'Passat', year: 2018, price: 16400, km: 102000, engine: '1.8L TSI', power: 180, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'White', cat: 'passenger', feat: false, views: 760, desc: 'Passat B8. Немис, хидматрасонии расмӣ.' },
+    { brand: 'Volkswagen', model: 'Tiguan', year: 2019, price: 19800, km: 74000, engine: '2.0L TSI', power: 180, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Blue', cat: 'passenger', feat: false, views: 940, desc: 'Tiguan 4Motion. Кроссовери шаҳрӣ, салони тоза.' },
+    { brand: 'Chevrolet', model: 'Cobalt', year: 2020, price: 9200, km: 54000, engine: '1.5L I4', power: 105, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'White', cat: 'passenger', feat: true, views: 4100, desc: 'Cobalt. Нархи хуб, қисмҳо арзон, барои рӯзмарра.' },
+    { brand: 'Lada', model: 'Vesta', year: 2021, price: 7800, km: 41000, engine: '1.6L I4', power: 106, fuel: 'Petrol', trans: 'Manual', body: 'Sedan', color: 'Grey', cat: 'passenger', feat: false, views: 1670, desc: 'Vesta. Мошини нав, кафолат, сарфаи сӯзишворӣ.' },
+    { brand: 'Lada', model: 'Granta', year: 2019, price: 5400, km: 68000, engine: '1.6L I4', power: 87, fuel: 'Petrol', trans: 'Manual', body: 'Sedan', color: 'White', cat: 'passenger', feat: false, views: 1520, desc: 'Granta. Арзон ва содда. Барои шаҳр.' },
+    { brand: 'Daewoo', model: 'Nexia', year: 2014, price: 3900, km: 142000, engine: '1.5L I4', power: 80, fuel: 'Petrol', trans: 'Manual', body: 'Sedan', color: 'Silver', cat: 'passenger', feat: false, views: 2280, desc: 'Nexia. Қисмҳо дар ҳар бозор ҳаст. Ҳолати корӣ.' },
+    { brand: 'Mazda', model: 'CX-5', year: 2018, price: 18900, km: 82000, engine: '2.0L I4', power: 150, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Red', cat: 'passenger', feat: false, views: 690, desc: 'CX-5. Дизайни зебо, салони сифатнок.' },
+    { brand: 'Subaru', model: 'Forester', year: 2017, price: 17200, km: 99000, engine: '2.5L Boxer', power: 182, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Green', cat: 'passenger', feat: false, views: 540, desc: 'Forester AWD. Барои зимистон ва кӯҳ.' },
+    { brand: 'Lexus', model: 'GX', year: 2016, price: 34800, km: 112000, engine: '4.6L V8', power: 301, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Black', cat: 'passenger', feat: true, views: 1340, desc: 'GX 460. Люкс ва 4WD. Марк Левинсон.' },
+    { brand: 'Mercedes-Benz', model: 'GLC', year: 2019, price: 31200, km: 61000, engine: '2.0L Turbo', power: 211, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'White', cat: 'passenger', feat: false, views: 1110, desc: 'GLC 300. Кроссовери премиум, панорама.' },
+    { brand: 'BMW', model: 'X6', year: 2017, price: 33500, km: 104000, engine: '3.0L Diesel', power: 258, fuel: 'Diesel', trans: 'Automatic', body: 'SUV', color: 'Black', cat: 'passenger', feat: true, views: 1490, desc: 'X6 30d. Купе-кроссовер, салони M, камераи 360.' },
+    { brand: 'Honda', model: 'Pilot', year: 2018, price: 22600, km: 88000, engine: '3.5L V6', power: 280, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Grey', cat: 'passenger', feat: false, views: 430, desc: 'Pilot. 8 ҷой, барои оилаи калон.' },
+    { brand: 'Kia', model: 'Rio', year: 2020, price: 11200, km: 39000, engine: '1.6L I4', power: 123, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'White', cat: 'passenger', feat: false, views: 1840, desc: 'Rio. Компакт, нав, кафолат боқӣ мондааст.' },
+    { brand: 'Toyota', model: 'Highlander', year: 2017, price: 26800, km: 97000, engine: '3.5L V6', power: 295, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'White', cat: 'passenger', feat: false, views: 720, desc: 'Highlander. 7 ҷой, боэътимоди Toyota.' },
+  ];
+
+  console.log('Seeding extra passenger cars…');
+  for (let i = 0; i < items.length; i++) {
+    const c = items[i];
+    await insertVehicle(
+      { ...c, imgs: car(i) },
+      sellers.rows[i % sellers.rows.length].id,
+      locs.rows[i % locs.rows.length].id
+    );
+  }
 }
 
 async function seedKamaz() {
@@ -247,4 +295,5 @@ export async function migrateAndSeedExtras() {
   if (Number(homes.rows[0]?.n || 0) === 0) await seedHomes();
 
   await syncCategories();
+  await seedMorePassenger();
 }

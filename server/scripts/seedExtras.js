@@ -181,6 +181,23 @@ async function seedParts() {
     { brand: 'KAMAZ', model: 'Brake discs', year: 2023, price: 160, km: 0, engine: '—', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Дискҳои тормозӣ барои КамАЗ 65115 / 6520.' },
     { brand: 'Audi', model: 'Gearbox 7G', year: 2017, price: 1800, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Қуттии суръати Audi 7G-Tronic. Санҷидашуда.' },
     { brand: 'KAMAZ', model: 'Tires 315/80 R22.5', year: 2024, price: 420, km: 0, engine: '—', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: 'Шинаҳои боркаш 315/80. 4 дона.' },
+    { brand: 'Toyota', model: 'Oil filter', year: 2025, price: 18, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Филтри равған. Camry / Corolla / RAV4. Аслӣ.' },
+    { brand: 'Toyota', model: 'Air filter', year: 2025, price: 22, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Филтри ҳаво. Барои Prado ва Land Cruiser.' },
+    { brand: 'Mercedes-Benz', model: 'Shock absorbers', year: 2021, price: 320, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: 'Амортизаторҳои пеш. C-Class / E-Class. 2 дона.' },
+    { brand: 'BMW', model: 'Radiator', year: 2019, price: 210, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Радиатори BMW 3 / 5 Series. Нав.' },
+    { brand: 'Honda', model: 'Alternator', year: 2018, price: 140, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Генератор Civic / Accord. Санҷидашуда.' },
+    { brand: 'Hyundai', model: 'Spark plugs', year: 2025, price: 35, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'Шамҳо 4 дона. Tucson / Elantra / Sonata.' },
+    { brand: 'Kia', model: 'Bumper front', year: 2022, price: 180, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Бампери пеш Sportage. Ранг нашудааст.' },
+    { brand: 'Nissan', model: 'Timing belt kit', year: 2024, price: 95, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Комплекти ремни ГРМ. Patrol / X-Trail.' },
+    { brand: 'Mitsubishi', model: 'Transfer case', year: 2016, price: 650, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Раздаткаи Pajero 4. Ҳолати хуб.' },
+    { brand: 'Volkswagen', model: 'Clutch kit', year: 2018, price: 240, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'Комплекти сцепление Passat / Tiguan.' },
+    { brand: 'Lada', model: 'Starter', year: 2020, price: 55, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Стартер Vesta / Granta. Нав.' },
+    { brand: 'Chevrolet', model: 'Side mirror', year: 2021, price: 45, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'Оинаи паҳлӯ Cobalt. Бо гармидиҳӣ.' },
+    { brand: 'KAMAZ', model: 'Fuel pump', year: 2022, price: 380, km: 0, engine: '11.8L', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Насоси сӯзишворӣ КамАЗ. Аслӣ.' },
+    { brand: 'Toyota', model: 'Brake pads', year: 2025, price: 48, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: 'Колодкаҳои тормоз. Camry / Corolla / Prado.' },
+    { brand: 'Mercedes-Benz', model: 'Air suspension', year: 2017, price: 720, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Баллони пневмо GLE / S-Class. Як дона.' },
+    { brand: 'BMW', model: 'Xenon ballast', year: 2016, price: 85, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Блок ксенон BMW. Кор мекунад.' },
+    { brand: 'Honda', model: 'CV joint', year: 2019, price: 70, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'ШРУС CR-V / Civic. Нав, бо кафолат.' },
   ];
   console.log('Seeding spare parts…');
   for (let i = 0; i < items.length; i++) {
@@ -200,8 +217,7 @@ async function syncCategories() {
   `);
   const kamaz = await query(`SELECT COUNT(*)::int AS n FROM cars WHERE category = 'kamaz'`);
   if (Number(kamaz.rows[0]?.n || 0) < 4) await seedKamaz();
-  const parts = await query(`SELECT COUNT(*)::int AS n FROM cars WHERE category = 'parts'`);
-  if (Number(parts.rows[0]?.n || 0) === 0) await seedParts();
+  await seedParts();
 }
 
 async function seedHomes() {
@@ -231,6 +247,58 @@ async function seedHomes() {
       [
         seller.id, h.title, h.kind, h.rooms, h.area, h.floor, h.floors, h.price,
         locs.rows[i % locs.rows.length].id, h.desc, seller.phone, h.feat, 120 + i * 40,
+      ]
+    );
+    await query(
+      `INSERT INTO property_images (property_id, url, sort_order) VALUES ($1,$2,0)`,
+      [rows[0].id, h.img]
+    );
+  }
+}
+
+async function homeExists(title) {
+  const { rows } = await query('SELECT 1 FROM properties WHERE title = $1 LIMIT 1', [title]);
+  return !!rows[0];
+}
+
+async function seedMoreHomes() {
+  const sellers = await query(`SELECT id, phone FROM users WHERE role IN ('SELLER', 'ADMIN') ORDER BY id LIMIT 6`);
+  const locs = await query('SELECT id FROM locations ORDER BY id');
+  if (!sellers.rows.length || !locs.rows.length) return;
+
+  const homes = [
+    { title: 'Квартираи 4-ҳуҷрагӣ, Исмоили Сомонӣ', kind: 'apartment', rooms: 4, area: 128, floor: 8, floors: 12, price: 98000, feat: true, img: '/homes/3.jpg', desc: 'Квартираи калон дар марказ. Таъмири евро, 2 ҳаммом, паркинг.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, Фирдавсӣ', kind: 'apartment', rooms: 2, area: 58, floor: 4, floors: 9, price: 41000, feat: true, img: '/homes/1.jpg', desc: 'Хонаи тоза, назди бозор ва мактаб. Барқ ва об устувор.' },
+    { title: 'Квартираи 3-ҳуҷрагӣ, Шоҳмансур', kind: 'apartment', rooms: 3, area: 74, floor: 2, floors: 5, price: 52000, feat: false, img: '/homes/3.jpg', desc: 'Оилавӣ, ҳамсояҳои ором, балкон ба ҳавлӣ.' },
+    { title: 'Квартираи студия, Душанбе Сити', kind: 'apartment', rooms: 1, area: 38, floor: 11, floors: 16, price: 36500, feat: true, img: '/homes/1.jpg', desc: 'Бинои нав. Лифт, консьерж, назди гимн.' },
+    { title: 'Хонаи ҳавлигӣ, 82-мкр', kind: 'house', rooms: 5, area: 160, floor: 1, floors: 1, price: 89000, feat: true, img: '/homes/2.jpg', desc: 'Ҳавлии калон, 2 мошин ҷой, дарахт, обҳои худӣ.' },
+    { title: 'Хонаи 2-ошёна, Варзоб', kind: 'house', rooms: 7, area: 240, floor: 2, floors: 2, price: 175000, feat: true, img: '/homes/2.jpg', desc: 'Вилла бо манзараи кӯҳ. Ҳавзи хурд, генератор.' },
+    { title: 'Квартираи 3-ҳуҷрагӣ, Хуҷанд марказ', kind: 'apartment', rooms: 3, area: 82, floor: 6, floors: 9, price: 39000, feat: false, img: '/homes/3.jpg', desc: 'Маркази Хуҷанд. Таъмиршуда, мебел боқӣ мемонад.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, Бохтар', kind: 'apartment', rooms: 2, area: 55, floor: 1, floors: 4, price: 22000, feat: false, img: '/homes/1.jpg', desc: 'Ошёнаи якум. Барои оилаи ҷавон, бозор наздик.' },
+    { title: 'Квартираи 4-ҳуҷрагӣ, Кӯлоб', kind: 'apartment', rooms: 4, area: 96, floor: 3, floors: 5, price: 31000, feat: false, img: '/homes/3.jpg', desc: 'Хонаи васеъ. Мактаб ва шифохона 5 дақиқа.' },
+    { title: 'Хонаи нав, Ҳисор', kind: 'house', rooms: 6, area: 190, floor: 2, floors: 2, price: 67000, feat: true, img: '/homes/2.jpg', desc: 'Сохтмони 2024. Газ, об, барқ. Ҳавлии девордор.' },
+    { title: 'Замини 8 сотих, Рӯдакӣ', kind: 'land', rooms: 0, area: 800, floor: 0, floors: 0, price: 18500, feat: false, img: '/homes/2.jpg', desc: 'Замин барои хона. Роҳи асфалт, ҳуҷҷатҳо тайёр.' },
+    { title: 'Замини 12 сотих, Ваҳдат', kind: 'land', rooms: 0, area: 1200, floor: 0, floors: 0, price: 26000, feat: true, img: '/homes/1.jpg', desc: 'Қитъаи калон. Об ва барқ дар наздикӣ.' },
+    { title: 'Мағоза 45 м², бозори Корвон', kind: 'commerce', rooms: 1, area: 45, floor: 1, floors: 2, price: 54000, feat: true, img: '/homes/1.jpg', desc: 'Ҷойи тиҷоратӣ бо трафики баланд. Омода ба иҷора ё фурӯш.' },
+    { title: 'Офис 120 м², хиёбони Рӯдакӣ', kind: 'commerce', rooms: 4, area: 120, floor: 3, floors: 7, price: 128000, feat: false, img: '/homes/3.jpg', desc: 'Офиси премиум. Паркинг, интернет, назди вазоратҳо.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, 102-мкр', kind: 'apartment', rooms: 2, area: 61, floor: 7, floors: 9, price: 44500, feat: false, img: '/homes/1.jpg', desc: 'Таъмири нав. Кухняи алоҳида, балкон шишагӣ.' },
+    { title: 'Хонаи ҳавлигӣ, Ғафуров', kind: 'house', rooms: 4, area: 110, floor: 1, floors: 1, price: 28000, feat: false, img: '/homes/2.jpg', desc: 'Ҳавлӣ, ошхонаи тобистона, ҷойи мошин.' },
+  ];
+
+  console.log('Seeding extra homes…');
+  for (let i = 0; i < homes.length; i++) {
+    const h = homes[i];
+    if (await homeExists(h.title)) continue;
+    const seller = sellers.rows[i % sellers.rows.length];
+    const { rows } = await query(
+      `INSERT INTO properties (
+         seller_id, title, kind, rooms, area_m2, floor, floors, price_usd,
+         location_id, description, phone, status, is_featured, views
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'APPROVED',$12,$13)
+       RETURNING id`,
+      [
+        seller.id, h.title, h.kind, h.rooms, h.area, h.floor, h.floors, h.price,
+        locs.rows[i % locs.rows.length].id, h.desc, seller.phone, h.feat, 150 + i * 35,
       ]
     );
     await query(
@@ -296,4 +364,5 @@ export async function migrateAndSeedExtras() {
 
   await syncCategories();
   await seedMorePassenger();
+  await seedMoreHomes();
 }

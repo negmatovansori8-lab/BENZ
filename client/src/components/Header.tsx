@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Bell, Car, Heart, Home, Menu, MessageSquare, Moon, Sun, User, X,
 } from 'lucide-react';
@@ -50,6 +51,17 @@ export function Header() {
   const [notes, setNotes] = useState<NotificationItem[]>([]);
   const [bell, setBell] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setOpen(false);
+    setBell(false);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   useEffect(() => {
     if (!user) return;
@@ -59,8 +71,9 @@ export function Header() {
   const unread = notes.filter((n) => !n.is_read).length;
 
   return (
-    <header className="sticky top-0 z-50 glass text-white">
-      <div className="container-ah flex h-14 items-center gap-2 sm:h-16 sm:gap-4">
+    <>
+    <header className="sticky top-0 z-50 overflow-hidden border-b border-white/10 bg-zinc-950 text-white">
+      <div className="container-ah flex h-14 items-center gap-2 sm:h-16 sm:gap-3">
         <Logo />
         <nav className="ml-4 hidden items-center gap-1 lg:flex">
           {navKeys.map((l) => (
@@ -148,7 +161,7 @@ export function Header() {
             </div>
           )}
           {user ? (
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-2 lg:flex">
               {user.role === 'ADMIN' && (
                 <Link to="/admin" className="rounded-full bg-gold-500/20 px-3 py-1 text-xs font-semibold text-gold-300">
                   {t('navAdmin')}
@@ -166,77 +179,79 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-2 lg:flex">
               <Link to="/login" className="btn-ghost !py-1.5 !text-white">{t('navLogin')}</Link>
               <Link to="/register" className="btn-gold !py-1.5">{t('navRegister')}</Link>
             </div>
           )}
-          <button type="button" className="rounded-full p-2 text-white lg:hidden" onClick={() => setOpen(true)} aria-label="Menu">
-            <Menu className="h-5 w-5" />
-          </button>
         </div>
       </div>
-
-      {open && (
-        <div className="fixed inset-0 z-[60] bg-black/60 lg:hidden" onClick={() => setOpen(false)}>
-          <aside className="absolute right-0 top-0 h-full w-[min(88vw,360px)] bg-zinc-950 p-6 text-white" onClick={(e) => e.stopPropagation()}>
-            <div className="mb-6 flex items-center justify-between">
-              <Logo />
-              <button type="button" onClick={() => setOpen(false)}><X /></button>
-            </div>
-            <label className="mb-3 flex items-center justify-between text-sm text-white/70">
-              {t('language')}
-              <select
-                className="rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
-                value={locale}
-                onChange={(e) => setLocale(e.target.value as typeof locale)}
-              >
-                {LOCALES.map((l) => (
-                  <option key={l.id} value={l.id} className="text-zinc-900">
-                    {l.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="mb-4 flex items-center justify-between text-sm text-white/70">
-              Currency
-              <select
-                translate="no"
-                className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value as Currency)}
-              >
-                {CURRENCIES.map((c) => (
-                  <option key={c} value={c} className="text-zinc-900" translate="no">
-                    {CURRENCY_LABELS[c]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="flex flex-col gap-2">
-              {navKeys.map((l) => (
-                <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">
-                  {t(l.key)}
-                </Link>
-              ))}
-              {user ? (
-                <>
-                  <Link to="/profile" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">{t('navProfile')}</Link>
-                  <Link to="/dashboard" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 hover:bg-white/10">{t('navDashboard')}</Link>
-                  {user.role === 'ADMIN' && <Link to="/admin" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-gold-400">{t('navAdmin')}</Link>}
-                  <button type="button" className="rounded-xl px-3 py-2 text-left text-red-300" onClick={() => { logout(); setOpen(false); }}>{t('navLogout')}</button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2">{t('navLogin')}</Link>
-                  <Link to="/register" onClick={() => setOpen(false)} className="btn-gold mt-2">{t('navRegister')}</Link>
-                </>
-              )}
-            </div>
-          </aside>
-        </div>
-      )}
     </header>
+    {open && createPortal(
+      <div className="fixed inset-0 z-[80] lg:hidden">
+        <button type="button" className="absolute inset-0 bg-black/70" aria-label="Close menu" onClick={() => setOpen(false)} />
+        <aside className="absolute inset-y-0 right-0 flex h-[100dvh] w-[min(86vw,340px)] flex-col overflow-y-auto bg-zinc-950 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-white shadow-2xl">
+          <div className="mb-6 flex items-center justify-between">
+            <Logo />
+            <button type="button" className="rounded-full p-2 hover:bg-white/10" onClick={() => setOpen(false)} aria-label="Close">
+              <X />
+            </button>
+          </div>
+          <label className="mb-3 flex items-center justify-between text-sm text-white/70">
+            {t('language')}
+            <select
+              className="rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as typeof locale)}
+            >
+              {LOCALES.map((l) => (
+                <option key={l.id} value={l.id} className="text-zinc-900">
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="mb-4 flex items-center justify-between text-sm text-white/70">
+            Currency
+            <select
+              translate="no"
+              className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value as Currency)}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c} value={c} className="text-zinc-900" translate="no">
+                  {CURRENCY_LABELS[c]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex flex-col gap-1">
+            {navKeys.map((l) => (
+              <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-white/10">
+                {t(l.key)}
+                {l.to === '/compare' && items.length > 0 ? ` (${items.length})` : ''}
+              </Link>
+            ))}
+            {user ? (
+              <>
+                <Link to="/profile" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/10">{t('navProfile')}</Link>
+                <Link to="/dashboard" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/10">{t('navDashboard')}</Link>
+                {user.role === 'ADMIN' && <Link to="/admin" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-gold-400">{t('navAdmin')}</Link>}
+                <button type="button" className="rounded-xl px-3 py-3 text-left text-red-300" onClick={() => { logout(); setOpen(false); }}>{t('navLogout')}</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3">{t('navLogin')}</Link>
+                <Link to="/register" onClick={() => setOpen(false)} className="btn-gold mt-3 w-full">{t('navRegister')}</Link>
+              </>
+            )}
+          </div>
+        </aside>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
 
@@ -275,7 +290,7 @@ export function MobileNav() {
 export function Footer() {
   const { t } = useI18n();
   return (
-    <footer className="mt-10 border-t border-[var(--ah-line)] bg-zinc-950 text-white sm:mt-16">
+    <footer className="mt-10 hidden border-t border-[var(--ah-line)] bg-zinc-950 text-white md:mt-16 md:block">
       <div className="container-ah grid gap-8 py-10 md:grid-cols-4 md:gap-10 md:py-14">
         <div>
           <Logo />

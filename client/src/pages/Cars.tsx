@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { Seo } from '../components/Seo';
@@ -195,16 +196,18 @@ export default function Cars() {
         </div>
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-[70] bg-black/50 lg:hidden" onClick={() => setOpen(false)}>
-          <div className="absolute right-0 top-0 h-full w-[min(92vw,380px)] overflow-auto bg-[var(--ah-surface)] p-5" onClick={(e) => e.stopPropagation()}>
+      {open && createPortal(
+        <div className="fixed inset-0 z-[80] lg:hidden">
+          <button type="button" className="absolute inset-0 bg-black/60" aria-label="Close filters" onClick={() => setOpen(false)} />
+          <div className="absolute inset-y-0 right-0 h-[100dvh] w-[min(92vw,380px)] overflow-auto bg-[var(--ah-surface)] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-semibold">{t('filters')}</h2>
               <button type="button" onClick={() => setOpen(false)}><X /></button>
             </div>
             {filters}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

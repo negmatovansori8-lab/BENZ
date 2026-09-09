@@ -38,6 +38,8 @@ function isAllowedOrigin(origin) {
     const { hostname } = new URL(origin);
     if (hostname === 'localhost' || hostname === '127.0.0.1') return !isProd;
     if (hostname.endsWith('.vercel.app')) return true;
+    if (hostname.endsWith('.up.railway.app')) return true;
+    if (hostname === 'hacerr.pp.ua' || hostname.endsWith('.pp.ua')) return true;
   } catch {
     return false;
   }

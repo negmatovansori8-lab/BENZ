@@ -78,7 +78,7 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
             src={cover}
             seed={car.id}
             alt={`${car.brand} ${car.model}`}
-            className="img-zoom h-48 w-full object-cover"
+            className="img-zoom h-40 w-full object-cover sm:h-48"
           />
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/55 to-transparent" />
           <div className="absolute left-3 top-3 flex gap-1">
@@ -86,8 +86,8 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
             {car.status === 'SOLD' && <span className="chip bg-zinc-950 text-[10px] text-white">{t('badgeSold')}</span>}
           </div>
         </div>
-        <div className="flex flex-1 flex-col p-4">
-          <p className="font-display text-xl leading-none text-gold-600 dark:text-gold-400">
+        <div className="flex flex-1 flex-col p-3 sm:p-4">
+          <p className="font-display text-lg leading-none text-gold-600 dark:text-gold-400 sm:text-xl">
             {formatPrice(car.price_usd, currency, rates)}
           </p>
           <h3 className="mt-2 font-semibold leading-tight">

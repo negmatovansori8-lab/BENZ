@@ -60,7 +60,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 glass text-white">
-      <div className="container-ah flex h-16 items-center gap-4">
+      <div className="container-ah flex h-14 items-center gap-2 sm:h-16 sm:gap-4">
         <Logo />
         <nav className="ml-4 hidden items-center gap-1 lg:flex">
           {navKeys.map((l) => (
@@ -87,7 +87,7 @@ export function Header() {
         <div className="ml-auto flex items-center gap-1.5">
           <select
             aria-label={t('language')}
-            className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80"
+            className="notranslate hidden rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80 sm:block"
             value={locale}
             onChange={(e) => setLocale(e.target.value as typeof locale)}
           >
@@ -148,7 +148,7 @@ export function Header() {
             </div>
           )}
           {user ? (
-            <div className="hidden items-center gap-2 sm:flex">
+            <div className="hidden items-center gap-2 md:flex">
               {user.role === 'ADMIN' && (
                 <Link to="/admin" className="rounded-full bg-gold-500/20 px-3 py-1 text-xs font-semibold text-gold-300">
                   {t('navAdmin')}
@@ -166,7 +166,7 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
+            <div className="hidden items-center gap-2 md:flex">
               <Link to="/login" className="btn-ghost !py-1.5 !text-white">{t('navLogin')}</Link>
               <Link to="/register" className="btn-gold !py-1.5">{t('navRegister')}</Link>
             </div>
@@ -184,7 +184,7 @@ export function Header() {
               <Logo />
               <button type="button" onClick={() => setOpen(false)}><X /></button>
             </div>
-            <label className="mb-4 flex items-center justify-between text-sm text-white/70">
+            <label className="mb-3 flex items-center justify-between text-sm text-white/70">
               {t('language')}
               <select
                 className="rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
@@ -194,6 +194,21 @@ export function Header() {
                 {LOCALES.map((l) => (
                   <option key={l.id} value={l.id} className="text-zinc-900">
                     {l.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="mb-4 flex items-center justify-between text-sm text-white/70">
+              Currency
+              <select
+                translate="no"
+                className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c} value={c} className="text-zinc-900" translate="no">
+                    {CURRENCY_LABELS[c]}
                   </option>
                 ))}
               </select>
@@ -236,7 +251,7 @@ export function MobileNav() {
     { to: user ? '/profile' : '/login', icon: User, label: t('navProfile') },
   ];
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--ah-line)] bg-[var(--ah-surface)]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--ah-line)] bg-[var(--ah-surface)]/95 pb-[max(0.35rem,env(safe-area-inset-bottom))] backdrop-blur md:hidden">
       <ul className="grid grid-cols-5">
         {items.map((it) => (
           <li key={it.label}>
@@ -244,7 +259,7 @@ export function MobileNav() {
               to={it.to}
               end={it.to === '/'}
               className={({ isActive }) =>
-                cn('flex flex-col items-center gap-0.5 py-2 text-[10px]', isActive ? 'text-gold-500' : 'text-[var(--ah-muted)]')
+                cn('flex min-h-[48px] flex-col items-center justify-center gap-0.5 py-1.5 text-[10px]', isActive ? 'text-gold-500' : 'text-[var(--ah-muted)]')
               }
             >
               <it.icon className="h-5 w-5" />
@@ -260,8 +275,8 @@ export function MobileNav() {
 export function Footer() {
   const { t } = useI18n();
   return (
-    <footer className="mt-16 border-t border-[var(--ah-line)] bg-zinc-950 text-white">
-      <div className="container-ah grid gap-10 py-14 md:grid-cols-4">
+    <footer className="mt-10 border-t border-[var(--ah-line)] bg-zinc-950 text-white sm:mt-16">
+      <div className="container-ah grid gap-8 py-10 md:grid-cols-4 md:gap-10 md:py-14">
         <div>
           <Logo />
           <p className="mt-3 font-display text-lg text-gold-400">{t('slogan')}</p>

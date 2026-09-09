@@ -6,7 +6,7 @@ import { useCompare } from '../context/CompareContext';
 export function MainLayout() {
   const { items } = useCompare();
   return (
-    <div className="flex min-h-screen flex-col pb-16 md:pb-0">
+    <div className="flex min-h-screen flex-col pb-[4.5rem] md:pb-0">
       <Header />
       <main className="flex-1">
         <RouteShell />

@@ -135,11 +135,11 @@ export default function Cars() {
   );
 
   return (
-    <div className="container-ah py-8">
+    <div className="container-ah py-5 sm:py-8">
       <Seo title={`${pageTitle} — BENZ`} description={t('heroSubtitle')} />
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="font-display text-3xl">{pageTitle}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl">{pageTitle}</h1>
           <p className="text-sm text-[var(--ah-muted)]">{data?.pagination.total ?? '—'} {t('listings')}</p>
         </div>
         <div className="flex flex-1 flex-col gap-2 sm:flex-row md:max-w-xl">
@@ -196,7 +196,7 @@ export default function Cars() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-black/50 lg:hidden" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[70] bg-black/50 lg:hidden" onClick={() => setOpen(false)}>
           <div className="absolute right-0 top-0 h-full w-[min(92vw,380px)] overflow-auto bg-[var(--ah-surface)] p-5" onClick={(e) => e.stopPropagation()}>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-semibold">{t('filters')}</h2>

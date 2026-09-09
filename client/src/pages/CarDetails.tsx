@@ -114,7 +114,7 @@ export default function CarDetails() {
   };
 
   return (
-    <div className="container-ah py-8">
+    <div className="container-ah py-5 sm:py-8">
       <Seo title={`${car.brand} ${car.model} ${car.year} — BENZ`} description={car.description || undefined} />
       <Link to="/cars" className="mb-5 inline-flex items-center gap-2 text-sm text-[var(--ah-muted)] transition hover:text-gold-600">
         <ArrowLeft className="h-4 w-4" /> {t('back')}
@@ -122,14 +122,14 @@ export default function CarDetails() {
 
       <div className="grid gap-8 lg:grid-cols-[1.2fr_.8fr]">
         <div>
-          <button type="button" className="relative block w-full overflow-hidden rounded-3xl" onClick={() => setZoom(true)}>
+          <button type="button" className="relative block w-full overflow-hidden rounded-2xl sm:rounded-3xl" onClick={() => setZoom(true)}>
             <SafeImg
               key={current + idx}
               src={current}
               seed={car.id}
               index={idx}
               alt={`${car.brand} ${car.model}`}
-              className="fade-swap h-[420px] w-full object-cover"
+              className="fade-swap h-56 w-full object-cover sm:h-[420px]"
             />
             <span className="absolute bottom-4 right-4 rounded-full bg-black/50 p-2 text-white backdrop-blur"><ZoomIn className="h-4 w-4" /></span>
           </button>
@@ -152,9 +152,9 @@ export default function CarDetails() {
 
         <aside className="card p-6">
           {car.is_featured && <span className="chip bg-gold-500/15 text-gold-700">{t('badgeFeatured')}</span>}
-          <h1 className="font-display mt-2 text-3xl">{car.brand} {car.model}</h1>
+          <h1 className="font-display mt-2 text-2xl sm:text-3xl">{car.brand} {car.model}</h1>
           <p className="mt-1 text-[var(--ah-muted)]">{car.year} · {t(bodyMsg(car.body))}</p>
-          <p className="mt-4 font-display text-4xl text-gold-600">{formatPrice(car.price_usd, currency, rates)}</p>
+          <p className="mt-4 font-display text-3xl text-gold-600 sm:text-4xl">{formatPrice(car.price_usd, currency, rates)}</p>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-[var(--ah-muted)]">
             <IconPin className="h-4 w-4" />
             {[car.city, car.country].filter(Boolean).join(', ') || car.location}

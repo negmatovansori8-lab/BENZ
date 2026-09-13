@@ -5,8 +5,10 @@ import { api } from '../services/api';
 import type { Car } from '../types';
 import { CarCard, CarCardSkeleton } from '../components/CarCard';
 import { EmptyState } from '../components/EmptyState';
+import { useI18n } from '../context/LocaleContext';
 
 export default function Favorites() {
+  const { t } = useI18n();
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,9 +20,9 @@ export default function Favorites() {
 
   return (
     <div className="container-ah py-10">
-      <Seo title="Favorites — BENZ" />
-      <h1 className="font-display text-3xl">Favorites</h1>
-      <p className="text-sm text-[var(--ah-muted)]">Cars you saved for later.</p>
+      <Seo title={`${t('navFavorites')} — BENZ`} />
+      <h1 className="font-display text-3xl">{t('navFavorites')}</h1>
+      <p className="text-sm text-[var(--ah-muted)]">{t('favSubtitle')}</p>
       <div className="mt-8">
         {loading && (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -28,7 +30,7 @@ export default function Favorites() {
           </div>
         )}
         {!loading && !cars.length && (
-          <EmptyState icon={Heart} title="No favorites yet" text="Tap the heart on any car to save it here." action={{ to: '/cars', label: 'Browse cars' }} />
+          <EmptyState icon={Heart} title={t('noFavoritesYet')} text={t('tapHeart')} action={{ to: '/cars', label: t('browseCars') }} />
         )}
         {!loading && cars.length > 0 && (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

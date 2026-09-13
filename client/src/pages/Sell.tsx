@@ -95,14 +95,14 @@ export default function Sell() {
       files.forEach((f) => fd.append('images', f));
       if (editId) {
         await api.put(`/cars/${editId}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-        push('Listing updated', 'success');
+        push(t('listingUpdated'), 'success');
       } else {
         await api.post('/cars', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-        push('Listing submitted for review', 'success');
+        push(t('listingSubmitted'), 'success');
       }
       navigate('/dashboard');
-    } catch (e: unknown) {
-      push((e as { displayMessage?: string }).displayMessage || 'Please try again', 'error');
+    } catch {
+      push(t('somethingWrong'), 'error');
     } finally {
       setLoading(false);
     }

@@ -91,10 +91,10 @@ export default function CarDetails() {
       } else {
         await api.post('/favorites', { car_id: car.id });
         setCar({ ...car, is_favorite: true });
-        push('Added to favorites', 'success');
+        push(t('addedToFavorites'), 'success');
       }
-    } catch (e: unknown) {
-      push((e as { displayMessage?: string }).displayMessage || 'Please try again', 'error');
+    } catch {
+      push(t('somethingWrong'), 'error');
     }
   };
 
@@ -104,10 +104,10 @@ export default function CarDetails() {
     setSending(true);
     try {
       const { data } = await api.post('/messages', { car_id: car.id, content: msg });
-      push('Message sent', 'success');
+      push(t('messageSent'), 'success');
       navigate(`/messages/${data.conversation.id}`);
-    } catch (e: unknown) {
-      push((e as { displayMessage?: string }).displayMessage || 'Please try again', 'error');
+    } catch {
+      push(t('somethingWrong'), 'error');
     } finally {
       setSending(false);
     }
@@ -164,7 +164,7 @@ export default function CarDetails() {
             <button type="button" className="btn-ghost" onClick={favorite}>
               <Heart className={cn('h-4 w-4', car.is_favorite && 'fill-red-500 text-red-500')} /> {t('favoriteBtn')}
             </button>
-            <button type="button" className="btn-ghost" onClick={() => { add(car); push('Added to compare', 'success'); }}>
+            <button type="button" className="btn-ghost" onClick={() => { add(car); push(t('addedToCompare'), 'success'); }}>
               <Scale className={cn('h-4 w-4', has(car.id) && 'text-gold-500')} /> {t('compareBtn')}
             </button>
             <ContactActions phone={car.phone || car.seller_phone} />

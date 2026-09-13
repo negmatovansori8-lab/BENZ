@@ -33,9 +33,9 @@ export default function Profile() {
     try {
       await api.put('/auth/me', form);
       await refresh();
-      push('Profile updated', 'success');
+      push(t('profileUpdated'), 'success');
     } catch (err: unknown) {
-      push((err as { displayMessage?: string }).displayMessage || 'Please try again', 'error');
+      push(t('somethingWrong'), 'error');
     }
   };
 
@@ -43,7 +43,7 @@ export default function Profile() {
 
   return (
     <div className="container-ah py-10">
-      <Seo title="Profile — BENZ" />
+      <Seo title={`${t('navProfile')} — BENZ`} />
       <div className="card flex flex-col items-start gap-6 p-6 sm:flex-row sm:items-center">
         <img src={avatarUrl(user.name, user.avatar)} alt="" className="h-24 w-24 rounded-full object-cover" />
         <div>
@@ -54,29 +54,34 @@ export default function Profile() {
             {user.last_login_at ? ` · ${t('lastLogin')}: ${new Date(user.last_login_at).toLocaleString()}` : ''}
           </p>
           <div className="mt-3 flex gap-2">
-            <Link to="/messages" className="btn-ghost !py-1.5">Messages</Link>
-            <Link to="/dashboard" className="btn-ghost !py-1.5">My Listings</Link>
+            <Link to="/messages" className="btn-ghost !py-1.5">{t('navMessages')}</Link>
+            <Link to="/dashboard" className="btn-ghost !py-1.5">{t('myListings')}</Link>
           </div>
         </div>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
-        {(['listings', 'favorites', 'viewed', 'settings'] as const).map((t) => (
-          <button key={t} type="button" onClick={() => setTab(t)} className={`chip capitalize ${tab === t ? 'bg-gold-500 text-zinc-950' : ''}`}>{t === 'viewed' ? 'Recently Viewed' : t}</button>
+        {([
+          { id: 'listings' as const, label: t('myListings') },
+          { id: 'favorites' as const, label: t('navFavorites') },
+          { id: 'viewed' as const, label: t('recentlyViewed') },
+          { id: 'settings' as const, label: t('settings') },
+        ]).map((item) => (
+          <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`chip ${tab === item.id ? 'bg-gold-500 text-zinc-950' : ''}`}>{item.label}</button>
         ))}
       </div>
 
       <div className="mt-6">
-        {tab === 'listings' && <Grid cars={listings} empty="You have no listings yet." />}
-        {tab === 'favorites' && <Grid cars={favorites} empty="No favorites yet." />}
-        {tab === 'viewed' && <Grid cars={viewed} empty="You have not viewed any cars yet." />}
+        {tab === 'listings' && <Grid cars={listings} empty={t('noListingsYet')} />}
+        {tab === 'favorites' && <Grid cars={favorites} empty={t('noFavoritesYet')} />}
+        {tab === 'viewed' && <Grid cars={viewed} empty={t('notViewedYet')} />}
         {tab === 'settings' && (
           <form onSubmit={save} className="card max-w-lg space-y-3 p-6">
-            <label><span className="label">Name</span><input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
-            <label><span className="label">Phone</span><input className="input" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label>
-            <label><span className="label">Avatar URL</span><input className="input" value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} /></label>
-            <p className="text-xs text-[var(--ah-muted)]">Email cannot be changed here: {user.email}</p>
-            <button className="btn-gold" type="submit">Save settings</button>
+            <label><span className="label">{t('name')}</span><input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
+            <label><span className="label">{t('phone')}</span><input className="input" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label>
+            <label><span className="label">{t('avatarUrl')}</span><input className="input" value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} /></label>
+            <p className="text-xs text-[var(--ah-muted)]">{t('emailLocked')}: {user.email}</p>
+            <button className="btn-gold" type="submit">{t('saveSettings')}</button>
           </form>
         )}
       </div>

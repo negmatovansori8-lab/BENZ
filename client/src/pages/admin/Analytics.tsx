@@ -30,18 +30,23 @@ export default function AdminAnalytics() {
     <div>
       <Seo title="Admin Analytics — BENZ" />
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="font-display text-3xl">Analytics</h1>
+        <h1 className="font-display text-3xl">Таҳлил</h1>
         <div className="flex gap-2">
-          {['daily', 'weekly', 'monthly', 'yearly'].map((p) => (
-            <button key={p} type="button" className={`chip capitalize ${period === p ? 'bg-gold-500 text-zinc-950' : ''}`} onClick={() => setPeriod(p)}>
-              {p}
+          {([
+            { id: 'daily', label: 'Рӯз' },
+            { id: 'weekly', label: 'Ҳафта' },
+            { id: 'monthly', label: 'Моҳ' },
+            { id: 'yearly', label: 'Сол' },
+          ] as const).map((p) => (
+            <button key={p.id} type="button" className={`chip ${period === p.id ? 'bg-gold-500 text-zinc-950' : ''}`} onClick={() => setPeriod(p.id)}>
+              {p.label}
             </button>
           ))}
         </div>
       </div>
 
       <section className="card mt-6 p-5">
-        <h2 className="mb-4 font-semibold">Sales</h2>
+        <h2 className="mb-4 font-semibold">Фурӯш</h2>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={sales}>
@@ -56,7 +61,7 @@ export default function AdminAnalytics() {
       </section>
 
       <section className="card mt-6 p-5">
-        <h2 className="mb-4 font-semibold">Revenue</h2>
+        <h2 className="mb-4 font-semibold">Даромад</h2>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={revenue}>
@@ -71,7 +76,7 @@ export default function AdminAnalytics() {
       </section>
 
       <section className="card mt-6 p-5">
-        <h2 className="mb-4 font-semibold">User growth</h2>
+        <h2 className="mb-4 font-semibold">Афзоиши корбарон</h2>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={users}>
@@ -86,7 +91,7 @@ export default function AdminAnalytics() {
       </section>
 
       <section className="card mt-6 p-5">
-        <h2 className="mb-4 font-semibold">Popular Brands</h2>
+        <h2 className="mb-4 font-semibold">Брендҳои маъмул</h2>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data?.brands || []} layout="vertical" margin={{ left: 80 }}>

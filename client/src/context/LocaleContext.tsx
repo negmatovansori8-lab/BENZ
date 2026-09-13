@@ -10,10 +10,7 @@ interface LocaleState {
 const LocaleContext = createContext<LocaleState | null>(null);
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    const saved = localStorage.getItem('ah_locale') as Locale | null;
-    return saved && dict[saved] ? saved : 'tg';
-  });
+  const [locale, setLocaleState] = useState<Locale>('tg');
 
   useEffect(() => {
     localStorage.setItem('ah_locale', locale);

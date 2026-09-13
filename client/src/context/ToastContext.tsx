@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { dict } from '../i18n/dict';
+import { isUnverifiedText } from '../utils/authErrors';
 
 type ToastKind = 'success' | 'error' | 'info';
 interface Toast {
@@ -14,7 +16,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const push = useCallback((message: string, kind: ToastKind = 'info') => {
     const id = Date.now() + Math.random();
-    setToasts((t) => [...t, { id, kind, message }]);
+    const text = isUnverifiedText(message) ? dict.tg.authEmailNotConfirmed : message;
+    setToasts((t) => [...t, { id, kind, message: text }]);
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3800);
   }, []);
 

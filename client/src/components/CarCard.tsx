@@ -36,10 +36,10 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
         await api.post('/favorites', { car_id: car.id });
         setFav(true);
         onFavorite?.(car.id, true);
-        push('Added to favorites', 'success');
+        push(t('addedToFavorites'), 'success');
       }
-    } catch (err: unknown) {
-      push((err as { displayMessage?: string }).displayMessage || 'Something went wrong', 'error');
+    } catch {
+      push(t('somethingWrong'), 'error');
     }
   };
 
@@ -51,8 +51,8 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
       return;
     }
     const ok = add(car);
-    if (!ok) push('You can compare up to 4 cars', 'info');
-    else push('Added to compare', 'success');
+    if (!ok) push(t('compareLimit'), 'info');
+    else push(t('addedToCompare'), 'success');
   };
 
   const facts = [

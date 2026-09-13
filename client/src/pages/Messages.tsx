@@ -7,10 +7,12 @@ import type { ChatMessage, Conversation } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { avatarUrl, cn, timeAgo } from '../utils/format';
 import { EmptyState } from '../components/EmptyState';
+import { useI18n } from '../context/LocaleContext';
 
 export default function Messages() {
   const { conversationId } = useParams();
   const { user } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [list, setList] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -55,10 +57,10 @@ export default function Messages() {
 
   return (
     <div className="container-ah py-8">
-      <Seo title="Messages — BENZ" />
-      <h1 className="font-display mb-6 text-3xl">Messages</h1>
+      <Seo title={`${t('navMessages')} — BENZ`} />
+      <h1 className="font-display mb-6 text-3xl">{t('navMessages')}</h1>
       {!list.length ? (
-        <EmptyState icon={MessageSquare} title="No conversations" text="Message a seller from a car page to start chatting." action={{ to: '/cars', label: 'Browse cars' }} />
+        <EmptyState icon={MessageSquare} title={t('noConversations')} text={t('startChatHint')} action={{ to: '/cars', label: t('browseCars') }} />
       ) : (
         <div className="card grid min-h-[70vh] overflow-hidden md:grid-cols-[300px_1fr]">
           <aside className="border-b border-[var(--ah-line)] md:border-b-0 md:border-r">
@@ -97,12 +99,12 @@ export default function Messages() {
                   ))}
                 </div>
                 <form onSubmit={send} className="flex gap-2 border-t border-[var(--ah-line)] p-4">
-                  <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Type a message…" />
+                  <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder={t('writeMessage')} />
                   <button className="btn-gold !px-4" disabled={sending}><Send className="h-4 w-4" /></button>
                 </form>
               </>
             ) : (
-              <div className="grid flex-1 place-items-center text-sm text-[var(--ah-muted)]">Select a conversation</div>
+              <div className="grid flex-1 place-items-center text-sm text-[var(--ah-muted)]">{t('selectConversation')}</div>
             )}
           </section>
         </div>

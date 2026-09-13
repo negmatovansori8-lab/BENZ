@@ -23,19 +23,19 @@ export default function AdminHome() {
   }, []);
 
   const cards = [
-    { label: 'Total Users', v: stats?.total_users },
-    { label: 'Total Sellers', v: stats?.total_sellers },
-    { label: 'Total Cars', v: stats?.total_cars },
-    { label: 'Active Listings', v: stats?.active_listings },
-    { label: 'Sold Cars', v: stats?.sold_cars },
-    { label: 'Total Revenue', v: stats ? `$${formatNumber(stats.total_revenue)}` : '—' },
+    { label: 'Ҳамаи корбарон', v: stats?.total_users },
+    { label: 'Фурӯшандагон', v: stats?.total_sellers },
+    { label: 'Ҳамаи мошинҳо', v: stats?.total_cars },
+    { label: 'Эълонҳои фаъол', v: stats?.active_listings },
+    { label: 'Мошинҳои фурӯхта', v: stats?.sold_cars },
+    { label: 'Даромад', v: stats ? `$${formatNumber(stats.total_revenue)}` : '—' },
   ];
 
   return (
     <div>
       <Seo title="Admin — BENZ" />
-      <h1 className="font-display text-3xl">Admin Dashboard</h1>
-      <p className="text-sm text-[var(--ah-muted)]">Marketplace overview</p>
+      <h1 className="font-display text-3xl">Кабинети админ</h1>
+      <p className="text-sm text-[var(--ah-muted)]">Шарҳи бозор</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <div key={c.label} className="card p-5">
@@ -45,13 +45,13 @@ export default function AdminHome() {
         ))}
       </div>
       <div className="mt-6 flex gap-3">
-        <Link to="/admin/users" className="btn-ghost">Manage users</Link>
-        <Link to="/admin/cars" className="btn-ghost">Review listings</Link>
-        <Link to="/admin/analytics" className="btn-gold">Analytics</Link>
+        <Link to="/admin/users" className="btn-ghost">Идораи корбарон</Link>
+        <Link to="/admin/cars" className="btn-ghost">Тафтиши эълонҳо</Link>
+        <Link to="/admin/analytics" className="btn-gold">Таҳлил</Link>
       </div>
       {!!stats?.recent_logins?.length && (
         <div className="card mt-8 p-5">
-          <h2 className="font-semibold">Recent logins</h2>
+          <h2 className="font-semibold">Даромадҳои охирин</h2>
           <ul className="mt-3 divide-y divide-[var(--ah-line)] text-sm">
             {stats.recent_logins.map((u) => (
               <li key={u.id} className="flex items-center justify-between gap-3 py-2">

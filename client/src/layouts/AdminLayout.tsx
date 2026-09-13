@@ -5,10 +5,10 @@ import { RouteShell } from '../components/RouteShell';
 import { cn } from '../utils/format';
 
 const items = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Overview', end: true },
-  { to: '/admin/users', icon: Users, label: 'Users' },
-  { to: '/admin/cars', icon: Car, label: 'Listings' },
-  { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+  { to: '/admin', icon: LayoutDashboard, label: 'Шарҳи умумӣ', end: true },
+  { to: '/admin/users', icon: Users, label: 'Корбарон' },
+  { to: '/admin/cars', icon: Car, label: 'Эълонҳо' },
+  { to: '/admin/analytics', icon: BarChart3, label: 'Таҳлил' },
 ];
 
 export function AdminLayout() {
@@ -17,7 +17,7 @@ export function AdminLayout() {
       <Header />
       <div className="container-ah flex flex-1 flex-col gap-6 py-8 lg:flex-row">
         <aside className="card h-fit w-full p-3 lg:w-56">
-          <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gold-600">Admin</p>
+          <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-gold-600">Админ</p>
           {items.map((it) => (
             <NavLink
               key={it.to}

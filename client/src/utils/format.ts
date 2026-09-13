@@ -9,7 +9,7 @@ export function formatNumber(n: number) {
 }
 
 export function formatMileage(km: number) {
-  return `${formatNumber(km)} km`;
+  return `${formatNumber(km)} км`;
 }
 
 export const CURRENCY_LABELS: Record<Currency, string> = {
@@ -31,12 +31,12 @@ export function formatPrice(usd: number | string, currency: Currency, rates: Rec
 export function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m}m ago`;
+  if (m < 1) return 'ҳозир';
+  if (m < 60) return `${m} дақ. пеш`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
+  if (h < 24) return `${h} соат пеш`;
   const d = Math.floor(h / 24);
-  if (d < 30) return `${d}d ago`;
+  if (d < 30) return `${d} рӯз пеш`;
   return new Date(iso).toLocaleDateString();
 }
 

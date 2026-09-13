@@ -21,7 +21,7 @@ api.interceptors.response.use(
   (err) => {
     const message =
       err.response?.data?.message ||
-      (err.code === 'ERR_NETWORK' ? 'Cannot reach the server. Please try again.' : 'Something went wrong. Please try again.');
+      (err.code === 'ERR_NETWORK' ? 'Ба сервер пайваст нашуд. Аз нав кӯшиш кунед.' : 'Хато рӯй дод. Аз нав кӯшиш кунед.');
     return Promise.reject({ ...err, displayMessage: message });
   }
 );

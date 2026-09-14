@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
@@ -45,6 +45,7 @@ export default function Cars() {
     const p = new URLSearchParams(params);
     if (dq) p.set('q', dq);
     else p.delete('q');
+    if (!p.get('limit')) p.set('limit', '24');
     return p.toString();
   }, [params, dq]);
 
@@ -66,7 +67,7 @@ export default function Cars() {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
     else next.delete(key);
-    next.set('page', '1');
+    if (key !== 'page') next.set('page', '1');
     setParams(next);
   };
 
@@ -179,17 +180,30 @@ export default function Cars() {
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {data.data.map((c) => <CarCard key={c.id} car={c} />)}
               </div>
-              <div className="mt-8 flex justify-center gap-2">
-                {Array.from({ length: data.pagination.totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`h-9 w-9 rounded-full text-sm ${Number(params.get('page') || 1) === i + 1 ? 'bg-gold-500 text-zinc-950' : 'border border-[var(--ah-line)]'}`}
-                    onClick={() => set('page', String(i + 1))}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                {(() => {
+                  const current = Number(params.get('page') || 1);
+                  const totalPages = data.pagination.totalPages;
+                  const pages = new Set([1, totalPages, current - 1, current, current + 1]);
+                  const list = [...pages].filter((n) => n >= 1 && n <= totalPages).sort((a, b) => a - b);
+                  const nodes: ReactNode[] = [];
+                  list.forEach((n, idx) => {
+                    if (idx && n - list[idx - 1] > 1) {
+                      nodes.push(<span key={`e${n}`} className="px-1 text-[var(--ah-muted)]">…</span>);
+                    }
+                    nodes.push(
+                      <button
+                        key={n}
+                        type="button"
+                        className={`h-9 min-w-9 rounded-full px-3 text-sm ${current === n ? 'bg-gold-500 text-zinc-950' : 'border border-[var(--ah-line)]'}`}
+                        onClick={() => set('page', String(n))}
+                      >
+                        {n}
+                      </button>
+                    );
+                  });
+                  return nodes;
+                })()}
               </div>
             </>
           )}

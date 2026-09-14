@@ -29,13 +29,13 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/cars?featured=true&category=passenger&limit=8'),
-      api.get('/cars?category=passenger&sort=newest&limit=8'),
-      api.get('/cars?category=passenger&sort=popular&limit=8'),
-      api.get('/cars?category=heavy&limit=8'),
-      api.get('/cars?category=kamaz&limit=8'),
-      api.get('/cars?category=parts&limit=8'),
-      api.get('/homes'),
+      api.get('/cars?featured=true&category=passenger&limit=16'),
+      api.get('/cars?category=passenger&sort=newest&limit=16'),
+      api.get('/cars?category=passenger&sort=popular&limit=16'),
+      api.get('/cars?category=heavy&limit=16'),
+      api.get('/cars?category=kamaz&limit=16'),
+      api.get('/cars?category=parts&limit=16'),
+      api.get('/homes?limit=8'),
       api.get('/meta/brands'),
       api.get('/meta/locations'),
     ])
@@ -46,7 +46,7 @@ export default function Home() {
         setHeavy(h.data.data || []);
         setKamaz(kamazRes.data.data || []);
         setParts(partsRes.data.data || []);
-        setHomes((homesRes.data.data || []).slice(0, 4));
+        setHomes((homesRes.data.data || []).slice(0, 8));
         setBrands(b.data.data || []);
         setLocations(l.data.data || []);
       })
@@ -190,7 +190,7 @@ export default function Home() {
         </div>
         {loading && (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => <div key={i} className="card skeleton h-64" />)}
+            {Array.from({ length: 8 }).map((_, i) => <div key={i} className="card skeleton h-64" />)}
           </div>
         )}
         {!loading && homes.length > 0 && (
@@ -241,7 +241,7 @@ function Grid({ cars, loading, empty }: { cars: Car[]; loading: boolean; empty: 
   if (loading) {
     return (
       <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory no-scrollbar sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="w-[78%] shrink-0 snap-start sm:w-auto">
             <CarCardSkeleton />
           </div>

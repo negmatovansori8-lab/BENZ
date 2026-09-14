@@ -1,7 +1,7 @@
 import { query } from '../config/db.js';
 
-const TARGET_CARS = 8500;
-const TARGET_HOMES = 1500;
+const TARGET_CARS = 20000;
+const TARGET_HOMES = 3000;
 const BATCH = 80;
 
 const PASSENGER = [
@@ -152,7 +152,7 @@ function makePassenger(n, sellers, locs) {
     body,
     color: COLORS[n % COLORS.length],
     cat: 'passenger',
-    feat: n % 90 === 0,
+    feat: n % 18 === 0,
     views: 80 + (n % 4000),
     img: imgFor('passenger', n),
     desc: `${g.brand} ${model} ${year}, ${km.toLocaleString('ru-RU')} км. ${CITIES[n % CITIES.length]}. Ҳолати хуб, ҳуҷҷатҳо тайёр.`,
@@ -231,11 +231,11 @@ async function fillCars(need, sellers, locs) {
     parts: await idMap(PARTS),
   };
   const mix = [
-    ...Array.from({ length: Math.ceil(need * 0.62) }, (_, i) => ['passenger', i]),
-    ...Array.from({ length: Math.ceil(need * 0.12) }, (_, i) => ['commercial', i]),
-    ...Array.from({ length: Math.ceil(need * 0.06) }, (_, i) => ['special', i]),
-    ...Array.from({ length: Math.ceil(need * 0.08) }, (_, i) => ['kamaz', i]),
-    ...Array.from({ length: Math.ceil(need * 0.12) }, (_, i) => ['parts', i]),
+    ...Array.from({ length: Math.ceil(need * 0.78) }, (_, i) => ['passenger', i]),
+    ...Array.from({ length: Math.ceil(need * 0.08) }, (_, i) => ['commercial', i]),
+    ...Array.from({ length: Math.ceil(need * 0.04) }, (_, i) => ['special', i]),
+    ...Array.from({ length: Math.ceil(need * 0.05) }, (_, i) => ['kamaz', i]),
+    ...Array.from({ length: Math.ceil(need * 0.05) }, (_, i) => ['parts', i]),
   ].slice(0, need);
 
   console.log(`Catalog: adding ${need} vehicles…`);
@@ -291,8 +291,8 @@ export async function seedCatalog() {
   const homes = await query(`SELECT COUNT(*)::int AS n FROM properties`);
   const carN = Number(cars.rows[0]?.n || 0);
   const homeN = Number(homes.rows[0]?.n || 0);
-  const STEP_CARS = 5000;
-  const STEP_HOMES = 800;
+  const STEP_CARS = 8000;
+  const STEP_HOMES = 1000;
   const sellerIds = sellers.rows.map((r) => r.id);
   const locIds = locs.rows.map((r) => r.id);
 

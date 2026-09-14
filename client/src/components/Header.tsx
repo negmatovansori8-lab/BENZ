@@ -17,7 +17,7 @@ import { cn, CURRENCY_LABELS } from '../utils/format';
 
 const navKeys = [
   { to: '/', key: 'navHome' as const },
-  { to: '/cars', key: 'navCars' as const },
+  { to: '/cars?category=passenger', key: 'navCars' as const },
   { to: '/cars?category=heavy', key: 'catCommercial' as const },
   { to: '/homes', key: 'catHomes' as const },
   { to: '/sell', key: 'navSell' as const },
@@ -261,7 +261,7 @@ export function MobileNav() {
   const { t } = useI18n();
   const items = [
     { to: '/', icon: Home, label: t('navHome') },
-    { to: '/cars', icon: Car, label: t('mobileCars') },
+    { to: '/cars?category=passenger', icon: Car, label: t('mobileCars') },
     { to: '/favorites', icon: Heart, label: t('navFavorites') },
     { to: '/messages', icon: MessageSquare, label: t('navMessages') },
     { to: user ? '/profile' : '/login', icon: User, label: t('navProfile') },
@@ -301,7 +301,7 @@ export function Footer() {
         <div>
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gold-400">{t('explore')}</h3>
           <ul className="space-y-2 text-sm text-white/70">
-            <li><Link to="/cars">{t('navCars')}</Link></li>
+            <li><Link to="/cars?category=passenger">{t('navCars')}</Link></li>
             <li><Link to="/cars?category=heavy">{t('catCommercial')}</Link></li>
             <li><Link to="/homes">{t('catHomes')}</Link></li>
             <li><Link to="/sell">{t('navSell')}</Link></li>

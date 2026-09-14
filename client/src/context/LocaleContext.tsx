@@ -9,8 +9,18 @@ interface LocaleState {
 
 const LocaleContext = createContext<LocaleState | null>(null);
 
+function readSavedLocale(): Locale {
+  try {
+    const saved = localStorage.getItem('ah_locale');
+    if (saved === 'tg' || saved === 'ru' || saved === 'en') return saved;
+  } catch {
+    /* ignore */
+  }
+  return 'tg';
+}
+
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('tg');
+  const [locale, setLocaleState] = useState<Locale>(readSavedLocale);
 
   useEffect(() => {
     localStorage.setItem('ah_locale', locale);

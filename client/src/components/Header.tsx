@@ -100,7 +100,8 @@ export function Header() {
         <div className="ml-auto flex items-center gap-1.5">
           <select
             aria-label={t('language')}
-            className="notranslate hidden rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80 sm:block"
+            translate="no"
+            className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80"
             value={locale}
             onChange={(e) => setLocale(e.target.value as typeof locale)}
           >

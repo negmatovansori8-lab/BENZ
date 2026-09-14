@@ -389,4 +389,10 @@ export async function migrateAndSeedExtras() {
   await syncCategories();
   await seedMorePassenger();
   await seedMoreHomes();
+  try {
+    const { seedCatalog } = await import('./seedCatalog.js');
+    await seedCatalog();
+  } catch (err) {
+    console.error('Catalog seed failed (API still runs):', err.message);
+  }
 }

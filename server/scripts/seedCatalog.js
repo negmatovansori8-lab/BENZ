@@ -1,7 +1,5 @@
 import { query } from '../config/db.js';
 
-const TARGET_CARS = 20000;
-const TARGET_HOMES = 3000;
 const BATCH = 80;
 
 const PASSENGER = [
@@ -132,78 +130,52 @@ async function insertCarBatch(rows) {
   await query(`INSERT INTO car_images (car_id, url, sort_order) VALUES ${imgValues.join(',')}`, imgParams);
 }
 
-function makePassenger(n, sellers, locs) {
-  const g = PASSENGER[n % PASSENGER.length];
-  const model = g.models[Math.floor(n / PASSENGER.length) % g.models.length];
-  const year = 2008 + (n % 18);
-  const km = 8000 + (n * 137) % 240000;
-  const price = 3500 + (n * 211) % 92000;
-  const body = g.bodies[n % g.bodies.length];
-  const fuel = n % 17 === 0 ? 'Electric' : n % 9 === 0 ? 'Hybrid' : n % 4 === 0 ? 'Diesel' : n % 5 === 0 ? 'Gas' : 'Petrol';
+function buildCar(g, model, year, cat, n, sellers, locs) {
+  const km = cat === 'parts' ? 0 : 8000 + (n * 137) % 240000;
+  const price = cat === 'parts' ? 15 + (n * 17) % 3500 : 3500 + (n * 211) % 92000;
+  const body = g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup';
+  const fuel = cat === 'parts' || cat === 'kamaz' || cat === 'commercial' || cat === 'special'
+    ? (cat === 'parts' ? 'Petrol' : 'Diesel')
+    : n % 17 === 0 ? 'Electric' : n % 9 === 0 ? 'Hybrid' : n % 4 === 0 ? 'Diesel' : n % 5 === 0 ? 'Gas' : 'Petrol';
+  const label = cat === 'parts'
+    ? `${g.brand} ${model}. Қисми эҳтиётӣ, санҷидашуда. ${CITIES[n % CITIES.length]}.`
+    : cat === 'kamaz'
+      ? `${g.brand} ${model} ${year}. КамАЗ. ${CITIES[n % CITIES.length]}.`
+      : cat === 'special'
+        ? `${g.brand} ${model} ${year}. Спецтехника. ${CITIES[n % CITIES.length]}.`
+        : cat === 'commercial'
+          ? `${g.brand} ${model} ${year}. Нақлиёти калон. ${CITIES[n % CITIES.length]}.`
+          : `${g.brand} ${model} ${year}, ${km.toLocaleString('ru-RU')} км. ${CITIES[n % CITIES.length]}. Ҳолати хуб, ҳуҷҷатҳо тайёр.`;
   return {
     key: `${g.brand}|${model}`,
     year,
-    price,
+    price: cat === 'commercial' || cat === 'special' || cat === 'kamaz' ? 9000 + (n * 307) % 80000 : price,
     km,
-    engine: fuel === 'Electric' ? 'Electric motor' : `${(1.2 + (n % 40) / 10).toFixed(1)}L`,
-    power: 80 + (n % 320),
+    engine: cat === 'parts' ? '—' : fuel === 'Electric' ? 'Electric motor' : `${(cat === 'passenger' ? 1.2 + (n % 40) / 10 : 4 + (n % 90) / 10).toFixed(1)}L`,
+    power: cat === 'parts' ? 0 : 80 + (n % 320),
     fuel,
-    trans: TRANS[n % 2],
+    trans: cat === 'parts' ? 'Manual' : TRANS[n % 2],
     body,
     color: COLORS[n % COLORS.length],
-    cat: 'passenger',
+    cat,
     feat: n % 18 === 0,
     views: 80 + (n % 4000),
-    img: imgFor('passenger', n),
-    desc: `${g.brand} ${model} ${year}, ${km.toLocaleString('ru-RU')} км. ${CITIES[n % CITIES.length]}. Ҳолати хуб, ҳуҷҷатҳо тайёр.`,
-    sellerId: sellers[n % sellers.length],
-    locId: locs[n % locs.length],
-    phone: '+992 90 555 1000',
-  };
-}
-
-function makeFromGroups(n, groups, cat, sellers, locs) {
-  const g = groups[n % groups.length];
-  const model = g.models[Math.floor(n / groups.length) % g.models.length];
-  const year = 2010 + (n % 16);
-  const km = cat === 'parts' ? 0 : 12000 + (n * 223) % 320000;
-  const price = cat === 'parts' ? 15 + (n * 17) % 3500 : 9000 + (n * 307) % 80000;
-  return {
-    key: `${g.brand}|${model}`,
-    year,
-    price,
-    km,
-    engine: cat === 'parts' ? '—' : `${(4 + (n % 90) / 10).toFixed(1)}L Diesel`,
-    power: cat === 'parts' ? 0 : 140 + (n % 360),
-    fuel: cat === 'parts' ? 'Petrol' : 'Diesel',
-    trans: cat === 'parts' ? 'Manual' : TRANS[n % 2],
-    body: g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup',
-    color: COLORS[n % COLORS.length],
-    cat,
-    feat: n % 70 === 0,
-    views: 50 + (n % 2200),
     img: imgFor(cat, n),
-    desc: cat === 'parts'
-      ? `${g.brand} ${model}. Қисми эҳтиётӣ, санҷидашуда. ${CITIES[n % CITIES.length]}.`
-      : `${g.brand} ${model} ${year}. ${cat === 'kamaz' ? 'КамАЗ' : cat === 'special' ? 'Спецтехника' : 'Нақлиёти калон'}. ${CITIES[n % CITIES.length]}.`,
+    desc: label,
     sellerId: sellers[n % sellers.length],
     locId: locs[n % locs.length],
     phone: '+992 90 555 1000',
   };
 }
 
-function makeHome(n, sellers, locs) {
-  const kinds = ['apartment', 'house', 'land', 'commerce'];
-  const kind = kinds[n % kinds.length];
-  const rooms = kind === 'land' ? 0 : 1 + (n % 7);
-  const area = kind === 'land' ? 400 + (n % 20) * 50 : 32 + (n % 40) * 6;
+function makeHome(n, sellers, kind, rooms, area, locId) {
   const title = kind === 'apartment'
-    ? `Квартираи ${rooms}-ҳуҷрагӣ, ${DISTRICTS[n % DISTRICTS.length]} №${n + 1}`
+    ? `Квартираи ${rooms}-ҳуҷрагӣ, ${DISTRICTS[n % DISTRICTS.length]}`
     : kind === 'house'
-      ? `Хонаи ҳавлигӣ, ${CITIES[n % CITIES.length]} №${n + 1}`
+      ? `Хонаи ҳавлигӣ, ${CITIES[n % CITIES.length]}`
       : kind === 'land'
-        ? `Замини ${Math.round(area / 100)} сотих, ${CITIES[n % CITIES.length]} №${n + 1}`
-        : `Офис / мағоза ${area} м², ${DISTRICTS[n % DISTRICTS.length]} №${n + 1}`;
+        ? `Замини ${Math.round(area / 100)} сотих, ${CITIES[n % CITIES.length]}`
+        : `Офис / мағоза ${area} м², ${DISTRICTS[n % DISTRICTS.length]}`;
   return {
     sellerId: sellers[n % sellers.length].id,
     phone: sellers[n % sellers.length].phone,
@@ -214,7 +186,7 @@ function makeHome(n, sellers, locs) {
     floor: kind === 'apartment' ? 1 + (n % 12) : kind === 'house' ? 1 + (n % 2) : 0,
     floors: kind === 'apartment' ? 5 + (n % 12) : kind === 'house' ? 1 + (n % 2) : 0,
     price: kind === 'land' ? 8000 + (n % 40) * 900 : 18000 + (n % 120) * 1400,
-    locId: locs[n % locs.length],
+    locId,
     desc: `${title}. ${CITIES[n % CITIES.length]}. Ҳуҷҷатҳо тайёр, нарх музокирот.`,
     feat: n % 55 === 0,
     views: 40 + (n % 900),
@@ -222,7 +194,54 @@ function makeHome(n, sellers, locs) {
   };
 }
 
-async function fillCars(need, sellers, locs) {
+async function removeDuplicateCars() {
+  await query(`
+    DELETE FROM cars
+    WHERE id NOT IN (
+      SELECT min_id FROM (
+        SELECT MIN(id) AS min_id
+        FROM cars
+        GROUP BY brand_id, model_id, year, category
+      ) t
+    )
+  `);
+}
+
+async function removeDuplicateHomes() {
+  await query(`
+    DELETE FROM properties
+    WHERE id NOT IN (
+      SELECT min_id FROM (
+        SELECT MIN(id) AS min_id
+        FROM properties
+        GROUP BY kind, rooms, COALESCE(area_m2, 0), location_id
+      ) t
+    )
+  `);
+}
+
+function uniqueGroupRows(groups, cat, sellers, locs, existing) {
+  const rows = [];
+  let n = 0;
+  const years = cat === 'passenger'
+    ? [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+    : cat === 'parts'
+      ? [2024]
+      : [2014, 2016, 2018, 2020, 2022, 2024];
+  for (const g of groups) {
+    for (const model of g.models) {
+      for (const year of years) {
+        const key = `${g.brand}|${model}|${year}|${cat}`;
+        if (existing.has(key)) continue;
+        rows.push(buildCar(g, model, year, cat, n, sellers, locs));
+        n += 1;
+      }
+    }
+  }
+  return rows;
+}
+
+async function fillCars(_need, sellers, locs) {
   const maps = {
     passenger: await idMap(PASSENGER),
     commercial: await idMap(COMMERCIAL),
@@ -230,33 +249,63 @@ async function fillCars(need, sellers, locs) {
     kamaz: await idMap(KAMAZ),
     parts: await idMap(PARTS),
   };
-  const mix = [
-    ...Array.from({ length: Math.ceil(need * 0.78) }, (_, i) => ['passenger', i]),
-    ...Array.from({ length: Math.ceil(need * 0.08) }, (_, i) => ['commercial', i]),
-    ...Array.from({ length: Math.ceil(need * 0.04) }, (_, i) => ['special', i]),
-    ...Array.from({ length: Math.ceil(need * 0.05) }, (_, i) => ['kamaz', i]),
-    ...Array.from({ length: Math.ceil(need * 0.05) }, (_, i) => ['parts', i]),
-  ].slice(0, need);
-
-  console.log(`Catalog: adding ${need} vehicles…`);
-  for (let offset = 0; offset < mix.length; offset += BATCH) {
-    const chunk = mix.slice(offset, offset + BATCH).map(([cat, i], idx) => {
-      const n = offset + idx;
-      const raw = cat === 'passenger'
-        ? makePassenger(i, sellers, locs)
-        : makeFromGroups(i, cat === 'commercial' ? COMMERCIAL : cat === 'special' ? SPECIAL : cat === 'kamaz' ? KAMAZ : PARTS, cat, sellers, locs);
-      const ids = maps[cat].get(raw.key);
+  const found = await query(`
+    SELECT b.name AS brand, m.name AS model, c.year, c.category
+    FROM cars c
+    JOIN brands b ON b.id = c.brand_id
+    JOIN models m ON m.id = c.model_id
+  `);
+  const existing = new Set(found.rows.map((r) => `${r.brand}|${r.model}|${r.year}|${r.category}`));
+  const pending = [
+    ...uniqueGroupRows(PASSENGER, 'passenger', sellers, locs, existing),
+    ...uniqueGroupRows(COMMERCIAL, 'commercial', sellers, locs, existing),
+    ...uniqueGroupRows(SPECIAL, 'special', sellers, locs, existing),
+    ...uniqueGroupRows(KAMAZ, 'kamaz', sellers, locs, existing),
+    ...uniqueGroupRows(PARTS, 'parts', sellers, locs, existing),
+  ]
+    .map((raw) => {
+      const ids = maps[raw.cat].get(raw.key);
+      if (!ids) return null;
+      const combo = `${raw.key}|${raw.year}|${raw.cat}`;
+      if (existing.has(combo)) return null;
+      existing.add(combo);
       return { ...raw, brandId: ids.brandId, modelId: ids.modelId };
-    });
-    await insertCarBatch(chunk);
-    if (offset % 800 === 0) console.log(`  cars ${Math.min(offset + BATCH, mix.length)}/${mix.length}`);
+    })
+    .filter(Boolean);
+
+  console.log(`Catalog: adding ${pending.length} unique vehicles…`);
+  for (let offset = 0; offset < pending.length; offset += BATCH) {
+    await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 }
 
-async function fillHomes(need, sellers, locs) {
-  console.log(`Catalog: adding ${need} homes…`);
-  for (let offset = 0; offset < need; offset += BATCH) {
-    const chunk = Array.from({ length: Math.min(BATCH, need - offset) }, (_, i) => makeHome(offset + i, sellers, locs));
+async function fillHomes(sellers, locs) {
+  const found = await query(`
+    SELECT kind, rooms, COALESCE(area_m2, 0) AS area, location_id
+    FROM properties
+  `);
+  const existing = new Set(found.rows.map((r) => `${r.kind}|${r.rooms}|${r.area}|${r.location_id}`));
+  const kinds = ['apartment', 'house', 'land', 'commerce'];
+  const pending = [];
+  let n = 0;
+  for (const locId of locs) {
+    for (const kind of kinds) {
+      const roomOpts = kind === 'land' ? [0] : [1, 2, 3, 4];
+      const areaOpts = kind === 'land' ? [400, 600, 800] : kind === 'commerce' ? [45, 80, 120] : [42, 64, 86, 128];
+      for (const rooms of roomOpts) {
+        for (const area of areaOpts) {
+          const key = `${kind}|${rooms}|${area}|${locId}`;
+          if (existing.has(key)) continue;
+          existing.add(key);
+          pending.push(makeHome(n, sellers, kind, rooms, area, locId));
+          n += 1;
+        }
+      }
+    }
+  }
+  console.log(`Catalog: adding ${pending.length} unique homes…`);
+  for (let offset = 0; offset < pending.length; offset += BATCH) {
+    const chunk = pending.slice(offset, offset + BATCH);
     const params = [];
     const values = [];
     let p = 1;
@@ -287,16 +336,13 @@ export async function seedCatalog() {
   const locs = await query('SELECT id FROM locations ORDER BY id');
   if (!sellers.rows.length || !locs.rows.length) return;
 
-  const cars = await query(`SELECT COUNT(*)::int AS n FROM cars`);
-  const homes = await query(`SELECT COUNT(*)::int AS n FROM properties`);
-  const carN = Number(cars.rows[0]?.n || 0);
-  const homeN = Number(homes.rows[0]?.n || 0);
-  const STEP_CARS = 8000;
-  const STEP_HOMES = 1000;
+  await removeDuplicateCars();
+  await removeDuplicateHomes();
+
   const sellerIds = sellers.rows.map((r) => r.id);
   const locIds = locs.rows.map((r) => r.id);
 
-  if (carN < TARGET_CARS) await fillCars(Math.min(STEP_CARS, TARGET_CARS - carN), sellerIds, locIds);
-  if (homeN < TARGET_HOMES) await fillHomes(Math.min(STEP_HOMES, TARGET_HOMES - homeN), sellers.rows, locIds);
+  await fillCars(0, sellerIds, locIds);
+  await fillHomes(sellers.rows, locIds);
   console.log('Catalog seed done.');
 }

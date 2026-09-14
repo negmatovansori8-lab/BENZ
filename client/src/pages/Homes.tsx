@@ -20,7 +20,17 @@ export default function Homes() {
   useEffect(() => {
     setLoading(true);
     const q = kind ? `?kind=${kind}` : '';
-    api.get(`/homes${q}`).then((r) => setItems(r.data.data || [])).catch(() => setItems([])).finally(() => setLoading(false));
+    api.get(`/homes${q}`).then((r) => {
+      const seen = new Set<string>();
+      setItems((r.data.data || []).filter((x: Property) => {
+        const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.title}`;
+        const id = `id:${x.id}`;
+        if (seen.has(id) || seen.has(key)) return false;
+        seen.add(id);
+        seen.add(key);
+        return true;
+      }));
+    }).catch(() => setItems([])).finally(() => setLoading(false));
   }, [kind]);
 
   return (

@@ -58,7 +58,18 @@ export default function Cars() {
     setError(false);
     api
       .get(`/cars?${queryString}`)
-      .then((r) => setData(r.data))
+      .then((r) => {
+        const seen = new Set<string>();
+        const rows = (r.data.data || []).filter((c: Car) => {
+          const key = `${c.brand}|${c.model}|${c.year}|${c.category}`;
+          const id = `id:${c.id}`;
+          if (seen.has(id) || seen.has(key)) return false;
+          seen.add(id);
+          seen.add(key);
+          return true;
+        });
+        setData({ ...r.data, data: rows });
+      })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [queryString]);

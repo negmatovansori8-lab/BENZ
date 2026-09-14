@@ -29,24 +29,46 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/cars?featured=true&category=passenger&limit=16'),
-      api.get('/cars?category=passenger&sort=newest&limit=16'),
-      api.get('/cars?category=passenger&sort=popular&limit=16'),
-      api.get('/cars?category=heavy&limit=16'),
-      api.get('/cars?category=kamaz&limit=16'),
-      api.get('/cars?category=parts&limit=16'),
+      api.get('/cars?featured=true&category=passenger&limit=48'),
+      api.get('/cars?category=passenger&sort=newest&limit=48'),
+      api.get('/cars?category=passenger&sort=popular&limit=48'),
+      api.get('/cars?category=heavy&limit=48'),
+      api.get('/cars?category=kamaz&limit=48'),
+      api.get('/cars?category=parts&limit=48'),
       api.get('/homes?limit=8'),
       api.get('/meta/brands'),
       api.get('/meta/locations'),
     ])
       .then(([f, r, p, h, kamazRes, partsRes, homesRes, b, l]) => {
-        setFeatured(f.data.data || []);
-        setRecent(r.data.data || []);
-        setPopular(p.data.data || []);
-        setHeavy(h.data.data || []);
-        setKamaz(kamazRes.data.data || []);
-        setParts(partsRes.data.data || []);
-        setHomes((homesRes.data.data || []).slice(0, 8));
+        const used = new Set<string>();
+        const take = (list: Car[], n = 16) => {
+          const out: Car[] = [];
+          for (const c of list || []) {
+            const key = `${c.brand}|${c.model}|${c.year}|${c.category}`;
+            const id = `id:${c.id}`;
+            if (used.has(id) || used.has(key)) continue;
+            used.add(id);
+            used.add(key);
+            out.push(c);
+            if (out.length >= n) break;
+          }
+          return out;
+        };
+        setFeatured(take(f.data.data || []));
+        setRecent(take(r.data.data || []));
+        setPopular(take(p.data.data || []));
+        setHeavy(take(h.data.data || []));
+        setKamaz(take(kamazRes.data.data || []));
+        setParts(take(partsRes.data.data || []));
+        const seenHome = new Set<string>();
+        setHomes((homesRes.data.data || []).filter((x: Property) => {
+          const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.location_id ?? x.title}`;
+          const id = `id:${x.id}`;
+          if (seenHome.has(id) || seenHome.has(key)) return false;
+          seenHome.add(id);
+          seenHome.add(key);
+          return true;
+        }).slice(0, 8));
         setBrands(b.data.data || []);
         setLocations(l.data.data || []);
       })

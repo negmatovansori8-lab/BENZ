@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { User } from '../types';
 import { api } from '../services/api';
-import { getSupabase, isSupabaseConfigured } from '../services/supabase';
-import { authError, errorText, isUnconfirmedAuthError, isUnverifiedText, mapSupabaseAuthError } from '../utils/authErrors';
+import { authError, errorText, mapApiAuthMessage } from '../utils/authErrors';
 
 export type RegisterPayload = { name: string; email: string; password: string; phone?: string };
 
@@ -12,7 +11,7 @@ interface AuthState {
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<{ needsConfirmation: boolean; user: User | null }>;
-  confirmSignup: (email: string, token: string, payload: RegisterPayload) => Promise<User>;
+  confirmSignup: (email: string, token: string, payload?: RegisterPayload) => Promise<User>;
   resendSignup: (email: string) => Promise<void>;
   requestPasswordReset: (identifier: string) => Promise<{ email: string }>;
   confirmPasswordReset: (email: string, token: string, password: string) => Promise<User>;
@@ -23,10 +22,10 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-function requireSupabase() {
-  const supabase = getSupabase();
-  if (!supabase) throw authError('authNotConfigured');
-  return supabase;
+function throwMapped(err: unknown): never {
+  const key = mapApiAuthMessage(errorText(err));
+  if (key) throw authError(key);
+  throw err;
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -60,141 +59,70 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return data.user as User;
   };
 
-  const finishLocalAccount = async (payload: RegisterPayload) => {
-    try {
-      const { data } = await api.post('/auth/register', payload);
-      return acceptSession(data);
-    } catch (err: unknown) {
-      const status = (err as { response?: { status?: number } })?.response?.status;
-      if (status === 409) {
-        const { data } = await api.post('/auth/login', { email: payload.email, password: payload.password });
-        return acceptSession(data);
-      }
-      throw err;
-    }
-  };
-
   const login = async (email: string, password: string) => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
       return acceptSession(data);
     } catch (err) {
-      const supabase = getSupabase();
-      if (supabase) {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (isUnconfirmedAuthError(error) || isUnverifiedText(error?.message) || (data.user && !data.user.email_confirmed_at)) {
-          throw authError('authEmailNotConfirmed', { needsConfirmation: true, email });
-        }
-        if (!error && data.user?.email_confirmed_at) {
-          const meta = data.user.user_metadata || {};
-          return finishLocalAccount({
-            name: String(meta.name || email.split('@')[0]),
-            email,
-            password,
-            phone: meta.phone ? String(meta.phone) : undefined,
-          });
-        }
-      }
-      if (isUnverifiedText(errorText(err))) {
-        throw authError('authEmailNotConfirmed', { needsConfirmation: true, email });
-      }
-      throw err;
+      throwMapped(err);
     }
   };
 
   const register = async (payload: RegisterPayload) => {
-    if (!isSupabaseConfigured()) throw authError('authNotConfigured');
-    const supabase = requireSupabase();
-    const email = payload.email.trim();
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: payload.password,
-      options: {
-        data: { name: payload.name, phone: payload.phone || '' },
-      },
-    });
-
-    if (error) throw authError(mapSupabaseAuthError(error));
-    if (data.user?.identities && data.user.identities.length === 0) {
-      throw authError('authEmailTaken');
+    try {
+      const { data } = await api.post('/auth/register', payload);
+      return { needsConfirmation: Boolean(data?.needsConfirmation), user: null };
+    } catch (err) {
+      throwMapped(err);
     }
-
-    if (data.session && data.user?.email_confirmed_at) {
-      const user = await finishLocalAccount({ ...payload, email });
-      return { needsConfirmation: false, user };
-    }
-
-    return { needsConfirmation: true, user: null };
   };
 
-  const confirmSignup = async (email: string, token: string, payload: RegisterPayload) => {
+  const confirmSignup = async (email: string, token: string) => {
     const code = token.trim();
     if (!code) throw authError('codeRequired');
-    const supabase = requireSupabase();
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: email.trim(),
-      token: code,
-      type: 'signup',
-    });
-    if (error) throw authError(mapSupabaseAuthError(error));
-    if (!data.user?.email_confirmed_at && !data.session) {
-      throw authError('authCodeInvalid');
+    try {
+      const { data } = await api.post('/auth/register/confirm', { email: email.trim(), code });
+      return acceptSession(data);
+    } catch (err) {
+      throwMapped(err);
     }
-    return finishLocalAccount({ ...payload, email: email.trim() });
   };
 
   const resendSignup = async (email: string) => {
-    const supabase = requireSupabase();
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: email.trim(),
-    });
-    if (error) throw authError(mapSupabaseAuthError(error));
+    try {
+      await api.post('/auth/register/resend', { email: email.trim() });
+    } catch (err) {
+      throwMapped(err);
+    }
   };
 
   const requestPasswordReset = async (identifier: string) => {
-    if (!isSupabaseConfigured()) throw authError('authNotConfigured');
     const raw = identifier.trim();
     if (!raw) throw authError('authInvalidEmail');
-    let email = raw.includes('@') ? raw.toLowerCase() : '';
-    if (!email) {
-      const { data } = await api.post('/auth/recover-lookup', { phone: raw });
-      email = String(data?.email || '');
+    try {
+      const { data } = await api.post('/auth/recover', { identifier: raw });
+      return { email: String(data?.email || (raw.includes('@') ? raw.toLowerCase() : '')) };
+    } catch (err) {
+      throwMapped(err);
     }
-    if (!email) return { email: '' };
-    const supabase = requireSupabase();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/login`,
-    });
-    if (error) throw authError(mapSupabaseAuthError(error));
-    return { email };
   };
 
   const confirmPasswordReset = async (email: string, token: string, password: string) => {
     const code = token.trim();
     if (!code) throw authError('codeRequired');
     if (!email) throw authError('authCodeInvalid');
-    const supabase = requireSupabase();
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: email.trim(),
-      token: code,
-      type: 'recovery',
-    });
-    if (error) throw authError(mapSupabaseAuthError(error));
-    const accessToken = data.session?.access_token;
-    if (!accessToken) throw authError('authCodeInvalid');
-    const { error: updateError } = await supabase.auth.updateUser({ password });
-    if (updateError) throw authError(mapSupabaseAuthError(updateError));
-    const { data: resetData } = await api.post('/auth/reset-password', { password, accessToken });
-    return acceptSession(resetData);
+    try {
+      const { data } = await api.post('/auth/reset-password', { email: email.trim(), code, password });
+      return acceptSession(data);
+    } catch (err) {
+      throwMapped(err);
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('ah_token');
     setToken(null);
     setUser(null);
-    const supabase = getSupabase();
-    if (supabase) void supabase.auth.signOut();
   };
 
   const refresh = async () => {

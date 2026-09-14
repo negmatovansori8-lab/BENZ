@@ -322,6 +322,30 @@ export async function migrateAndSeedExtras() {
   }
 
   await execSql(`
+    CREATE TABLE IF NOT EXISTS email_codes (
+      email         VARCHAR(180) NOT NULL,
+      purpose       VARCHAR(40) NOT NULL,
+      code_hash     VARCHAR(255) NOT NULL,
+      payload       TEXT,
+      expires_at    TIMESTAMPTZ NOT NULL,
+      last_sent_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY (email, purpose)
+    );
+  `);
+
+  await execSql(`
+    CREATE TABLE IF NOT EXISTS email_codes (
+      email         VARCHAR(180) NOT NULL,
+      purpose       VARCHAR(40) NOT NULL,
+      code_hash     VARCHAR(255) NOT NULL,
+      payload       TEXT,
+      expires_at    TIMESTAMPTZ NOT NULL,
+      last_sent_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY (email, purpose)
+    );
+  `);
+
+  await execSql(`
     CREATE TABLE IF NOT EXISTS login_events (
       id          SERIAL PRIMARY KEY,
       user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

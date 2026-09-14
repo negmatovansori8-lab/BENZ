@@ -205,10 +205,6 @@ export function Register() {
       push(t('accountCreated'), 'success');
       navigate('/');
     } catch (err: unknown) {
-      if (needsEmailConfirmation(err) || (isAuthFlowError(err) && err.i18nKey === 'authEmailTaken')) {
-        setPending(form);
-        return;
-      }
       const apiKey = mapApiAuthMessage((err as { displayMessage?: string }).displayMessage);
       const message = isAuthFlowError(err)
         ? t(err.i18nKey)

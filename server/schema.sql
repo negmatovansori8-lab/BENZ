@@ -180,3 +180,13 @@ CREATE INDEX IF NOT EXISTS idx_conversations_buyer ON conversations(buyer_id);
 CREATE INDEX IF NOT EXISTS idx_conversations_seller ON conversations(seller_id);
 
 CREATE INDEX IF NOT EXISTS idx_users_email_lower ON users (LOWER(email));
+
+CREATE TABLE IF NOT EXISTS email_codes (
+  email         VARCHAR(180) NOT NULL,
+  purpose       VARCHAR(40) NOT NULL,
+  code_hash     VARCHAR(255) NOT NULL,
+  payload       TEXT,
+  expires_at    TIMESTAMPTZ NOT NULL,
+  last_sent_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (email, purpose)
+);

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useI18n } from '../context/LocaleContext';
 import { isAuthFlowError } from '../utils/authErrors';
+import { rememberLogin } from '../utils/rememberLogin';
 import type { Msg } from '../i18n/dict';
 
 const RESEND_WAIT = 60;
@@ -73,6 +74,7 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       await confirmPasswordReset(email, token, password);
+      rememberLogin(email, password);
       push(t('passwordChanged'), 'success');
       navigate('/');
     } catch (err: unknown) {

@@ -10,7 +10,7 @@ import { isMailConfigured, sendCodeEmail } from '../utils/mailer.js';
 export const registerRules = [
   body('name').trim().isLength({ min: 2, max: 120 }).withMessage('Name must be 2–120 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
-  body('password').isLength({ min: 8, max: 72 }).withMessage('Password must be at least 8 characters'),
+  body('password').optional({ values: 'falsy' }).isLength({ min: 4, max: 72 }).withMessage('Code must be at least 4 characters'),
   body('phone').optional().isLength({ max: 40 }),
 ];
 
@@ -62,9 +62,11 @@ export const AuthController = {
     const existing = await UserModel.findByEmail(email);
     if (existing) throw new AppError('An account with this email already exists', 409);
 
+    const ownCode = String(req.body.password || '').trim();
     await issueCode(email, 'signup', {
       name: sanitizeString(req.body.name, 120),
-      passwordHash: await bcrypt.hash(req.body.password, 12),
+      passwordHash: ownCode ? await bcrypt.hash(ownCode, 12) : null,
+      useEmailCode: !ownCode,
       phone: sanitizeString(req.body.phone, 40) || null,
     });
 
@@ -86,12 +88,15 @@ export const AuthController = {
     } catch {
       payload = {};
     }
-    if (!payload.passwordHash || !payload.name) throw new AppError('Invalid code', 400);
+    if (!payload.name) throw new AppError('Invalid code', 400);
+    const passwordHash = payload.passwordHash
+      || (payload.useEmailCode ? await bcrypt.hash(String(req.body.code), 12) : null);
+    if (!passwordHash) throw new AppError('Invalid code', 400);
 
     const user = await UserModel.create({
       name: payload.name,
       email,
-      passwordHash: payload.passwordHash,
+      passwordHash,
       phone: payload.phone || null,
       role: 'USER',
       avatar: null,

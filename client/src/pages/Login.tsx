@@ -7,6 +7,7 @@ import { Logo } from '../components/Header';
 import { useToast } from '../context/ToastContext';
 import { useI18n } from '../context/LocaleContext';
 import { isAuthFlowError, mapApiAuthMessage, needsEmailConfirmation } from '../utils/authErrors';
+import { lastLoginEmail, rememberLogin, savedLoginCode } from '../utils/rememberLogin';
 import type { Msg } from '../i18n/dict';
 import type { RegisterPayload } from '../context/AuthContext';
 
@@ -109,8 +110,8 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string })?.from || '/';
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(() => lastLoginEmail());
+  const [password, setPassword] = useState(() => savedLoginCode(lastLoginEmail()));
   const [loading, setLoading] = useState(false);
   const [pending, setPending] = useState<RegisterPayload | null>(null);
 
@@ -123,6 +124,7 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(email, password);
+      rememberLogin(email, password);
       push(t('welcomeBack'), 'success');
       goAfterAuth(user.role);
     } catch (err: unknown) {
@@ -149,6 +151,7 @@ export default function Login() {
           email={pending.email}
           onConfirm={async (code) => {
             const user = await confirmSignup(pending.email, code, pending);
+            rememberLogin(pending.email, pending.password || code);
             push(t('accountCreated'), 'success');
             goAfterAuth(user.role);
           }}
@@ -165,8 +168,26 @@ export default function Login() {
         <Logo className="mb-6 justify-center !text-[var(--ah-text)]" />
         <h1 className="font-display text-center text-3xl">{t('loginTitle')}</h1>
         <p className="mb-6 text-center text-sm text-[var(--ah-muted)]">{t('loginWelcome')}</p>
-        <label className="block"><span className="label">{t('email')}</span><input className="input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></label>
-        <label className="mt-3 block"><span className="label">{t('password')}</span><input className="input" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
+        <label className="block">
+          <span className="label">{t('email')}</span>
+          <input
+            className="input"
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              const next = e.target.value;
+              setEmail(next);
+              const saved = savedLoginCode(next);
+              if (saved) setPassword(saved);
+            }}
+          />
+        </label>
+        <label className="mt-3 block">
+          <span className="label">{t('password')}</span>
+          <input className="input" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </label>
         <p className="mt-2 text-right text-sm">
           <Link to="/forgot-password" className="text-gold-600">{t('forgotPassword')}</Link>
         </p>
@@ -197,11 +218,17 @@ export function Register() {
     setError('');
     setLoading(true);
     try {
+      if (form.password && form.password.length < 4) {
+        setError(t('passwordOptionalHint'));
+        setLoading(false);
+        return;
+      }
       const result = await register(form);
       if (result.needsConfirmation) {
         setPending(form);
         return;
       }
+      rememberLogin(form.email, form.password);
       push(t('accountCreated'), 'success');
       navigate('/');
     } catch (err: unknown) {
@@ -224,6 +251,7 @@ export function Register() {
           email={pending.email}
           onConfirm={async (code) => {
             await confirmSignup(pending.email, code, pending);
+            rememberLogin(pending.email, pending.password || code);
             push(t('accountCreated'), 'success');
             navigate('/');
           }}
@@ -244,7 +272,17 @@ export function Register() {
         <label><span className="label">{t('name')}</span><input className="input" required autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label><span className="label">{t('email')}</span><input className="input" type="email" required autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
         <label><span className="label">{t('phone')}</span><input className="input" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label>
-        <label><span className="label">{t('password')}</span><input className="input" type="password" minLength={8} required autoComplete="new-password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></label>
+        <label>
+          <span className="label">{t('passwordOptional')}</span>
+          <input
+            className="input"
+            type="password"
+            autoComplete="new-password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />
+        </label>
+        <p className="text-xs text-[var(--ah-muted)]">{t('passwordOptionalHint')}</p>
         <button className="btn-gold w-full" disabled={loading}>{loading ? t('creating') : t('createAccount')}</button>
         <p className="text-center text-sm">
           <Link to="/forgot-password" className="text-gold-600">{t('forgotPassword')}</Link>

@@ -4,6 +4,7 @@ import { UserModel } from '../models/User.js';
 import { signToken } from '../utils/jwt.js';
 import { AppError, asyncHandler } from '../utils/AppError.js';
 import { sanitizeString } from '../utils/helpers.js';
+import { emailFromSupabaseAccessToken } from '../utils/supabaseAuth.js';
 
 export const registerRules = [
   body('name').trim().isLength({ min: 2, max: 120 }).withMessage('Name must be 2–120 characters'),
@@ -15,6 +16,15 @@ export const registerRules = [
 export const loginRules = [
   body('email').isEmail().normalizeEmail(),
   body('password').notEmpty(),
+];
+
+export const recoverLookupRules = [
+  body('phone').trim().isLength({ min: 9, max: 40 }),
+];
+
+export const resetPasswordRules = [
+  body('password').isLength({ min: 8, max: 72 }).withMessage('Password must be at least 8 characters'),
+  body('accessToken').trim().notEmpty(),
 ];
 
 export const AuthController = {
@@ -48,6 +58,36 @@ export const AuthController = {
 
     const publicUser = await UserModel.recordLogin(user.id);
     const token = signToken({ id: user.id, role: user.role });
+    res.json({ success: true, token, user: publicUser });
+  }),
+
+  recoverLookup: asyncHandler(async (req, res) => {
+    const user = await UserModel.findByPhone(req.body.phone);
+    res.json({ success: true, email: user?.email || null });
+  }),
+
+  resetPassword: asyncHandler(async (req, res) => {
+    const email = await emailFromSupabaseAccessToken(req.body.accessToken);
+    if (!email) throw new AppError('Invalid email or password', 401);
+
+    const passwordHash = await bcrypt.hash(req.body.password, 12);
+    let user = await UserModel.findByEmail(email);
+    if (user) {
+      if (user.is_blocked) throw new AppError('Account is blocked', 403);
+      await UserModel.updatePassword(user.id, passwordHash);
+    } else {
+      user = await UserModel.create({
+        name: email.split('@')[0],
+        email,
+        passwordHash,
+        phone: null,
+        role: 'USER',
+        avatar: null,
+      });
+    }
+
+    const publicUser = await UserModel.recordLogin(user.id);
+    const token = signToken({ id: publicUser.id, role: publicUser.role });
     res.json({ success: true, token, user: publicUser });
   }),
 

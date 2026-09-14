@@ -86,6 +86,9 @@ export function mapSupabaseAuthError(error: { code?: string; message?: string } 
   if (code === 'over_email_send_rate_limit' || message.includes('security purposes') || message.includes('rate limit') || message.includes('only request this after')) {
     return 'authTooMany';
   }
+  if (message.includes('error sending') || message.includes('sending confirmation') || message.includes('smtp')) {
+    return 'authEmailSendFailed';
+  }
   if (code === 'weak_password' || (message.includes('password') && (message.includes('weak') || message.includes('at least') || message.includes('characters')))) {
     return 'authWeakPassword';
   }

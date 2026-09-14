@@ -23,6 +23,7 @@ const Compare = lazy(() => import('./pages/Compare'));
 const Messages = lazy(() => import('./pages/Messages'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const AdminHome = lazy(() => import('./pages/admin/Dashboard'));
 const AdminUsers = lazy(() => import('./pages/admin/Users'));
@@ -62,6 +63,7 @@ export default function App() {
                       <Route path="compare" element={<Compare />} />
                       <Route path="login" element={<Login />} />
                       <Route path="register" element={<Register />} />
+                      <Route path="forgot-password" element={<ForgotPassword />} />
                       <Route path="favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
                       <Route path="messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                       <Route path="messages/:conversationId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />

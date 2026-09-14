@@ -1,4 +1,5 @@
 import { query } from '../config/db.js';
+import { phoneLookupVariants } from '../utils/supabaseAuth.js';
 
 const PUBLIC_USER = 'id, name, email, phone, avatar, role, is_blocked, created_at, last_login_at';
 
@@ -6,6 +7,23 @@ export const UserModel = {
   async findByEmail(email) {
     const { rows } = await query(`SELECT * FROM users WHERE email = $1`, [email]);
     return rows[0] || null;
+  },
+
+  async findByPhone(phone) {
+    const variants = phoneLookupVariants(phone);
+    if (!variants.length) return null;
+    const { rows } = await query(
+      `SELECT * FROM users
+       WHERE regexp_replace(coalesce(phone, ''), '[^0-9]', '', 'g') = ANY($1::text[])
+       LIMIT 1`,
+      [variants]
+    );
+    return rows[0] || null;
+  },
+
+  async updatePassword(id, passwordHash) {
+    await query(`UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [passwordHash, id]);
+    return this.findById(id);
   },
 
   async findById(id) {

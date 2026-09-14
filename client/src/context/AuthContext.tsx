@@ -14,6 +14,8 @@ interface AuthState {
   register: (payload: RegisterPayload) => Promise<{ needsConfirmation: boolean; user: User | null }>;
   confirmSignup: (email: string, token: string, payload: RegisterPayload) => Promise<User>;
   resendSignup: (email: string) => Promise<void>;
+  requestPasswordReset: (identifier: string) => Promise<{ email: string }>;
+  confirmPasswordReset: (email: string, token: string, password: string) => Promise<User>;
   logout: () => void;
   refresh: () => Promise<void>;
   setUser: (u: User | null) => void;
@@ -150,6 +152,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw authError(mapSupabaseAuthError(error));
   };
 
+  const requestPasswordReset = async (identifier: string) => {
+    if (!isSupabaseConfigured()) throw authError('authNotConfigured');
+    const raw = identifier.trim();
+    if (!raw) throw authError('authInvalidEmail');
+    let email = raw.includes('@') ? raw.toLowerCase() : '';
+    if (!email) {
+      const { data } = await api.post('/auth/recover-lookup', { phone: raw });
+      email = String(data?.email || '');
+    }
+    if (!email) return { email: '' };
+    const supabase = requireSupabase();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    });
+    if (error) throw authError(mapSupabaseAuthError(error));
+    return { email };
+  };
+
+  const confirmPasswordReset = async (email: string, token: string, password: string) => {
+    const code = token.trim();
+    if (!code) throw authError('codeRequired');
+    if (!email) throw authError('authCodeInvalid');
+    const supabase = requireSupabase();
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: code,
+      type: 'recovery',
+    });
+    if (error) throw authError(mapSupabaseAuthError(error));
+    const accessToken = data.session?.access_token;
+    if (!accessToken) throw authError('authCodeInvalid');
+    const { error: updateError } = await supabase.auth.updateUser({ password });
+    if (updateError) throw authError(mapSupabaseAuthError(updateError));
+    const { data: resetData } = await api.post('/auth/reset-password', { password, accessToken });
+    return acceptSession(resetData);
+  };
+
   const logout = () => {
     localStorage.removeItem('ah_token');
     setToken(null);
@@ -164,7 +203,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const value = useMemo(
-    () => ({ user, token, loading, login, register, confirmSignup, resendSignup, logout, refresh, setUser }),
+    () => ({ user, token, loading, login, register, confirmSignup, resendSignup, requestPasswordReset, confirmPasswordReset, logout, refresh, setUser }),
     [user, token, loading]
   );
 

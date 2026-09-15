@@ -98,9 +98,9 @@ export default function Home() {
           <div className="mt-6 flex justify-center">
             <Link
               to="/cars?category=passenger"
-              className="btn-gold !inline-flex !w-auto !min-w-0 !max-w-max !px-6 !py-2.5"
+              className="btn-gold !inline-flex !w-auto !px-8 !py-3 !text-base"
             >
-              {t('searchShort')}
+              {t('searchCars')}
             </Link>
           </div>
         </div>

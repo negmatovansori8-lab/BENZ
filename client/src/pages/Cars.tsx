@@ -98,11 +98,6 @@ export default function Cars() {
           {BRANDS.map((b) => <option key={b}>{b}</option>)}
         </select>
       </Field>
-      <p className="label !mb-0">{t('year')}</p>
-      <div className="grid grid-cols-2 gap-2">
-        <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('yearFrom') || ''} onChange={(e) => set('yearFrom', e.target.value.replace(/\D/g, ''))} />
-        <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('yearTo') || ''} onChange={(e) => set('yearTo', e.target.value.replace(/\D/g, ''))} />
-      </div>
       <Field label={t('city')}>
         <select className="input" value={params.get('city') || ''} onChange={(e) => set('city', e.target.value)}>
           <option value="">{t('any')}</option>

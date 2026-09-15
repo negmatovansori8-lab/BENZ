@@ -21,7 +21,6 @@ const navKeys = [
   { to: '/cars?category=heavy', key: 'catCommercial' as const },
   { to: '/homes', key: 'catHomes' as const },
   { to: '/sell', key: 'navSell' as const },
-  { to: '/compare', key: 'navCompare' as const },
 ];
 
 export function Logo({ className = '' }: { className?: string }) {
@@ -90,9 +89,6 @@ export function Header() {
               }
             >
               {t(l.key)}
-              {l.to === '/compare' && items.length > 0 && (
-                <span className="ml-1 text-gold-400">({items.length})</span>
-              )}
             </NavLink>
           ))}
         </nav>
@@ -114,7 +110,7 @@ export function Header() {
           <select
             aria-label="Currency"
             translate="no"
-            className="notranslate hidden rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80 md:block"
+            className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80"
             value={currency}
             onChange={(e) => setCurrency(e.target.value as Currency)}
           >
@@ -185,6 +181,14 @@ export function Header() {
               <Link to="/register" className="btn-gold !py-1.5">{t('navRegister')}</Link>
             </div>
           )}
+          <button
+            type="button"
+            className="rounded-full p-2 text-white/80 hover:bg-white/10 lg:hidden"
+            onClick={() => setOpen(true)}
+            aria-label="Menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </header>
@@ -231,9 +235,13 @@ export function Header() {
             {navKeys.map((l) => (
               <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-white/10">
                 {t(l.key)}
-                {l.to === '/compare' && items.length > 0 ? ` (${items.length})` : ''}
               </Link>
             ))}
+            {items.length >= 2 && (
+              <Link to="/compare" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-white/10">
+                {t('navCompare')} ({items.length})
+              </Link>
+            )}
             {user ? (
               <>
                 <Link to="/profile" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/10">{t('navProfile')}</Link>

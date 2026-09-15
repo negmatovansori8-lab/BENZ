@@ -83,7 +83,7 @@ export default function Cars() {
   };
 
   const filters = (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <Field label={t('category')}>
         <select className="input" value={params.get('category') || ''} onChange={(e) => set('category', e.target.value)}>
           <option value="">{t('any')}</option>
@@ -104,17 +104,20 @@ export default function Cars() {
       <Field label={t('model')}>
         <input className="input" placeholder="X5, Camry…" value={params.get('model') || ''} onChange={(e) => set('model', e.target.value)} />
       </Field>
+      <p className="label !mb-0">{t('minPrice')}</p>
       <div className="grid grid-cols-2 gap-2">
-        <Field label={t('minPrice')}><input className="input" type="number" value={params.get('minPrice') || ''} onChange={(e) => set('minPrice', e.target.value)} /></Field>
-        <Field label={t('maxPrice')}><input className="input" type="number" value={params.get('maxPrice') || ''} onChange={(e) => set('maxPrice', e.target.value)} /></Field>
+        <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('minPrice') || ''} onChange={(e) => set('minPrice', e.target.value.replace(/\D/g, ''))} />
+        <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('maxPrice') || ''} onChange={(e) => set('maxPrice', e.target.value.replace(/\D/g, ''))} />
       </div>
+      <p className="label !mb-0">{t('year')}</p>
       <div className="grid grid-cols-2 gap-2">
-        <Field label={t('yearFrom')}><input className="input" type="number" value={params.get('yearFrom') || ''} onChange={(e) => set('yearFrom', e.target.value)} /></Field>
-        <Field label={t('yearTo')}><input className="input" type="number" value={params.get('yearTo') || ''} onChange={(e) => set('yearTo', e.target.value)} /></Field>
+        <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('yearFrom') || ''} onChange={(e) => set('yearFrom', e.target.value.replace(/\D/g, ''))} />
+        <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('yearTo') || ''} onChange={(e) => set('yearTo', e.target.value.replace(/\D/g, ''))} />
       </div>
+      <p className="label !mb-0">{t('minKm')}</p>
       <div className="grid grid-cols-2 gap-2">
-        <Field label={t('minKm')}><input className="input" type="number" value={params.get('minMileage') || ''} onChange={(e) => set('minMileage', e.target.value)} /></Field>
-        <Field label={t('maxKm')}><input className="input" type="number" value={params.get('maxMileage') || ''} onChange={(e) => set('maxMileage', e.target.value)} /></Field>
+        <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('minMileage') || ''} onChange={(e) => set('minMileage', e.target.value.replace(/\D/g, ''))} />
+        <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('maxMileage') || ''} onChange={(e) => set('maxMileage', e.target.value.replace(/\D/g, ''))} />
       </div>
       <Field label={t('fuel')}>
         <select className="input" value={params.get('fuel') || ''} onChange={(e) => set('fuel', e.target.value)}>
@@ -134,16 +137,16 @@ export default function Cars() {
           {BODIES.map((f) => <option key={f}>{f}</option>)}
         </select>
       </Field>
-      <Field label={t('country')}>
-        <select className="input" value={params.get('country') || ''} onChange={(e) => set('country', e.target.value)}>
+      <Field label={t('city')}>
+        <select className="input" value={params.get('city') || ''} onChange={(e) => set('city', e.target.value)}>
           <option value="">{t('any')}</option>
-          {[...new Set(locations.map((l) => l.country))].map((c) => <option key={c}>{c}</option>)}
+          {[...new Set(locations.map((l) => l.city))].map((c) => <option key={c}>{c}</option>)}
         </select>
       </Field>
-      <Field label={t('city')}>
-        <input className="input" value={params.get('city') || ''} onChange={(e) => set('city', e.target.value)} placeholder="Dushanbe" />
-      </Field>
-      <button type="button" className="btn-ghost w-full" onClick={() => setParams({})}>{t('clearFilters')}</button>
+      <div className="flex gap-2 pt-1">
+        <button type="button" className="btn-ghost flex-1 !py-2.5" onClick={() => setParams({})}>{t('clearFilters')}</button>
+        <button type="button" className="btn-gold flex-1 !py-2.5 lg:hidden" onClick={() => setOpen(false)}>{t('applyFilters')}</button>
+      </div>
     </div>
   );
 
@@ -155,23 +158,25 @@ export default function Cars() {
           <h1 className="font-display text-2xl sm:text-3xl">{pageTitle}</h1>
           <p className="text-sm text-[var(--ah-muted)]">{data?.pagination.total ?? '—'} {t('listings')}</p>
         </div>
-        <div className="flex flex-1 flex-col gap-2 sm:flex-row md:max-w-xl">
-          <div className="relative flex-1">
-            <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ah-muted)]" />
-            <input
-              className="input pl-9"
-              placeholder={t('searchPlaceholder')}
-              value={q}
-              onChange={(e) => set('q', e.target.value)}
-            />
+          <div className="flex flex-1 flex-col gap-2 sm:flex-row md:max-w-xl">
+            <div className="relative flex-1">
+              <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ah-muted)]" />
+              <input
+                className="input pl-9"
+                placeholder={t('searchPlaceholder')}
+                value={q}
+                onChange={(e) => set('q', e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <select className="input flex-1 sm:w-48" value={params.get('sort') || 'newest'} onChange={(e) => set('sort', e.target.value)}>
+                {SORT_KEYS.map((s) => <option key={s.id} value={s.id}>{t(s.key)}</option>)}
+              </select>
+              <button type="button" className="btn-ghost shrink-0 lg:hidden" onClick={() => setOpen(true)}>
+                <SlidersHorizontal className="h-4 w-4" /> {t('filters')}
+              </button>
+            </div>
           </div>
-          <select className="input sm:w-48" value={params.get('sort') || 'newest'} onChange={(e) => set('sort', e.target.value)}>
-            {SORT_KEYS.map((s) => <option key={s.id} value={s.id}>{t(s.key)}</option>)}
-          </select>
-          <button type="button" className="btn-ghost lg:hidden" onClick={() => setOpen(true)}>
-            <SlidersHorizontal className="h-4 w-4" /> {t('filters')}
-          </button>
-        </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
@@ -224,10 +229,11 @@ export default function Cars() {
       {open && createPortal(
         <div className="fixed inset-0 z-[80] lg:hidden">
           <button type="button" className="absolute inset-0 bg-black/60" aria-label="Close filters" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 right-0 h-[100dvh] w-[min(92vw,380px)] overflow-auto bg-[var(--ah-surface)] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+          <div className="absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-auto rounded-t-3xl bg-[var(--ah-surface)] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl">
+            <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-[var(--ah-line)]" />
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-semibold">{t('filters')}</h2>
-              <button type="button" onClick={() => setOpen(false)}><X /></button>
+              <button type="button" className="rounded-full p-2" onClick={() => setOpen(false)} aria-label="Close"><X className="h-5 w-5" /></button>
             </div>
             {filters}
           </div>

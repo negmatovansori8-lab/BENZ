@@ -128,9 +128,9 @@ export default function Home() {
               <option value="">{t('model')}</option>
               {models.map((m) => <option key={m.id}>{m.name}</option>)}
             </select>
-            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" type="number" placeholder={t('minPrice')} value={form.minPrice} onChange={(e) => setForm({ ...form, minPrice: e.target.value })} />
-            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" type="number" placeholder={t('maxPrice')} value={form.maxPrice} onChange={(e) => setForm({ ...form, maxPrice: e.target.value })} />
-            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" type="number" placeholder={t('year')} value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })} />
+            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('minPrice')} value={form.minPrice} onChange={(e) => setForm({ ...form, minPrice: e.target.value.replace(/\D/g, '') })} />
+            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('maxPrice')} value={form.maxPrice} onChange={(e) => setForm({ ...form, maxPrice: e.target.value.replace(/\D/g, '') })} />
+            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('year')} value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value.replace(/\D/g, '') })} />
             <select className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}>
               <option value="">{t('location')}</option>
               {locations.map((l) => <option key={l.id} value={l.city}>{l.city}</option>)}

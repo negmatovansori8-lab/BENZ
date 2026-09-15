@@ -130,9 +130,22 @@ async function insertCarBatch(rows) {
   await query(`INSERT INTO car_images (car_id, url, sort_order) VALUES ${imgValues.join(',')}`, imgParams);
 }
 
+function realisticPrice(g, year, cat, n) {
+  if (cat === 'parts') return 15 + (n * 13) % 420;
+  const luxury = ['Mercedes-Benz', 'BMW', 'Lexus', 'Audi'].includes(g.brand);
+  const age = Math.max(0, 2026 - year);
+  if (cat === 'passenger') {
+    const base = luxury ? 16000 : 7200;
+    const drop = age * (luxury ? 700 : 260);
+    const jitter = (n * 97) % (luxury ? 4000 : 2200);
+    return Math.max(luxury ? 6500 : 1800, Math.round(base - drop + jitter));
+  }
+  return Math.max(7000, Math.round(11000 + (n * 113) % 16000 - age * 180));
+}
+
 function buildCar(g, model, year, cat, n, sellers, locs) {
   const km = cat === 'parts' ? 0 : 8000 + (n * 137) % 240000;
-  const price = cat === 'parts' ? 15 + (n * 17) % 3500 : 3500 + (n * 211) % 92000;
+  const price = realisticPrice(g, year, cat, n);
   const body = g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup';
   const fuel = cat === 'parts' || cat === 'kamaz' || cat === 'commercial' || cat === 'special'
     ? (cat === 'parts' ? 'Petrol' : 'Diesel')
@@ -149,7 +162,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
   return {
     key: `${g.brand}|${model}`,
     year,
-    price: cat === 'commercial' || cat === 'special' || cat === 'kamaz' ? 9000 + (n * 307) % 80000 : price,
+    price,
     km,
     engine: cat === 'parts' ? '—' : fuel === 'Electric' ? 'Electric motor' : `${(cat === 'passenger' ? 1.2 + (n % 40) / 10 : 4 + (n % 90) / 10).toFixed(1)}L`,
     power: cat === 'parts' ? 0 : 80 + (n % 320),
@@ -331,6 +344,33 @@ async function fillHomes(sellers, locs) {
   }
 }
 
+async function normalizePrices() {
+  await query(`
+    UPDATE cars c
+    SET price_usd = CASE
+      WHEN c.category = 'parts' THEN GREATEST(10, LEAST(650, 20 + (c.id % 500)))
+      WHEN c.category = 'passenger' THEN GREATEST(
+        1800,
+        LEAST(
+          28000,
+          CASE WHEN b.name IN ('Mercedes-Benz', 'BMW', 'Lexus', 'Audi')
+            THEN 8000 + GREATEST(0, c.year - 2010) * 650 + (c.id % 3500)
+            ELSE 2000 + GREATEST(0, c.year - 2010) * 320 + (c.id % 2200)
+          END
+        )
+      )
+      ELSE GREATEST(7000, LEAST(30000, 9000 + (c.id % 14000)))
+    END
+    FROM brands b
+    WHERE b.id = c.brand_id
+  `);
+  await query(`
+    UPDATE properties
+    SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
+    WHERE price_usd > 95000
+  `);
+}
+
 export async function seedCatalog() {
   const sellers = await query(`SELECT id, phone FROM users WHERE role IN ('SELLER', 'ADMIN') ORDER BY id`);
   const locs = await query('SELECT id FROM locations ORDER BY id');
@@ -338,6 +378,7 @@ export async function seedCatalog() {
 
   await removeDuplicateCars();
   await removeDuplicateHomes();
+  await normalizePrices();
 
   const sellerIds = sellers.rows.map((r) => r.id);
   const locIds = locs.rows.map((r) => r.id);

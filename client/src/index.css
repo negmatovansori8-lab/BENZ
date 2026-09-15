@@ -87,6 +87,23 @@ input {
   .input {
     @apply w-full rounded-xl border border-[var(--ah-line)] bg-[var(--ah-surface)] px-3.5 py-2.5 text-sm outline-none
       transition placeholder:text-zinc-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  select.input {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23a1a1aa' d='M1 1l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    padding-right: 2.25rem;
   }
   .label {
     @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-[var(--ah-muted)];

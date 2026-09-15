@@ -67,7 +67,7 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
         <button type="button" onClick={toggleFav} className="rounded-full bg-black/50 p-2 text-white backdrop-blur transition hover:bg-black/70" aria-label={t('favoriteBtn')}>
           <Heart className={cn('h-4 w-4', fav && 'fill-red-500 text-red-500')} />
         </button>
-        <button type="button" onClick={toggleCompare} className="rounded-full bg-black/50 p-2 text-white backdrop-blur transition hover:bg-black/70" aria-label={t('compareBtn')}>
+        <button type="button" onClick={toggleCompare} className="hidden rounded-full bg-black/50 p-2 text-white backdrop-blur transition hover:bg-black/70 sm:inline-flex" aria-label={t('compareBtn')}>
           <Scale className={cn('h-4 w-4', has(car.id) && 'text-gold-400')} />
         </button>
       </div>

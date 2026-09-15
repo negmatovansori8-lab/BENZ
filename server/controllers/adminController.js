@@ -16,8 +16,8 @@ export const AdminController = {
     const [sales, brands, users, revenue] = await Promise.all([
       AnalyticsService.sales(period),
       AnalyticsService.popularBrands(),
-      AnalyticsService.userGrowth(),
-      AnalyticsService.revenue(),
+      AnalyticsService.userGrowth(period),
+      AnalyticsService.revenue(period),
     ]);
     res.json({ success: true, data: { sales, brands, users, revenue } });
   }),

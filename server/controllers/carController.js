@@ -118,19 +118,19 @@ export const CarController = {
 
   featured: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
-    const rows = await CarModel.featured(8);
+    const rows = await CarModel.featured(24);
     res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
   }),
 
   recent: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
-    const rows = await CarModel.recent(12);
+    const rows = await CarModel.recent(24);
     res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
   }),
 
   popular: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
-    const rows = await CarModel.popular(8);
+    const rows = await CarModel.popular(24);
     res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
   }),
 

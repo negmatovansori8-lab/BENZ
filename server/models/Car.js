@@ -45,17 +45,24 @@ export const CarModel = {
   async featured(limit = 8) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE
+       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE AND c.category = 'passenger'
        ORDER BY c.updated_at DESC LIMIT $1`,
       [limit]
     );
-    return rows;
+    if (rows.length) return rows;
+    const fallback = await query(
+      `SELECT ${CAR_SELECT} ${FROM}
+       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
+       ORDER BY c.views DESC, c.created_at DESC LIMIT $1`,
+      [limit]
+    );
+    return fallback.rows;
   },
 
   async recent(limit = 8) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED'
+       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
        ORDER BY c.created_at DESC LIMIT $1`,
       [limit]
     );
@@ -65,7 +72,7 @@ export const CarModel = {
   async popular(limit = 8) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED'
+       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
        ORDER BY c.views DESC, c.favorites_count DESC LIMIT $1`,
       [limit]
     );

@@ -35,26 +35,27 @@ export default function Home() {
       api.get('/homes?limit=8'),
     ])
       .then(([f, r, p, h, kamazRes, partsRes, homesRes]) => {
-        const used = new Set<string>();
-        const take = (list: Car[], n = 16) => {
+        const takeSection = (list: Car[], n = 16) => {
           const out: Car[] = [];
+          const seen = new Set<string>();
           for (const c of uniqueByIdAndImage(list || [])) {
             const id = `id:${c.id}`;
             const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`;
-            if (used.has(id) || used.has(twin)) continue;
-            used.add(id);
-            used.add(twin);
+            if (seen.has(id) || seen.has(twin)) continue;
+            seen.add(id);
+            seen.add(twin);
             out.push(c);
             if (out.length >= n) break;
           }
           return out;
         };
-        setFeatured(take(f.data.data || []));
-        setRecent(take(r.data.data || []));
-        setPopular(take(p.data.data || []));
-        setHeavy(take(h.data.data || []));
-        setKamaz(take(kamazRes.data.data || []));
-        setParts(take(partsRes.data.data || []));
+        // Cars stay in car blocks; heavy / kamaz / parts are separate
+        setFeatured(takeSection(f.data.data || [], 16));
+        setRecent(takeSection(r.data.data || [], 16));
+        setPopular(takeSection(p.data.data || [], 16));
+        setHeavy(takeSection(h.data.data || [], 16));
+        setKamaz(takeSection(kamazRes.data.data || [], 16));
+        setParts(takeSection(partsRes.data.data || [], 16));
         const seenHome = new Set<string>();
         setHomes((homesRes.data.data || []).filter((x: Property) => {
           const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.location_id ?? x.title}`;

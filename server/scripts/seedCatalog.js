@@ -463,6 +463,17 @@ async function normalizePrices() {
     SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
     WHERE price_usd > 95000
   `);
+  // Featured cars = passenger only (not planes / boats / bikes)
+  await query(`UPDATE cars SET is_featured = FALSE WHERE category <> 'passenger'`);
+  await query(`
+    UPDATE cars SET is_featured = TRUE
+    WHERE id IN (
+      SELECT id FROM cars
+      WHERE status = 'APPROVED' AND category = 'passenger'
+      ORDER BY views DESC, favorites_count DESC
+      LIMIT 32
+    )
+  `);
 }
 
 export async function seedCatalog() {

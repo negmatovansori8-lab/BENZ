@@ -95,7 +95,7 @@ export default function Home() {
             {t('heroTitle')}
           </h1>
           <p className="mt-3 max-w-xl text-sm text-white/75 sm:mt-4 sm:text-lg">{t('heroSubtitle')}</p>
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center">
             <Link
               to="/cars?category=passenger"
               className="btn-gold !inline-flex !w-auto !min-w-0 !max-w-max !px-6 !py-2.5"

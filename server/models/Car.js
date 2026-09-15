@@ -1,6 +1,5 @@
 import { query } from '../config/db.js';
 import { resolveCategoryFilter } from '../utils/catalogTaxonomy.js';
-import { NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE } from '../utils/vehicleImages.js';
 
 export const CAR_SELECT = `
   c.id, c.seller_id, c.brand_id, c.model_id, c.year, c.price_usd, c.mileage,
@@ -46,17 +45,16 @@ export const CarModel = {
   async featured(limit = 8) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE
-         AND c.year >= $2 AND c.mileage <= $3 AND c.category = 'passenger'
+       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE AND c.year >= 2025
        ORDER BY c.year DESC, c.updated_at DESC LIMIT $1`,
-      [limit, NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE]
+      [limit]
     );
     if (rows.length) return rows;
     const fallback = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.year >= $2 AND c.mileage <= $3 AND c.category = 'passenger'
+       WHERE c.status = 'APPROVED' AND c.year >= 2025 AND c.category = 'passenger'
        ORDER BY c.year DESC, c.created_at DESC LIMIT $1`,
-      [limit, NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE]
+      [limit]
     );
     return fallback.rows;
   },
@@ -64,9 +62,9 @@ export const CarModel = {
   async recent(limit = 12) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.year >= $2 AND c.mileage <= $3 AND c.category = 'passenger'
+       WHERE c.status = 'APPROVED' AND c.year >= 2025 AND c.category = 'passenger'
        ORDER BY c.year DESC, c.created_at DESC LIMIT $1`,
-      [limit, NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE]
+      [limit]
     );
     return rows;
   },
@@ -74,9 +72,9 @@ export const CarModel = {
   async newCars(limit = 24) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.year >= $2 AND c.mileage <= $3 AND c.category = 'passenger'
+       WHERE c.status = 'APPROVED' AND c.year >= 2025 AND c.category = 'passenger'
        ORDER BY c.year DESC, c.created_at DESC LIMIT $1`,
-      [limit, NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE]
+      [limit]
     );
     return rows;
   },
@@ -263,8 +261,7 @@ function buildWhere(f) {
     params.push(f.body);
   }
   if (f.newCars === 'true' || f.newCars === true || f.new === 'true' || f.new === true) {
-    where.push(`c.year >= ${NEW_CAR_YEAR_FROM}`);
-    where.push(`c.mileage <= ${NEW_CAR_MAX_MILEAGE}`);
+    where.push(`c.year >= 2025`);
     where.push(`c.category = 'passenger'`);
   }
   if (f.condition === 'new') {

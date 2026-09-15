@@ -124,11 +124,11 @@ async function ensureModel(brandId, name) {
   return rows[0].id;
 }
 
-import { imageForVehicle, carPhoto, NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE } from '../utils/vehicleImages.js';
+import { imageForVehicle, placeholderImage } from '../utils/vehicleImages.js';
 import { NEW_GLOBAL_CARS } from '../catalog/newCars2026.js';
 
-function imgFor(cat, n, label = 'BENZ', meta = {}) {
-  return imageForVehicle(cat, n, 0, label, meta);
+function imgFor(cat, n, label = 'BENZ') {
+  return imageForVehicle(cat, n, 0, label);
 }
 
 function homeImg(n) {
@@ -227,7 +227,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     cat,
     feat: n % 22 === 0,
     views: 80 + (n % 4000),
-    img: imgFor(cat, n, `${g.brand} ${model}`, { brand: g.brand, model, year }),
+    img: imgFor(cat, n, `${g.brand} ${model}`),
     desc: label,
     sellerId: sellers[n % sellers.length],
     locId: locs[n % locs.length],
@@ -311,7 +311,7 @@ function uniqueGroupRows(groups, cat, sellers, locs, existing) {
   let n = 0;
   // One year per model for specialty; a few years for passenger — uniqueness via brand|model|year|cat
   const years = cat === 'passenger'
-    ? [2018, 2021, 2023, 2024]
+    ? [2018, 2021, 2024, 2025]
     : cat === 'parts'
       ? [2024]
       : [2022];
@@ -388,71 +388,29 @@ async function fillCars(_need, sellers, locs) {
 }
 
 async function seedNewGlobalCars(sellers, locs) {
-  // Remove fake "new" passenger stock (high mileage / old fillCars year bump)
-  await query(
-    `DELETE FROM cars
-     WHERE category = 'passenger'
-       AND year >= $1
-       AND mileage > $2
-       AND phone = '+992 90 555 1000'`,
-    [NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE]
-  );
-
   const found = await query(`
-    SELECT c.id, b.name AS brand, m.name AS model, c.year
+    SELECT b.name AS brand, m.name AS model, c.year
     FROM cars c
     JOIN brands b ON b.id = c.brand_id
     JOIN models m ON m.id = c.model_id
     WHERE c.category = 'passenger'
   `);
-  const byTwin = new Map(
-    found.rows.map((r) => [`${r.brand}|${r.model}|${r.year}`.toLowerCase(), r.id])
-  );
+  const existing = new Set(found.rows.map((r) => `${r.brand}|${r.model}|${r.year}`.toLowerCase()));
   const usedImages = new Set();
   const pending = [];
-  let updated = 0;
 
   for (let i = 0; i < NEW_GLOBAL_CARS.length; i++) {
     const item = NEW_GLOBAL_CARS[i];
     const twin = `${item.brand}|${item.model}|${item.year}`.toLowerCase();
-    const cover = carPhoto(item.brand, item.model, item.year, 100000 + i * 17 + item.year, 0);
-    if (usedImages.has(cover)) continue;
-    usedImages.add(cover);
-
-    const existingId = byTwin.get(twin);
-    if (existingId) {
-      await query(
-        `UPDATE cars SET
-           price_usd = $1, mileage = $2, engine = $3, power = $4,
-           fuel = $5, transmission = $6, body = $7,
-           description = $8, is_featured = $9, status = 'APPROVED',
-           updated_at = NOW()
-         WHERE id = $10`,
-        [
-          item.price,
-          40 + (i * 37) % 400,
-          item.engine,
-          item.power,
-          item.fuel,
-          item.trans,
-          item.body,
-          `${item.brand} ${item.model} ${item.year}. ${item.body}, ${item.engine}, ${item.power} hp. New arrival.`,
-          i < 12,
-          existingId,
-        ]
-      );
-      await query(`DELETE FROM car_images WHERE car_id = $1`, [existingId]);
-      await query(
-        `INSERT INTO car_images (car_id, url, sort_order) VALUES ($1, $2, 0)`,
-        [existingId, cover]
-      );
-      updated += 1;
-      continue;
-    }
+    if (existing.has(twin)) continue;
 
     const brandId = await ensureBrand(item.brand);
     const modelId = await ensureModel(brandId, item.model);
-    byTwin.set(twin, -1);
+    const label = `${item.brand} ${item.model}`;
+    const cover = placeholderImage(100000 + i * 17 + item.year, label);
+    if (usedImages.has(cover)) continue;
+    usedImages.add(cover);
+    existing.add(twin);
 
     pending.push({
       sellerId: sellers[i % sellers.length],
@@ -460,7 +418,7 @@ async function seedNewGlobalCars(sellers, locs) {
       modelId,
       year: item.year,
       price: item.price,
-      km: 40 + (i * 37) % 400,
+      km: 50 + (i * 37) % 400,
       engine: item.engine,
       power: item.power,
       fuel: item.fuel,
@@ -470,14 +428,14 @@ async function seedNewGlobalCars(sellers, locs) {
       locId: locs[i % locs.length],
       desc: `${item.brand} ${item.model} ${item.year}. ${item.body}, ${item.engine}, ${item.power} hp. New arrival.`,
       phone: '+992 90 555 1000',
-      feat: i < 12,
+      feat: i < 8,
       views: 200 + i * 13,
       cat: 'passenger',
       img: cover,
     });
   }
 
-  console.log(`New Cars 2025/2026: updated ${updated}, adding ${pending.length}…`);
+  console.log(`New Cars 2025/2026: adding ${pending.length} unique models…`);
   for (let offset = 0; offset < pending.length; offset += BATCH) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
@@ -561,13 +519,9 @@ async function normalizePrices() {
     SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
     WHERE price_usd > 95000
   `);
-  // Prefer real new models in featured
-  await query(`UPDATE cars SET is_featured = FALSE WHERE year < $1 AND category = 'passenger'`, [NEW_CAR_YEAR_FROM]);
-  await query(
-    `UPDATE cars SET is_featured = TRUE
-     WHERE year >= $1 AND category = 'passenger' AND mileage <= $2`,
-    [NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE]
-  );
+  // Prefer new models in featured
+  await query(`UPDATE cars SET is_featured = FALSE WHERE year < 2025 AND category = 'passenger'`);
+  await query(`UPDATE cars SET is_featured = TRUE WHERE year >= 2025 AND category = 'passenger' AND mileage <= 500`);
 }
 
 export async function seedCatalog() {

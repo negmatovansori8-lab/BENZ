@@ -237,7 +237,7 @@ function buildWhere(f) {
     params.push(f.body);
   }
   if (f.category === 'heavy') {
-    where.push(`c.category IN ('commercial', 'special', 'kamaz')`);
+    where.push(`c.category IN ('commercial', 'special')`);
   } else if (f.category) {
     where.push(`c.category = $${i++}`);
     params.push(f.category);

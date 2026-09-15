@@ -45,7 +45,7 @@ const SPECIAL = [
 ];
 
 const KAMAZ = [
-  { brand: 'KAMAZ', models: ['65115', '6520', '43118', '5490', '65117', '53215', '43114', '54115', '6460', '65201'], bodies: ['Pickup'] },
+  { brand: 'KAMAZ', models: ['65115', '6520', '43118', '5490', '65117'], bodies: ['Pickup'] },
 ];
 
 const PARTS = [
@@ -208,6 +208,7 @@ function makeHome(n, sellers, kind, rooms, area, locId) {
 }
 
 async function removeDuplicateCars() {
+  // Same brand + model + year + category
   await query(`
     DELETE FROM cars
     WHERE id NOT IN (
@@ -218,6 +219,24 @@ async function removeDuplicateCars() {
       ) t
     )
   `);
+  // Trucks / KamAZ / parts: one listing per model (no year twins that look identical)
+  await query(`
+    DELETE FROM cars
+    WHERE category IN ('kamaz', 'commercial', 'special', 'parts')
+      AND id NOT IN (
+        SELECT keep_id FROM (
+          SELECT MIN(id) AS keep_id
+          FROM cars
+          WHERE category IN ('kamaz', 'commercial', 'special', 'parts')
+          GROUP BY brand_id, model_id, category
+        ) t
+      )
+  `);
+}
+
+export async function cleanupDuplicateListings() {
+  await removeDuplicateCars();
+  await removeDuplicateHomes();
 }
 
 async function removeDuplicateHomes() {
@@ -237,10 +256,10 @@ function uniqueGroupRows(groups, cat, sellers, locs, existing) {
   const rows = [];
   let n = 0;
   const years = cat === 'passenger'
-    ? [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+    ? [2012, 2014, 2016, 2018, 2020, 2022, 2024]
     : cat === 'parts'
       ? [2024]
-      : [2014, 2016, 2018, 2020, 2022, 2024];
+      : [2019, 2023];
   for (const g of groups) {
     for (const model of g.models) {
       for (const year of years) {

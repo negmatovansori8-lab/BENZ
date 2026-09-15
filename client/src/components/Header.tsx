@@ -39,7 +39,7 @@ export function Logo({ className = '' }: { className?: string }) {
           <circle cx="21.4" cy="21.8" r=".7" fill="#c9a227" />
         </svg>
       </span>
-      <span className="font-display text-xl tracking-[0.18em]">
+      <span className="font-display text-xl font-bold tracking-[0.12em]">
         BEN<span className="text-gold-500">Z</span>
       </span>
     </Link>

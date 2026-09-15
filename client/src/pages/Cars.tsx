@@ -61,11 +61,13 @@ export default function Cars() {
       .then((r) => {
         const seen = new Set<string>();
         const rows = (r.data.data || []).filter((c: Car) => {
-          const key = `${c.brand}|${c.model}|${c.year}|${c.category}`;
+          const twinKey = cat === 'kamaz' || cat === 'heavy' || cat === 'commercial' || cat === 'special' || cat === 'parts'
+            ? `${c.brand}|${c.model}|${c.category}`
+            : `${c.brand}|${c.model}|${c.year}|${c.category}`;
           const id = `id:${c.id}`;
-          if (seen.has(id) || seen.has(key)) return false;
+          if (seen.has(id) || seen.has(twinKey)) return false;
           seen.add(id);
-          seen.add(key);
+          seen.add(twinKey);
           return true;
         });
         setData({ ...r.data, data: rows });

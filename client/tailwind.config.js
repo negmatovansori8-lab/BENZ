@@ -5,26 +5,37 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Outfit', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'Georgia', 'serif'],
+        sans: ['Manrope', 'system-ui', 'sans-serif'],
+        display: ['Syne', 'Arial Narrow', 'sans-serif'],
       },
       colors: {
         gold: {
-          50: '#fbf7ee',
-          100: '#f3e7cc',
-          300: '#e0b44a',
-          400: '#d4a017',
-          500: '#c9a227',
-          600: '#a6851c',
-          700: '#7c6414',
+          50: '#f7f3e8',
+          100: '#ebe0c0',
+          300: '#d4b45a',
+          400: '#c9a227',
+          500: '#b8921f',
+          600: '#947618',
+          700: '#6e5712',
         },
       },
       boxShadow: {
-        card: '0 12px 40px -16px rgba(0,0,0,.45)',
-        glow: '0 0 40px -8px rgba(201,162,39,.35)',
+        card: '0 18px 50px -28px rgba(0,0,0,.55)',
+        glow: '0 0 48px -10px rgba(184,146,31,.4)',
       },
-      backgroundImage: {
-        'hero-fade': 'linear-gradient(180deg, rgba(9,9,11,.15) 0%, rgba(9,9,11,.72) 55%, var(--ah-bg) 100%)',
+      keyframes: {
+        heroDrift: {
+          '0%': { transform: 'scale(1.08) translate3d(0,0,0)' },
+          '100%': { transform: 'scale(1.16) translate3d(-1.5%, 1%, 0)' },
+        },
+        riseIn: {
+          '0%': { opacity: '0', transform: 'translateY(18px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        heroDrift: 'heroDrift 22s ease-in-out alternate infinite',
+        riseIn: 'riseIn 0.7s cubic-bezier(0.22,1,0.36,1) both',
       },
     },
   },

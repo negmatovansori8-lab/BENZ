@@ -34,14 +34,16 @@ export default function Home() {
     ])
       .then(([f, r, p, h, kamazRes, partsRes, homesRes]) => {
         const used = new Set<string>();
-        const take = (list: Car[], n = 16) => {
+        const take = (list: Car[], n = 16, strict = false) => {
           const out: Car[] = [];
           for (const c of list || []) {
-            const key = `${c.brand}|${c.model}|${c.year}|${c.category}`;
+            const twin = strict || c.category === 'kamaz' || c.category === 'commercial' || c.category === 'special' || c.category === 'parts'
+              ? `${c.brand}|${c.model}|${c.category}`
+              : `${c.brand}|${c.model}|${c.year}|${c.category}`;
             const id = `id:${c.id}`;
-            if (used.has(id) || used.has(key)) continue;
+            if (used.has(id) || used.has(twin)) continue;
             used.add(id);
-            used.add(key);
+            used.add(twin);
             out.push(c);
             if (out.length >= n) break;
           }
@@ -50,9 +52,9 @@ export default function Home() {
         setFeatured(take(f.data.data || []));
         setRecent(take(r.data.data || []));
         setPopular(take(p.data.data || []));
-        setHeavy(take(h.data.data || []));
-        setKamaz(take(kamazRes.data.data || []));
-        setParts(take(partsRes.data.data || []));
+        setHeavy(take(h.data.data || [], 16, true));
+        setKamaz(take(kamazRes.data.data || [], 16, true));
+        setParts(take(partsRes.data.data || [], 16, true));
         const seenHome = new Set<string>();
         setHomes((homesRes.data.data || []).filter((x: Property) => {
           const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.location_id ?? x.title}`;
@@ -71,34 +73,36 @@ export default function Home() {
     <>
       <Seo title={`BENZ — ${t('heroTitle')}`} description={t('heroSubtitle')} />
       <section
-        className="relative min-h-[70vh] overflow-hidden bg-zinc-950 sm:min-h-[88vh]"
+        className="relative min-h-[72vh] overflow-hidden bg-zinc-950 sm:min-h-[90vh]"
       >
         <img
           src="/hero-benz.jpg"
           alt="Mercedes-Benz"
-          className="absolute inset-0 h-full w-full object-cover object-center brightness-110 contrast-105 sm:object-right"
+          className="hero-ken absolute inset-0 h-full w-full object-cover object-center brightness-110 contrast-105 sm:object-right"
           onError={(e) => {
             e.currentTarget.src = '/hero.jpg';
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/25 sm:bg-gradient-to-r sm:from-black/75 sm:via-black/30 sm:to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--ah-bg)] to-transparent" />
-        <div className="container-ah relative z-10 flex min-h-[70vh] flex-col justify-end pb-10 pt-20 sm:min-h-[88vh] sm:pb-16 sm:pt-28">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20 sm:bg-gradient-to-r sm:from-black/80 sm:via-black/35 sm:to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[var(--ah-bg)] to-transparent" />
+        <div className="container-ah relative z-10 flex min-h-[72vh] flex-col justify-end pb-12 pt-24 sm:min-h-[90vh] sm:pb-20 sm:pt-28">
           {user && (
-            <p className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/35 px-4 py-1.5 text-sm text-white backdrop-blur">
+            <p className="rise-in mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-1.5 text-sm text-white backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               {t('hello')}, {user.name} — {t('youAreIn')}
             </p>
           )}
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-gold-300">{t('premium')}</p>
-          <h1 className="font-display max-w-3xl text-[1.85rem] leading-tight text-white sm:text-6xl">
+          <p className="rise-in font-display text-[clamp(2.6rem,12vw,7.5rem)] leading-[0.9] tracking-[-0.04em] text-white">
+            BEN<span className="text-gold-400">Z</span>
+          </p>
+          <h1 className="rise-in-delay mt-3 max-w-2xl font-display text-[1.35rem] font-semibold leading-tight tracking-tight text-white/95 sm:mt-4 sm:text-3xl">
             {t('heroTitle')}
           </h1>
-          <p className="mt-3 max-w-xl text-sm text-white/75 sm:mt-4 sm:text-lg">{t('heroSubtitle')}</p>
-          <div className="mt-6 flex justify-center">
+          <p className="rise-in-delay mt-3 max-w-lg text-sm text-white/70 sm:text-base">{t('heroSubtitle')}</p>
+          <div className="rise-in-delay-2 mt-7 flex justify-center sm:justify-start">
             <Link
               to="/cars?category=passenger"
-              className="btn-gold !inline-flex !w-auto !px-8 !py-3 !text-base"
+              className="btn-gold !inline-flex !w-auto !px-9 !py-3.5 !text-base"
             >
               {t('searchCars')}
             </Link>

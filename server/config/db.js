@@ -150,6 +150,13 @@ async function finishPostgres(pool, label) {
   } catch (err) {
     console.error('Extra seed failed (API still runs):', err.message);
   }
+  try {
+    const { cleanupDuplicateListings } = await import('../scripts/seedCatalog.js');
+    await cleanupDuplicateListings();
+    console.log('Duplicate listings cleaned');
+  } catch (err) {
+    console.error('Listing cleanup failed:', err.message);
+  }
   return impl;
 }
 

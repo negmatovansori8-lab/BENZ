@@ -11,7 +11,7 @@ const CATS: {
   rgb: string;
 }[] = [
   { to: '/cars?category=passenger', key: 'catPassenger', Icon: CatSedan, rgb: '232 72 85' },
-  { to: '/cars?category=commercial', key: 'catCommercial', Icon: CatTruck, rgb: '245 140 48' },
+  { to: '/cars?category=heavy', key: 'catCommercial', Icon: CatTruck, rgb: '245 140 48' },
   { to: '/cars?category=kamaz', key: 'catKamaz', Icon: CatKamaz, rgb: '56 152 236' },
   { to: '/cars?category=special', key: 'catSpecial', Icon: CatExcavator, rgb: '212 168 52' },
   { to: '/cars?category=parts', key: 'catParts', Icon: CatPiston, rgb: '46 184 122' },

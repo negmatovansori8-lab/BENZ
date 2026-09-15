@@ -159,7 +159,7 @@ export function avatarUrl(name?: string | null, url?: string | null) {
     .toUpperCase() || 'AH';
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
     <rect width="64" height="64" rx="32" fill="#c9a227"/>
-    <text x="32" y="38" text-anchor="middle" font-size="20" font-family="Outfit,Arial,sans-serif" font-weight="700" fill="#0a0a0b">${letters}</text>
+    <text x="32" y="38" text-anchor="middle" font-size="20" font-family="Syne,Arial,sans-serif" font-weight="700" fill="#0a0a0b">${letters}</text>
   </svg>`;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }

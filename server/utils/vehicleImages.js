@@ -50,7 +50,9 @@ export function isStockRemoteImage(url) {
   return (
     /images\.unsplash\.com/i.test(s) ||
     /loremflickr\.com/i.test(s) ||
-    /picsum\.photos/i.test(s)
+    /picsum\.photos/i.test(s) ||
+    /cdn\.imagin\.studio/i.test(s) ||
+    /^data:image\/svg\+xml/i.test(s)
   );
 }
 
@@ -64,7 +66,12 @@ export function uniqueVehicles(rows = []) {
     const img = Array.isArray(row.images)
       ? (row.images[0]?.url || row.images[0])
       : null;
-    const imgKey = img ? String(img).split('?')[0] : null;
+    let imgKey = null;
+    if (img) {
+      const s = String(img);
+      // Keep query string for CDN seeds (picsum/imagin) so listings stay unique
+      imgKey = /picsum\.photos|imagin\.studio/i.test(s) ? s : s.split('?')[0];
+    }
     if (imgKey && byImg.has(imgKey)) continue;
     byId.add(row.id);
     if (imgKey) byImg.add(imgKey);

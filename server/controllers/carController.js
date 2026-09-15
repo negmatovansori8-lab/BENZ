@@ -56,18 +56,21 @@ function parseImages(images) {
 function rewriteImageUrl(url, carId, index, category = 'passenger') {
   const cat = category || 'passenger';
   const raw = url == null ? '' : String(url);
-  // Keep real seller uploads and non-stock remotes
   if (raw.startsWith('/uploads/')) return raw;
   if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw;
-  // Old stock paths + previous Unsplash duplicates → unique cover per listing id
+  // Keep local specialty gallery photos
+  if (raw.startsWith('/parts/') || raw.startsWith('/kamaz/') || raw.startsWith('/trucks/')) return raw;
+  // Old stock / Imagin leftovers → unique cover per listing id
   if (
     !raw ||
     isStockRemoteImage(raw) ||
-    raw.startsWith('/cars/') ||
-    raw.startsWith('/trucks/') ||
-    raw.startsWith('/kamaz/') ||
-    raw.startsWith('/parts/')
+    raw.startsWith('/cars/')
   ) {
+    if (cat === 'parts') return `/parts/${(Math.abs(Number(carId) || 0) % 3) + 1}.jpg`;
+    if (cat === 'kamaz') return `/kamaz/${(Math.abs(Number(carId) || 0) % 3) + 1}.jpg`;
+    if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
+      return `/trucks/${(Math.abs(Number(carId) || 0) % 3) + 1}.jpg`;
+    }
     return imageForVehicle(cat, carId, index);
   }
   if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;

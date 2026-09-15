@@ -6,7 +6,7 @@ import { query, withTransaction } from '../config/db.js';
 import { AppError, asyncHandler } from '../utils/AppError.js';
 import { parsePagination, paginate, sanitizeString } from '../utils/helpers.js';
 import { notify } from '../services/analyticsService.js';
-import { imageForVehicle, isStockRemoteImage, uniqueVehicles } from '../utils/vehicleImages.js';
+import { imageForVehicle, isStockRemoteImage, isImaginImage, uniqueVehicles, carPhoto } from '../utils/vehicleImages.js';
 
 const FUEL = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'Gas'];
 const TRANS = ['Automatic', 'Manual'];
@@ -36,8 +36,8 @@ function imageUrlsFromRequest(req) {
   return [...files, ...extra].filter(Boolean);
 }
 
-function localCarUrl(carId, index = 0, category = 'passenger') {
-  return imageForVehicle(category || 'passenger', carId, index);
+function localCarUrl(carId, index = 0, category = 'passenger', meta = {}) {
+  return imageForVehicle(category || 'passenger', carId, index, meta);
 }
 
 function parseImages(images) {
@@ -53,37 +53,37 @@ function parseImages(images) {
   return Array.isArray(images) ? images : [];
 }
 
-function rewriteImageUrl(url, carId, index, category = 'passenger') {
+function rewriteImageUrl(url, carId, index, category = 'passenger', meta = {}) {
   const cat = category || 'passenger';
   const raw = url == null ? '' : String(url);
   if (raw.startsWith('/uploads/')) return raw;
   if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw;
-  // Keep local specialty gallery photos
   if (raw.startsWith('/parts/') || raw.startsWith('/kamaz/') || raw.startsWith('/trucks/')) return raw;
-  // Old stock / Imagin leftovers → unique cover per listing id
-  if (
-    !raw ||
-    isStockRemoteImage(raw) ||
-    raw.startsWith('/cars/')
-  ) {
-    if (cat === 'parts') return `/parts/${(Math.abs(Number(carId) || 0) % 3) + 1}.jpg`;
-    if (cat === 'kamaz') return `/kamaz/${(Math.abs(Number(carId) || 0) % 3) + 1}.jpg`;
-    if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
-      return `/trucks/${(Math.abs(Number(carId) || 0) % 3) + 1}.jpg`;
+
+  // Passenger cars always get a real brand/model studio photo (not landscapes)
+  if (cat === 'passenger' && meta.brand && meta.model) {
+    if (isImaginImage(raw) || !raw || isStockRemoteImage(raw) || raw.startsWith('/cars/') || raw.startsWith('http')) {
+      return carPhoto(meta.brand, meta.model, meta.year, carId, index);
     }
-    return imageForVehicle(cat, carId, index);
+  }
+
+  if (!raw || isStockRemoteImage(raw) || raw.startsWith('/cars/')) {
+    return imageForVehicle(cat, carId, index, meta);
   }
   if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
-  return localCarUrl(carId, index, cat);
+  return localCarUrl(carId, index, cat, meta);
 }
 
 export function shapeCar(row, favoriteIds = []) {
   if (!row) return row;
+  const meta = { brand: row.brand, model: row.model, year: row.year };
   const images = parseImages(row.images).map((img, i) => ({
     ...(typeof img === 'object' && img ? img : { url: img }),
-    url: rewriteImageUrl(typeof img === 'object' ? img.url : img, row.id, i, row.category),
+    url: rewriteImageUrl(typeof img === 'object' ? img.url : img, row.id, i, row.category, meta),
   }));
-  const filled = images.length ? images : [{ id: 0, url: localCarUrl(row.id, 0, row.category), sort_order: 0 }];
+  const filled = images.length
+    ? images
+    : [{ id: 0, url: localCarUrl(row.id, 0, row.category, meta), sort_order: 0 }];
   return {
     ...row,
     images: filled,

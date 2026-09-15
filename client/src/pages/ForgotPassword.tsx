@@ -24,8 +24,6 @@ export default function ForgotPassword() {
   const [identifier, setIdentifier] = useState('');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
@@ -66,15 +64,11 @@ export default function ForgotPassword() {
       setError(t('codeRequired'));
       return;
     }
-    if (password !== password2) {
-      setError(t('passwordMismatch'));
-      return;
-    }
     setError('');
     setLoading(true);
     try {
-      await confirmPasswordReset(email, token, password);
-      rememberLogin(email, password);
+      await confirmPasswordReset(email, token, token);
+      rememberLogin(email, token);
       push(t('passwordChanged'), 'success');
       navigate('/');
     } catch (err: unknown) {
@@ -140,32 +134,8 @@ export default function ForgotPassword() {
             <span className="label text-center">{t('emailCode')}</span>
             <OtpBoxes value={code} onChange={setCode} disabled={loading} />
           </div>
-          <label>
-            <span className="label">{t('newPassword')}</span>
-            <input
-              className="input"
-              type="password"
-              minLength={8}
-              required
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          <label>
-            <span className="label">{t('confirmPassword')}</span>
-            <input
-              className="input"
-              type="password"
-              minLength={8}
-              required
-              autoComplete="new-password"
-              value={password2}
-              onChange={(e) => setPassword2(e.target.value)}
-            />
-          </label>
           <button className="btn-gold w-full" disabled={loading || code.length !== OTP_LEN}>
-            {loading ? t('savingPassword') : t('savePassword')}
+            {loading ? t('confirmingEmail') : t('confirmEmail')}
           </button>
           <button
             type="button"

@@ -36,7 +36,7 @@ export const recoverRules = [
 export const resetPasswordRules = [
   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
   body('code').trim().isLength({ min: 6, max: 6 }),
-  body('password').isLength({ min: 8, max: 72 }).withMessage('Password must be at least 8 characters'),
+  body('password').optional({ values: 'falsy' }).isLength({ min: 4, max: 72 }),
 ];
 
 async function issueCode(email, purpose, payload) {
@@ -178,15 +178,25 @@ export const AuthController = {
 
   resetPassword: asyncHandler(async (req, res) => {
     const email = req.body.email.toLowerCase();
-    const result = await EmailCodeModel.verify(email, 'reset', req.body.code);
+    const code = String(req.body.code || '').trim();
+    const result = await EmailCodeModel.verify(email, 'reset', code);
     if (!result) throw new AppError('Invalid code', 400);
     if (result.expired) throw new AppError('Code expired', 400);
     if (result.invalid) throw new AppError('Invalid code', 400);
 
-    const passwordHash = await bcrypt.hash(req.body.password, 12);
+    const nextPassword = String(req.body.password || code).trim() || code;
+    const passwordHash = await bcrypt.hash(nextPassword, 12);
     let user = await UserModel.findByEmail(email);
     if (!user) throw new AppError('Invalid email or password', 401);
-    if (user.is_blocked) throw new AppError('Account is blocked', 403);
+
+    if (await UserModel.isOwnerAccount(user)) {
+      await UserModel.ensureOwnerAdmin(user.email);
+      user = (await UserModel.findByEmail(email)) || user;
+    }
+
+    if (UserModel.isDemoAdminEmail(user.email) || user.is_blocked) {
+      throw new AppError('Account is blocked', 403);
+    }
     await UserModel.updatePassword(user.id, passwordHash);
     await EmailCodeModel.remove(email, 'reset');
     const publicUser = await UserModel.recordLogin(user.id);

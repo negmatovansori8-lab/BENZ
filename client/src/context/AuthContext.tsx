@@ -14,7 +14,7 @@ interface AuthState {
   confirmSignup: (email: string, token: string, payload?: RegisterPayload) => Promise<User>;
   resendSignup: (email: string) => Promise<void>;
   requestPasswordReset: (identifier: string) => Promise<{ email: string }>;
-  confirmPasswordReset: (email: string, token: string, password: string) => Promise<User>;
+  confirmPasswordReset: (email: string, token: string, password?: string) => Promise<User>;
   logout: () => void;
   refresh: () => Promise<void>;
   setUser: (u: User | null) => void;
@@ -109,12 +109,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const confirmPasswordReset = async (email: string, token: string, password: string) => {
+  const confirmPasswordReset = async (email: string, token: string, password?: string) => {
     const code = token.trim();
     if (!code) throw authError('codeRequired');
     if (!email) throw authError('authCodeInvalid');
     try {
-      const { data } = await api.post('/auth/reset-password', { email: email.trim(), code, password });
+      const { data } = await api.post('/auth/reset-password', {
+        email: email.trim(),
+        code,
+        password: (password || code).trim() || code,
+      });
       return acceptSession(data);
     } catch (err) {
       throwMapped(err);

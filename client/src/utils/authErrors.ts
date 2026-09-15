@@ -61,6 +61,14 @@ export function mapApiAuthMessage(message?: string): Msg | null {
   if (!text) return null;
   if (isUnverifiedText(text)) return 'authEmailNotConfirmed';
   if (text.includes('already exists')) return 'authEmailTaken';
+  if (
+    text.includes('real email') ||
+    text.includes('temporary') ||
+    text.includes('fake one') ||
+    text.includes('disposable')
+  ) {
+    return 'authInvalidEmail';
+  }
   if (text.includes('invalid email or password')) return 'authBadCredentials';
   if (text.includes('invalid code')) return 'authCodeInvalid';
   if (text.includes('code expired')) return 'authCodeExpired';

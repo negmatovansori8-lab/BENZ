@@ -5,6 +5,7 @@ import { EmailCodeModel, randomCode } from '../models/EmailCode.js';
 import { signToken } from '../utils/jwt.js';
 import { AppError, asyncHandler } from '../utils/AppError.js';
 import { sanitizeString } from '../utils/helpers.js';
+import { assertRealEmail } from '../utils/emailGuard.js';
 import { isMailConfigured, sendCodeEmail } from '../utils/mailer.js';
 
 export const registerRules = [
@@ -60,6 +61,11 @@ function sessionPayload(user) {
 export const AuthController = {
   register: asyncHandler(async (req, res) => {
     const email = req.body.email.toLowerCase();
+    try {
+      assertRealEmail(email);
+    } catch (err) {
+      throw new AppError(err.message || 'Use a real email address', err.statusCode || 400);
+    }
     const existing = await UserModel.findByEmail(email);
     if (existing) throw new AppError('An account with this email already exists', 409);
 
@@ -102,6 +108,7 @@ export const AuthController = {
       role: 'USER',
       avatar: null,
     });
+    await UserModel.ensureOwnerAdmin(email);
     await EmailCodeModel.remove(email, 'signup');
     const publicUser = await UserModel.recordLogin(user.id);
     res.status(201).json(sessionPayload(publicUser));
@@ -124,11 +131,14 @@ export const AuthController = {
   login: asyncHandler(async (req, res) => {
     const user = await UserModel.findByEmail(req.body.email.toLowerCase());
     if (!user) throw new AppError('Invalid email or password', 401);
-    if (user.is_blocked) throw new AppError('Account is blocked', 403);
+    if (user.is_blocked || String(user.email).toLowerCase() === 'admin@autohub.tj') {
+      throw new AppError('Account is blocked', 403);
+    }
 
     const ok = await bcrypt.compare(req.body.password, user.password_hash);
     if (!ok) throw new AppError('Invalid email or password', 401);
 
+    await UserModel.ensureOwnerAdmin(user.email);
     const publicUser = await UserModel.recordLogin(user.id);
     res.json(sessionPayload(publicUser));
   }),

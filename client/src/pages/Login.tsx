@@ -195,9 +195,6 @@ export default function Login() {
         <p className="mt-4 text-center text-sm text-[var(--ah-muted)]">
           {t('noAccount')} <Link to="/register" className="text-gold-600">{t('navRegister')}</Link>
         </p>
-        <p className="mt-4 rounded-xl bg-black/5 p-3 text-xs dark:bg-white/5">
-          {t('demoAdmin')}: <b>admin@autohub.tj</b> / Admin123!
-        </p>
       </form>
     </div>
   );

@@ -16,7 +16,7 @@ export default function Home() {
   const { t } = useI18n();
   const { user } = useAuth();
   const [featured, setFeatured] = useState<Car[]>([]);
-  const [recent, setRecent] = useState<Car[]>([]);
+  const [newCars, setNewCars] = useState<Car[]>([]);
   const [popular, setPopular] = useState<Car[]>([]);
   const [heavy, setHeavy] = useState<Car[]>([]);
   const [kamaz, setKamaz] = useState<Car[]>([]);
@@ -27,14 +27,14 @@ export default function Home() {
   useEffect(() => {
     Promise.all([
       api.get('/cars/featured'),
-      api.get('/cars/recent'),
+      api.get('/cars?newCars=true&sort=newest&limit=48'),
       api.get('/cars/popular'),
       api.get('/cars?category=heavy&limit=48'),
       api.get('/cars?category=kamaz&limit=48'),
       api.get('/cars?category=parts&limit=48'),
       api.get('/homes?limit=8'),
     ])
-      .then(([f, r, p, h, kamazRes, partsRes, homesRes]) => {
+      .then(([f, neu, p, h, kamazRes, partsRes, homesRes]) => {
         const used = new Set<string>();
         const take = (list: Car[], n = 16) => {
           const out: Car[] = [];
@@ -50,7 +50,7 @@ export default function Home() {
           return out;
         };
         setFeatured(take(f.data.data || []));
-        setRecent(take(r.data.data || []));
+        setNewCars(take(neu.data.data || [], 16));
         setPopular(take(p.data.data || []));
         setHeavy(take(h.data.data || []));
         setKamaz(take(kamazRes.data.data || []));
@@ -113,6 +113,23 @@ export default function Home() {
       <CategoryGrid />
 
       <section className="container-ah py-10 sm:py-14">
+        <div className="mb-5 flex items-end justify-between gap-3 sm:mb-8">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('fresh')}</p>
+            <h2 className="font-display text-2xl sm:text-3xl">{t('newCarsTitle')}</h2>
+            <p className="mt-1 text-sm text-[var(--ah-muted)]">{t('newCarsText')}</p>
+          </div>
+          <Link
+            to="/cars?newCars=true&sort=newest"
+            className="shrink-0 inline-flex items-center gap-1 text-sm text-gold-600"
+          >
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
+          </Link>
+        </div>
+        <Grid cars={newCars} loading={loading} empty={t('noCars')} />
+      </section>
+
+      <section className="container-ah pb-14">
         <div className="mb-5 flex items-end justify-between gap-3 sm:mb-8">
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('curated')}</p>
@@ -192,17 +209,14 @@ export default function Home() {
       </section>
 
       <section className="container-ah pb-14">
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('fresh')}</p>
-          <h2 className="font-display text-2xl sm:text-3xl">{t('newArrivals')}</h2>
-        </div>
-        <Grid cars={recent} loading={loading} empty={t('noCars')} />
-      </section>
-
-      <section className="container-ah pb-14">
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('trending')}</p>
-          <h2 className="font-display text-2xl sm:text-3xl">{t('popular')}</h2>
+        <div className="mb-5 flex items-end justify-between gap-3 sm:mb-8">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('trending')}</p>
+            <h2 className="font-display text-2xl sm:text-3xl">{t('popular')}</h2>
+          </div>
+          <Link to="/cars?sort=popular" className="inline-flex items-center gap-1 text-sm text-gold-600">
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
+          </Link>
         </div>
         <Grid cars={popular} loading={loading} empty={t('noCars')} />
       </section>

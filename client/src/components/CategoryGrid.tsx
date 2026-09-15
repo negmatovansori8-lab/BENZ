@@ -26,6 +26,7 @@ const PRIMARY: {
 ];
 
 const MORE: { to: string; key: Msg; icon: typeof Car }[] = [
+  { to: '/cars?newCars=true&sort=newest', key: 'newCarsTitle', icon: Zap },
   { to: '/cars?body=Sedan', key: 'bodySedan', icon: Car },
   { to: '/cars?body=SUV', key: 'bodySuv', icon: Car },
   { to: '/cars?body=Sports', key: 'bodySports', icon: Car },

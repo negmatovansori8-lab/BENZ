@@ -18,10 +18,9 @@ import { uniqueByIdAndImage } from '../utils/uniqueList';
 
 const SORT_KEYS: { id: string; key: Msg }[] = [
   { id: 'newest', key: 'sortNewest' },
-  { id: 'oldest', key: 'sortOldest' },
+  { id: 'recent', key: 'sortRecent' },
   { id: 'price_asc', key: 'sortPriceAsc' },
   { id: 'price_desc', key: 'sortPriceDesc' },
-  { id: 'mileage_asc', key: 'sortMileage' },
   { id: 'popular', key: 'sortPopular' },
 ];
 
@@ -46,6 +45,7 @@ export default function Cars() {
     : cat === 'agricultural' ? t('catAgricultural')
     : cat === 'marine' ? t('catMarine')
     : cat === 'aircraft' ? t('catAircraft')
+    : params.get('newCars') === 'true' || params.get('new') === 'true' ? t('newCarsTitle')
     : params.get('fuel') === 'Electric' ? t('catElectric')
     : params.get('fuel') === 'Hybrid' ? t('catHybrid')
     : params.get('body') ? t(bodyMsg(params.get('body')))
@@ -91,6 +91,10 @@ export default function Cars() {
     const fuel = params.get('fuel');
     if (body) next.set('body', body);
     if (fuel) next.set('fuel', fuel);
+    if (params.get('newCars') === 'true' || params.get('new') === 'true') {
+      next.set('newCars', 'true');
+      next.set('sort', 'newest');
+    }
     setParams(next);
   };
 

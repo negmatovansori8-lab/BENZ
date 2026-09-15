@@ -36,8 +36,8 @@ function imageUrlsFromRequest(req) {
   return [...files, ...extra].filter(Boolean);
 }
 
-function localCarUrl(carId, index = 0, category = 'passenger') {
-  return imageForVehicle(category || 'passenger', carId, index);
+function localCarUrl(carId, index = 0, category = 'passenger', label = 'BENZ') {
+  return imageForVehicle(category || 'passenger', carId, index, label);
 }
 
 function parseImages(images) {
@@ -53,13 +53,13 @@ function parseImages(images) {
   return Array.isArray(images) ? images : [];
 }
 
-function rewriteImageUrl(url, carId, index, category = 'passenger') {
+function rewriteImageUrl(url, carId, index, category = 'passenger', label = 'BENZ') {
   const cat = category || 'passenger';
   const raw = url == null ? '' : String(url);
-  // Keep real seller uploads and non-stock remotes
   if (raw.startsWith('/uploads/')) return raw;
   if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw;
-  // Old stock paths + previous Unsplash duplicates → unique cover per listing id
+  // Keep professional labeled SVG placeholders; never reuse another car's photo
+  if (raw.startsWith('data:image/svg+xml')) return raw;
   if (
     !raw ||
     isStockRemoteImage(raw) ||
@@ -68,23 +68,27 @@ function rewriteImageUrl(url, carId, index, category = 'passenger') {
     raw.startsWith('/kamaz/') ||
     raw.startsWith('/parts/')
   ) {
-    return imageForVehicle(cat, carId, index);
+    return imageForVehicle(cat, carId, index, label);
   }
   if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
-  return localCarUrl(carId, index, cat);
+  return localCarUrl(carId, index, cat, label);
 }
 
 export function shapeCar(row, favoriteIds = []) {
   if (!row) return row;
+  const label = [row.brand, row.model].filter(Boolean).join(' ') || 'BENZ';
   const images = parseImages(row.images).map((img, i) => ({
     ...(typeof img === 'object' && img ? img : { url: img }),
-    url: rewriteImageUrl(typeof img === 'object' ? img.url : img, row.id, i, row.category),
+    url: rewriteImageUrl(typeof img === 'object' ? img.url : img, row.id, i, row.category, label),
   }));
-  const filled = images.length ? images : [{ id: 0, url: localCarUrl(row.id, 0, row.category), sort_order: 0 }];
+  const filled = images.length
+    ? images
+    : [{ id: 0, url: localCarUrl(row.id, 0, row.category, label), sort_order: 0 }];
   return {
     ...row,
     images: filled,
     is_favorite: favoriteIds.includes(row.id),
+    is_new: Number(row.year) >= 2025,
     location: row.city ? `${row.city}, ${row.country}` : row.country || null,
   };
 }
@@ -152,6 +156,30 @@ export const CarController = {
 
   create: asyncHandler(async (req, res) => {
     const urls = imageUrlsFromRequest(req);
+    const brandId = Number(req.body.brand_id);
+    const modelId = Number(req.body.model_id);
+    const year = Number(req.body.year);
+    const category = req.body.category || 'passenger';
+
+    const twin = await query(
+      `SELECT c.id FROM cars c
+       WHERE c.brand_id = $1 AND c.model_id = $2 AND c.year = $3 AND c.category = $4
+       LIMIT 1`,
+      [brandId, modelId, year, category]
+    );
+    if (twin.rows[0]) {
+      throw new AppError('This brand, model and year already exists', 409);
+    }
+    if (urls.length) {
+      const imgDup = await query(
+        `SELECT car_id FROM car_images WHERE url = ANY($1::text[]) LIMIT 1`,
+        [urls]
+      );
+      if (imgDup.rows[0]) {
+        throw new AppError('One of the images is already used by another listing', 409);
+      }
+    }
+
     const car = await withTransaction(async (client) => {
       if (req.user.role === 'USER') {
         await client.query(`UPDATE users SET role = 'SELLER', updated_at = NOW() WHERE id = $1`, [req.user.id]);
@@ -159,9 +187,9 @@ export const CarController = {
       const created = await CarModel.create(
         {
           seller_id: req.user.id,
-          brand_id: Number(req.body.brand_id),
-          model_id: Number(req.body.model_id),
-          year: Number(req.body.year),
+          brand_id: brandId,
+          model_id: modelId,
+          year,
           price_usd: Number(req.body.price_usd),
           mileage: Number(req.body.mileage),
           engine: sanitizeString(req.body.engine, 80),
@@ -175,7 +203,7 @@ export const CarController = {
           description: sanitizeString(req.body.description, 4000),
           phone: sanitizeString(req.body.phone || req.user.phone, 40),
           status: 'PENDING',
-          category: req.body.category || 'passenger',
+          category,
         },
         client
       );

@@ -45,35 +45,18 @@ export const CarModel = {
   async featured(limit = 8) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE AND c.year >= 2025
-       ORDER BY c.year DESC, c.updated_at DESC LIMIT $1`,
-      [limit]
-    );
-    if (rows.length) return rows;
-    const fallback = await query(
-      `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.year >= 2025 AND c.category = 'passenger'
-       ORDER BY c.year DESC, c.created_at DESC LIMIT $1`,
-      [limit]
-    );
-    return fallback.rows;
-  },
-
-  async recent(limit = 12) {
-    const { rows } = await query(
-      `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.year >= 2025 AND c.category = 'passenger'
-       ORDER BY c.year DESC, c.created_at DESC LIMIT $1`,
+       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE
+       ORDER BY c.updated_at DESC LIMIT $1`,
       [limit]
     );
     return rows;
   },
 
-  async newCars(limit = 24) {
+  async recent(limit = 8) {
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.year >= 2025 AND c.category = 'passenger'
-       ORDER BY c.year DESC, c.created_at DESC LIMIT $1`,
+       WHERE c.status = 'APPROVED'
+       ORDER BY c.created_at DESC LIMIT $1`,
       [limit]
     );
     return rows;
@@ -260,10 +243,6 @@ function buildWhere(f) {
     where.push(`c.body = $${i++}`);
     params.push(f.body);
   }
-  if (f.newCars === 'true' || f.newCars === true || f.new === 'true' || f.new === true) {
-    where.push(`c.year >= 2025`);
-    where.push(`c.category = 'passenger'`);
-  }
   if (f.condition === 'new') {
     where.push(`c.mileage <= 500`);
   } else if (f.condition === 'used') {
@@ -312,12 +291,8 @@ function sortClause(sort) {
       return 'ORDER BY c.mileage ASC';
     case 'popular':
       return 'ORDER BY c.views DESC, c.favorites_count DESC';
-    case 'year_desc':
-      return 'ORDER BY c.year DESC, c.created_at DESC';
-    case 'recent':
-      return 'ORDER BY c.created_at DESC';
     case 'newest':
     default:
-      return 'ORDER BY c.year DESC, c.created_at DESC';
+      return 'ORDER BY c.created_at DESC';
   }
 }

@@ -124,11 +124,10 @@ async function ensureModel(brandId, name) {
   return rows[0].id;
 }
 
-import { imageForVehicle, placeholderImage } from '../utils/vehicleImages.js';
-import { NEW_GLOBAL_CARS } from '../catalog/newCars2026.js';
+import { imageForVehicle } from '../utils/vehicleImages.js';
 
-function imgFor(cat, n, label = 'BENZ') {
-  return imageForVehicle(cat, n, 0, label);
+function imgFor(cat, n) {
+  return imageForVehicle(cat, n, 0);
 }
 
 function homeImg(n) {
@@ -227,7 +226,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     cat,
     feat: n % 22 === 0,
     views: 80 + (n % 4000),
-    img: imgFor(cat, n, `${g.brand} ${model}`),
+    img: imgFor(cat, n),
     desc: label,
     sellerId: sellers[n % sellers.length],
     locId: locs[n % locs.length],
@@ -369,76 +368,22 @@ async function fillCars(_need, sellers, locs) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 
-  // Stock covers rewritten on API read to unique brand/model placeholders — clear bad remote stock
+  // Bind every cover image to car id so URLs stay unique forever
   await query(`
     UPDATE car_images ci
-    SET url = ''
+    SET url = 'https://picsum.photos/seed/benz-' || COALESCE(c.category, 'car') || '-' || c.id || '-0/900/600'
     FROM cars c
     WHERE ci.car_id = c.id
       AND (
         ci.url LIKE '%loremflickr%'
         OR ci.url LIKE '%unsplash%'
-        OR ci.url LIKE '%picsum.photos%'
         OR ci.url LIKE '/cars/%'
         OR ci.url LIKE '/trucks/%'
         OR ci.url LIKE '/kamaz/%'
         OR ci.url LIKE '/parts/%'
+        OR ci.url LIKE 'https://picsum.photos/seed/benz-%'
       )
   `);
-}
-
-async function seedNewGlobalCars(sellers, locs) {
-  const found = await query(`
-    SELECT b.name AS brand, m.name AS model, c.year
-    FROM cars c
-    JOIN brands b ON b.id = c.brand_id
-    JOIN models m ON m.id = c.model_id
-    WHERE c.category = 'passenger'
-  `);
-  const existing = new Set(found.rows.map((r) => `${r.brand}|${r.model}|${r.year}`.toLowerCase()));
-  const usedImages = new Set();
-  const pending = [];
-
-  for (let i = 0; i < NEW_GLOBAL_CARS.length; i++) {
-    const item = NEW_GLOBAL_CARS[i];
-    const twin = `${item.brand}|${item.model}|${item.year}`.toLowerCase();
-    if (existing.has(twin)) continue;
-
-    const brandId = await ensureBrand(item.brand);
-    const modelId = await ensureModel(brandId, item.model);
-    const label = `${item.brand} ${item.model}`;
-    const cover = placeholderImage(100000 + i * 17 + item.year, label);
-    if (usedImages.has(cover)) continue;
-    usedImages.add(cover);
-    existing.add(twin);
-
-    pending.push({
-      sellerId: sellers[i % sellers.length],
-      brandId,
-      modelId,
-      year: item.year,
-      price: item.price,
-      km: 50 + (i * 37) % 400,
-      engine: item.engine,
-      power: item.power,
-      fuel: item.fuel,
-      trans: item.trans,
-      body: item.body,
-      color: ['White', 'Black', 'Silver', 'Grey', 'Blue'][i % 5],
-      locId: locs[i % locs.length],
-      desc: `${item.brand} ${item.model} ${item.year}. ${item.body}, ${item.engine}, ${item.power} hp. New arrival.`,
-      phone: '+992 90 555 1000',
-      feat: i < 8,
-      views: 200 + i * 13,
-      cat: 'passenger',
-      img: cover,
-    });
-  }
-
-  console.log(`New Cars 2025/2026: adding ${pending.length} unique models…`);
-  for (let offset = 0; offset < pending.length; offset += BATCH) {
-    await insertCarBatch(pending.slice(offset, offset + BATCH));
-  }
 }
 
 async function fillHomes(sellers, locs) {
@@ -498,12 +443,11 @@ async function normalizePrices() {
     UPDATE cars c
     SET price_usd = CASE
       WHEN c.category = 'parts' THEN GREATEST(10, LEAST(650, 20 + (c.id % 500)))
-      WHEN c.category = 'passenger' AND c.year >= 2025 THEN c.price_usd
       WHEN c.category = 'passenger' THEN GREATEST(
         1800,
         LEAST(
           28000,
-          CASE WHEN b.name IN ('Mercedes-Benz', 'BMW', 'Lexus', 'Audi', 'Porsche')
+          CASE WHEN b.name IN ('Mercedes-Benz', 'BMW', 'Lexus', 'Audi')
             THEN 8000 + GREATEST(0, c.year - 2010) * 650 + (c.id % 3500)
             ELSE 2000 + GREATEST(0, c.year - 2010) * 320 + (c.id % 2200)
           END
@@ -519,9 +463,6 @@ async function normalizePrices() {
     SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
     WHERE price_usd > 95000
   `);
-  // Prefer new models in featured
-  await query(`UPDATE cars SET is_featured = FALSE WHERE year < 2025 AND category = 'passenger'`);
-  await query(`UPDATE cars SET is_featured = TRUE WHERE year >= 2025 AND category = 'passenger' AND mileage <= 500`);
 }
 
 export async function seedCatalog() {
@@ -536,7 +477,6 @@ export async function seedCatalog() {
   const sellerIds = sellers.rows.map((r) => r.id);
   const locIds = locs.rows.map((r) => r.id);
 
-  await seedNewGlobalCars(sellerIds, locIds);
   await fillCars(0, sellerIds, locIds);
   await fillHomes(sellers.rows, locIds);
   console.log('Catalog seed done.');

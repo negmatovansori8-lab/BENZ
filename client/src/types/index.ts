@@ -55,7 +55,6 @@ export interface Car {
   seller_avatar?: string | null;
   images: CarImage[] | null;
   is_favorite?: boolean;
-  is_new?: boolean;
   category?: string;
 }
 

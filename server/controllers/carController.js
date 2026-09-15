@@ -95,7 +95,7 @@ export function shapeCar(row, favoriteIds = []) {
     ...row,
     images: filled,
     is_favorite: favoriteIds.includes(row.id),
-    is_new: Number(row.year) >= NEW_CAR_YEAR_FROM,
+    is_new: (row.category || 'passenger') === 'passenger' && Number(row.year) >= NEW_CAR_YEAR_FROM,
     location: row.city ? `${row.city}, ${row.country}` : row.country || null,
   };
 }

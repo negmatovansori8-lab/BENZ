@@ -69,8 +69,26 @@ export function phoneLookupVariants(value) {
   const d = phoneDigits(value);
   if (d.length < 9) return [];
   const variants = new Set([d]);
-  if (d.startsWith('992') && d.length >= 12) variants.add(d.slice(3));
-  if (!d.startsWith('992') && (d.length === 9 || d.length === 10)) variants.add(`992${d.replace(/^0/, '')}`);
-  if (d.startsWith('0')) variants.add(d.slice(1));
+  // +992XXXXXXXXX
+  if (d.startsWith('992') && d.length >= 12) {
+    variants.add(d.slice(3));
+    variants.add(d.slice(-9));
+  }
+  // 0XXXXXXXXX local
+  if (d.startsWith('0') && d.length >= 10) {
+    const local = d.slice(1);
+    variants.add(local);
+    variants.add(`992${local}`);
+  }
+  // 9-digit Tajik mobile (90/91/92/93/98/110…)
+  if (!d.startsWith('992') && d.length === 9) {
+    variants.add(`992${d}`);
+  }
+  // 10-digit with leading 0 already handled; without 992
+  if (!d.startsWith('992') && d.length === 10 && !d.startsWith('0')) {
+    variants.add(`992${d.slice(-9)}`);
+    variants.add(d.slice(-9));
+  }
+  if (d.length > 12) variants.add(d.slice(-9));
   return [...variants];
 }

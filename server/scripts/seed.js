@@ -53,7 +53,7 @@ const LOCATIONS = [
 ];
 
 const USERS = [
-  { name: 'Admin Autohub', email: 'admin@autohub.tj', password: 'Admin123!', role: 'ADMIN', phone: '+992 90 000 0001' },
+  { name: 'Admin Autohub', email: 'admin@autohub.tj', password: 'Admin123!', role: 'USER', phone: '+992 90 000 0001' },
   { name: 'Farzona Karimova', email: 'farzona@autohub.tj', password: 'Password123!', role: 'SELLER', phone: '+992 90 111 1001' },
   { name: 'Rustam Saidov', email: 'rustam@autohub.tj', password: 'Password123!', role: 'SELLER', phone: '+992 90 111 1002' },
   { name: 'Dilshod Nazarov', email: 'dilshod@autohub.tj', password: 'Password123!', role: 'SELLER', phone: '+992 90 111 1003' },
@@ -263,9 +263,6 @@ export async function seedDatabase({ close = true, skipSchema = false } = {}) {
   );
 
   console.log('Seed complete.');
-  console.log('Admin:  admin@autohub.tj / Admin123!');
-  console.log('Seller: rustam@autohub.tj / Password123!');
-  console.log('User:   nigina@autohub.tj / Password123!');
   if (close) await pool.end();
 }
 

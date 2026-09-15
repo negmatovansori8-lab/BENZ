@@ -169,12 +169,13 @@ export default function Login() {
         <h1 className="font-display text-center text-3xl">{t('loginTitle')}</h1>
         <p className="mb-6 text-center text-sm text-[var(--ah-muted)]">{t('loginWelcome')}</p>
         <label className="block">
-          <span className="label">{t('email')}</span>
+          <span className="label">{t('emailOrPhone')}</span>
           <input
             className="input"
-            type="email"
+            type="text"
+            inputMode="email"
             required
-            autoComplete="email"
+            autoComplete="username"
             value={email}
             onChange={(e) => {
               const next = e.target.value;

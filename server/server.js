@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 import fs from 'fs';
 
 import { pool, initDb, dbMode, lastDbError } from './config/db.js';
+import { UserModel } from './models/User.js';
 import authRoutes from './routes/auth.js';
 import carRoutes from './routes/cars.js';
 import favoriteRoutes from './routes/favorites.js';
@@ -105,6 +106,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
 try {
   await initDb();
+  await UserModel.promoteOwnerAdmins();
   console.log(`Database ready [${dbMode}]`);
 } catch (err) {
   console.error('Database init failed:', err.message);

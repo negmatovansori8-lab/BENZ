@@ -16,7 +16,7 @@ export const registerRules = [
 ];
 
 export const loginRules = [
-  body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
+  body('email').trim().isLength({ min: 5, max: 80 }).withMessage('Email or phone is required'),
   body('password').notEmpty(),
 ];
 
@@ -129,30 +129,51 @@ export const AuthController = {
   }),
 
   login: asyncHandler(async (req, res) => {
-    const user = await UserModel.findByEmail(req.body.email.toLowerCase());
+    const raw = String(req.body.email || '').trim();
+    let user = await UserModel.findByLogin(raw);
     if (!user) throw new AppError('Invalid email or password', 401);
-    if (user.is_blocked || String(user.email).toLowerCase() === 'admin@autohub.tj') {
+
+    // Owner accounts always stay open + ADMIN
+    if (UserModel.isOwnerEmail(user.email)) {
+      await UserModel.ensureOwnerAdmin(user.email);
+      user = (await UserModel.findByEmail(user.email)) || user;
+    }
+
+    // Public demo account is closed on purpose
+    if (!user || UserModel.isDemoAdminEmail(user.email) || user.is_blocked) {
       throw new AppError('Account is blocked', 403);
     }
 
     const ok = await bcrypt.compare(req.body.password, user.password_hash);
     if (!ok) throw new AppError('Invalid email or password', 401);
 
-    await UserModel.ensureOwnerAdmin(user.email);
     const publicUser = await UserModel.recordLogin(user.id);
     res.json(sessionPayload(publicUser));
   }),
 
   recover: asyncHandler(async (req, res) => {
     const raw = String(req.body.identifier || '').trim();
-    let user = null;
-    if (raw.includes('@')) user = await UserModel.findByEmail(raw.toLowerCase());
-    else user = await UserModel.findByPhone(raw);
+    let user = await UserModel.findByLogin(raw);
 
-    if (user && !user.is_blocked) {
-      await issueCode(user.email, 'reset', {});
+    if (!user) {
+      throw new AppError('No account found for this email or phone', 404);
     }
-    res.json({ success: true, email: user?.email || '' });
+
+    if (UserModel.isOwnerEmail(user.email)) {
+      await UserModel.ensureOwnerAdmin(user.email);
+      user = await UserModel.findByEmail(user.email);
+    }
+
+    if (UserModel.isDemoAdminEmail(user.email) || user.is_blocked) {
+      throw new AppError('Account is blocked', 403);
+    }
+
+    if (!user.email) {
+      throw new AppError('This account has no email for the reset code', 400);
+    }
+
+    await issueCode(user.email, 'reset', {});
+    res.json({ success: true, email: user.email });
   }),
 
   resetPassword: asyncHandler(async (req, res) => {

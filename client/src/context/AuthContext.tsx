@@ -101,7 +101,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!raw) throw authError('authInvalidEmail');
     try {
       const { data } = await api.post('/auth/recover', { identifier: raw });
-      return { email: String(data?.email || (raw.includes('@') ? raw.toLowerCase() : '')) };
+      const email = String(data?.email || '').trim();
+      if (!email) throw authError('authAccountNotFound');
+      return { email };
     } catch (err) {
       throwMapped(err);
     }

@@ -61,6 +61,8 @@ export function mapApiAuthMessage(message?: string): Msg | null {
   if (!text) return null;
   if (isUnverifiedText(text)) return 'authEmailNotConfirmed';
   if (text.includes('already exists')) return 'authEmailTaken';
+  if (text.includes('no account found')) return 'authAccountNotFound';
+  if (text.includes('no email for the reset')) return 'authResetNeedsEmail';
   if (
     text.includes('real email') ||
     text.includes('temporary') ||

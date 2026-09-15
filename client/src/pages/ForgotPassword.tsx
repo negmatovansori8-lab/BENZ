@@ -132,7 +132,7 @@ export default function ForgotPassword() {
         <form onSubmit={onCode} className="card w-full max-w-md space-y-3 p-8">
           <h1 className="font-display text-center text-3xl">{t('forgotPasswordTitle')}</h1>
           <p className="text-center text-sm text-[var(--ah-muted)]">{t('resetCodeHint')}</p>
-          <p className="text-center text-sm font-medium">{identifier}</p>
+          <p className="text-center text-sm font-medium">{email || identifier}</p>
           {error && (
             <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>
           )}

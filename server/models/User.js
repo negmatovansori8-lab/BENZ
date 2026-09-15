@@ -2,10 +2,27 @@ import { query } from '../config/db.js';
 import { phoneLookupVariants } from '../utils/supabaseAuth.js';
 
 const PUBLIC_USER = 'id, name, email, phone, avatar, role, is_blocked, created_at, last_login_at';
+const DEMO_ADMIN_EMAIL = 'admin@autohub.tj';
+
+function ownerAdminEmails() {
+  const extra = String(process.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  return [...new Set([
+    'negmatovansori8@gmail.com',
+    'nurjahonismoilov531@gmail.com',
+    ...extra,
+  ])];
+}
 
 export const UserModel = {
   async findByEmail(email) {
-    const { rows } = await query(`SELECT * FROM users WHERE email = $1`, [email]);
+    const normalized = String(email || '').trim().toLowerCase();
+    const { rows } = await query(
+      `SELECT * FROM users WHERE lower(email) = $1 LIMIT 1`,
+      [normalized]
+    );
     return rows[0] || null;
   },
 
@@ -19,6 +36,13 @@ export const UserModel = {
       [variants]
     );
     return rows[0] || null;
+  },
+
+  async findByLogin(identifier) {
+    const raw = String(identifier || '').trim();
+    if (!raw) return null;
+    if (raw.includes('@')) return this.findByEmail(raw);
+    return this.findByPhone(raw);
   },
 
   async updatePassword(id, passwordHash) {
@@ -76,6 +100,45 @@ export const UserModel = {
 
   async remove(id) {
     await query(`DELETE FROM users WHERE id = $1`, [id]);
+  },
+
+  isOwnerEmail(email) {
+    return ownerAdminEmails().includes(String(email || '').trim().toLowerCase());
+  },
+
+  isDemoAdminEmail(email) {
+    return String(email || '').trim().toLowerCase() === DEMO_ADMIN_EMAIL;
+  },
+
+  async ensureOwnerAdmin(email) {
+    const normalized = String(email || '').trim().toLowerCase();
+    if (!ownerAdminEmails().includes(normalized)) return null;
+    const { rows } = await query(
+      `UPDATE users SET role = 'ADMIN', is_blocked = false, updated_at = NOW()
+       WHERE lower(email) = $1
+       RETURNING ${PUBLIC_USER}`,
+      [normalized]
+    );
+    return rows[0] || null;
+  },
+
+  async lockPublicDemoAdmin() {
+    await query(
+      `UPDATE users SET role = 'USER', is_blocked = true, updated_at = NOW()
+       WHERE lower(email) = $1`,
+      [DEMO_ADMIN_EMAIL]
+    );
+  },
+
+  async promoteOwnerAdmins() {
+    await this.lockPublicDemoAdmin();
+    const emails = ownerAdminEmails();
+    if (!emails.length) return;
+    await query(
+      `UPDATE users SET role = 'ADMIN', is_blocked = false, updated_at = NOW()
+       WHERE lower(email) = ANY($1::text[])`,
+      [emails]
+    );
   },
 
   async recordLogin(id) {

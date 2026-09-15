@@ -3,32 +3,32 @@ import { query } from '../config/db.js';
 const BATCH = 80;
 
 const PASSENGER = [
-  { brand: 'Toyota', models: ['Camry', 'Corolla', 'Prado', 'RAV4', 'Land Cruiser', 'Highlander', 'Hilux', 'Yaris', 'Supra'], bodies: ['Sedan', 'SUV', 'Pickup', 'Hatchback', 'Sports'] },
-  { brand: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class', 'G-Class', 'AMG GT'], bodies: ['Sedan', 'SUV', 'Hatchback', 'Sports'] },
-  { brand: 'BMW', models: ['3 Series', '5 Series', 'X5', 'X3', 'X6', 'X1', '7 Series', 'M4'], bodies: ['Sedan', 'SUV', 'Coupe', 'Sports'] },
+  { brand: 'Toyota', models: ['Camry', 'Corolla', 'Prado', 'RAV4', 'Land Cruiser', 'Highlander', 'Hilux', 'Yaris', 'Supra'], bodies: ['Sedan', 'SUV', 'Pickup', 'Hatchback', 'Coupe'] },
+  { brand: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class', 'G-Class', 'AMG GT'], bodies: ['Sedan', 'SUV', 'Hatchback', 'Coupe'] },
+  { brand: 'BMW', models: ['3 Series', '5 Series', 'X5', 'X3', 'X6', 'X1', '7 Series', 'M4'], bodies: ['Sedan', 'SUV', 'Coupe', 'Coupe'] },
   { brand: 'Audi', models: ['A6', 'A4', 'Q7', 'Q5', 'A8', 'RS6', 'TT'], bodies: ['Sedan', 'SUV', 'Wagon', 'Coupe'] },
   { brand: 'Lexus', models: ['LX', 'RX', 'GX', 'ES', 'IS', 'LC'], bodies: ['Sedan', 'SUV', 'Coupe'] },
-  { brand: 'Porsche', models: ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan'], bodies: ['Sports', 'SUV', 'Sedan'] },
-  { brand: 'Ferrari', models: ['Roma', 'F8 Tributo', 'SF90'], bodies: ['Sports', 'Coupe'] },
-  { brand: 'Lamborghini', models: ['Huracan', 'Urus'], bodies: ['Sports', 'SUV'] },
+  { brand: 'Porsche', models: ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan'], bodies: ['Coupe', 'SUV', 'Sedan'] },
+  { brand: 'Ferrari', models: ['Roma', 'F8 Tributo', 'SF90'], bodies: ['Coupe', 'Coupe'] },
+  { brand: 'Lamborghini', models: ['Huracan', 'Urus'], bodies: ['Coupe', 'SUV'] },
   { brand: 'Bentley', models: ['Continental GT', 'Bentayga'], bodies: ['Coupe', 'SUV'] },
   { brand: 'Rolls-Royce', models: ['Ghost', 'Cullinan'], bodies: ['Sedan', 'SUV'] },
   { brand: 'Tesla', models: ['Model 3', 'Model Y', 'Model S', 'Model X'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Ford', models: ['Mustang', 'Explorer', 'F-150', 'Focus', 'Bronco'], bodies: ['Sports', 'SUV', 'Pickup', 'Hatchback'] },
-  { brand: 'Chevrolet', models: ['Camaro', 'Tahoe', 'Malibu', 'Tracker', 'Silverado'], bodies: ['Sports', 'SUV', 'Sedan', 'Pickup'] },
+  { brand: 'Ford', models: ['Mustang', 'Explorer', 'F-150', 'Focus', 'Bronco'], bodies: ['Coupe', 'SUV', 'Pickup', 'Hatchback'] },
+  { brand: 'Chevrolet', models: ['Camaro', 'Tahoe', 'Malibu', 'Tracker', 'Silverado'], bodies: ['Coupe', 'SUV', 'Sedan', 'Pickup'] },
   { brand: 'Dodge', models: ['Charger', 'Challenger', 'Durango'], bodies: ['Sedan', 'Coupe', 'SUV'] },
   { brand: 'Jeep', models: ['Wrangler', 'Grand Cherokee', 'Compass'], bodies: ['SUV'] },
-  { brand: 'Nissan', models: ['Patrol', 'X-Trail', 'Sunny', 'Qashqai', 'GT-R'], bodies: ['SUV', 'Sedan', 'Sports'] },
+  { brand: 'Nissan', models: ['Patrol', 'X-Trail', 'Sunny', 'Qashqai', 'GT-R'], bodies: ['SUV', 'Sedan', 'Coupe'] },
   { brand: 'Honda', models: ['Civic', 'Accord', 'CR-V', 'Pilot', 'Fit'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
   { brand: 'Hyundai', models: ['Tucson', 'Santa Fe', 'Elantra', 'Sonata', 'Ioniq 5'], bodies: ['SUV', 'Sedan'] },
   { brand: 'Kia', models: ['Sportage', 'Sorento', 'K5', 'EV6', 'Seltos'], bodies: ['SUV', 'Sedan'] },
   { brand: 'Volkswagen', models: ['Passat', 'Tiguan', 'Golf', 'Touareg', 'ID.4'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
   { brand: 'Volvo', models: ['XC90', 'XC60', 'S90'], bodies: ['SUV', 'Sedan'] },
   { brand: 'Subaru', models: ['Forester', 'Outback', 'WRX'], bodies: ['SUV', 'Wagon', 'Sedan'] },
-  { brand: 'Mazda', models: ['CX-5', 'CX-9', 'Mazda 6', 'MX-5'], bodies: ['SUV', 'Sedan', 'Sports'] },
+  { brand: 'Mazda', models: ['CX-5', 'CX-9', 'Mazda 6', 'MX-5'], bodies: ['SUV', 'Sedan', 'Coupe'] },
   { brand: 'Mitsubishi', models: ['Pajero', 'Outlander', 'L200'], bodies: ['SUV', 'Pickup'] },
   { brand: 'Land Rover', models: ['Range Rover', 'Defender', 'Discovery'], bodies: ['SUV'] },
-  { brand: 'Jaguar', models: ['F-Pace', 'XF', 'F-Type'], bodies: ['SUV', 'Sedan', 'Sports'] },
+  { brand: 'Jaguar', models: ['F-Pace', 'XF', 'F-Type'], bodies: ['SUV', 'Sedan', 'Coupe'] },
   { brand: 'BYD', models: ['Song Plus', 'Han', 'Seal', 'Yuan Plus'], bodies: ['SUV', 'Sedan'] },
   { brand: 'Geely', models: ['Coolray', 'Monjaro', 'Atlas'], bodies: ['SUV'] },
   { brand: 'Chery', models: ['Tiggo 7', 'Tiggo 8', 'Arrizo 8'], bodies: ['SUV', 'Sedan'] },
@@ -78,7 +78,7 @@ const MOTORCYCLE = [
   { brand: 'Honda', models: ['CBR650R', 'PCX', 'Africa Twin'], bodies: ['Motorcycle', 'Scooter'] },
   { brand: 'Kawasaki', models: ['Ninja 650', 'Z900'], bodies: ['Motorcycle'] },
   { brand: 'Harley-Davidson', models: ['Street Glide', 'Iron 883'], bodies: ['Motorcycle'] },
-  { brand: 'Ducati', models: ['Panigale V2', 'Monster'], bodies: ['Motorcycle', 'Sports'] },
+  { brand: 'Ducati', models: ['Panigale V2', 'Monster'], bodies: ['Motorcycle', 'Coupe'] },
 ];
 
 const MARINE = [
@@ -103,6 +103,19 @@ const PARTS = [
   { brand: 'Hyundai', models: ['Battery 70Ah', 'Spark plugs', 'Bumper front', 'CV joint'] },
   { brand: 'Honda', models: ['Alternator', 'Timing belt kit', 'Clutch kit', 'Air filter'] },
 ];
+
+const ALLOWED_BODIES = new Set(['Sedan', 'SUV', 'Coupe', 'Hatchback', 'Wagon', 'Pickup', 'Minivan']);
+
+function safeBody(body, fallback = 'Sedan') {
+  const b = String(body || fallback);
+  if (ALLOWED_BODIES.has(b)) return b;
+  if (/sport|coupe|gt|roma|mustang|911|temerario|huracan/i.test(b)) return 'Coupe';
+  if (/truck|pickup|van|bus|tractor|construction|marine|aircraft|motorcycle/i.test(b)) return 'Pickup';
+  if (/wagon|estate/i.test(b)) return 'Wagon';
+  if (/hatch/i.test(b)) return 'Hatchback';
+  if (/suv|crossover|jeep/i.test(b)) return 'SUV';
+  return fallback;
+}
 
 const COLORS = ['White', 'Black', 'Silver', 'Grey', 'Blue', 'Red', 'Green', 'Beige'];
 const FUELS = ['Petrol', 'Diesel', 'Hybrid', 'Gas', 'Electric'];
@@ -157,32 +170,31 @@ async function idMap(groups) {
 
 async function insertCarBatch(rows) {
   if (!rows.length) return;
-  const params = [];
-  const values = [];
-  let i = 1;
+  // Insert one-by-one so one bad row cannot wipe a whole New Cars batch
   for (const r of rows) {
-    values.push(`($${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},'APPROVED',$${i++},$${i++},$${i++})`);
-    params.push(
-      r.sellerId, r.brandId, r.modelId, r.year, r.price, r.km, r.engine, r.power,
-      r.fuel, r.trans, r.body, r.color, r.locId, r.desc, r.phone, r.feat, r.views, r.cat
-    );
+    try {
+      const { rows: inserted } = await query(
+        `INSERT INTO cars (
+           seller_id, brand_id, model_id, year, price_usd, mileage, engine, power,
+           fuel, transmission, body, color, location_id, description, phone,
+           status, is_featured, views, category
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,'APPROVED',$16,$17,$18)
+         RETURNING id`,
+        [
+          r.sellerId, r.brandId, r.modelId, r.year, r.price, r.km, r.engine, r.power,
+          r.fuel, r.trans, safeBody(r.body), r.color, r.locId, r.desc, r.phone, r.feat, r.views, r.cat,
+        ]
+      );
+      if (inserted[0] && r.img) {
+        await query(
+          `INSERT INTO car_images (car_id, url, sort_order) VALUES ($1, $2, 0)`,
+          [inserted[0].id, r.img]
+        );
+      }
+    } catch (err) {
+      console.error(`Seed insert failed ${r.brandId}/${r.modelId}/${r.year}:`, err.message);
+    }
   }
-  const { rows: inserted } = await query(
-    `INSERT INTO cars (
-       seller_id, brand_id, model_id, year, price_usd, mileage, engine, power,
-       fuel, transmission, body, color, location_id, description, phone,
-       status, is_featured, views, category
-     ) VALUES ${values.join(',')} RETURNING id`,
-    params
-  );
-  const imgParams = [];
-  const imgValues = [];
-  let j = 1;
-  inserted.forEach((row, idx) => {
-    imgValues.push(`($${j++},$${j++},0)`);
-    imgParams.push(row.id, rows[idx].img);
-  });
-  await query(`INSERT INTO car_images (car_id, url, sort_order) VALUES ${imgValues.join(',')}`, imgParams);
 }
 
 function realisticPrice(g, year, cat, n) {
@@ -208,7 +220,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     : cat === 'motorcycle' ? 1500 + (n * 97) % 45000
     : 8000 + (n * 137) % 240000;
   const price = realisticPrice(g, year, cat, n);
-  const body = g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup';
+  const body = safeBody(g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup');
   const fuel = cat === 'parts'
     ? 'Petrol'
     : ['Tesla', 'BYD'].includes(g.brand) || /EV|Ioniq|ID\.|Taycan|Seal|Han/i.test(model)
@@ -435,6 +447,7 @@ async function seedNewGlobalCars(sellers, locs) {
 
     const existing = byTwin.get(twin);
     const km = 40 + (i * 37) % 400;
+    const body = safeBody(item.body);
     if (existing) {
       await query(
         `UPDATE cars SET
@@ -450,8 +463,8 @@ async function seedNewGlobalCars(sellers, locs) {
           item.power,
           item.fuel,
           item.trans,
-          item.body,
-          `${item.brand} ${item.model} ${item.year}. ${item.body}, ${item.engine}, ${item.power} hp. New arrival.`,
+          body,
+          `${item.brand} ${item.model} ${item.year}. ${body}, ${item.engine}, ${item.power} hp. New arrival.`,
           i < 12,
           existing.id,
         ]
@@ -480,10 +493,10 @@ async function seedNewGlobalCars(sellers, locs) {
       power: item.power,
       fuel: item.fuel,
       trans: item.trans,
-      body: item.body,
+      body,
       color: ['White', 'Black', 'Silver', 'Grey', 'Blue'][i % 5],
       locId: locs[i % locs.length],
-      desc: `${item.brand} ${item.model} ${item.year}. ${item.body}, ${item.engine}, ${item.power} hp. New arrival.`,
+      desc: `${item.brand} ${item.model} ${item.year}. ${body}, ${item.engine}, ${item.power} hp. New arrival.`,
       phone: '+992 90 555 1000',
       feat: i < 12,
       views: 200 + i * 13,
@@ -576,7 +589,9 @@ async function normalizePrices() {
     SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
     WHERE price_usd > 95000
   `);
-  // Mark low-mileage 2025+ passenger as featured (keep existing featured as-is)
+  // Parts are not “featured cars”
+  await query(`UPDATE cars SET is_featured = FALSE WHERE category = 'parts'`);
+  // Mark low-mileage 2025+ passenger as featured
   await query(
     `UPDATE cars SET is_featured = TRUE
      WHERE year >= $1 AND category = 'passenger' AND mileage <= $2`,

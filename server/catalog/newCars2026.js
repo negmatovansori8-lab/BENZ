@@ -1,6 +1,7 @@
 /**
  * Latest global models (2025–2026). Extend this list for 2027+ without schema changes.
  * One entry = one unique listing (brand + model + year).
+ * body must be one of: Sedan, SUV, Coupe, Hatchback, Wagon, Pickup, Minivan
  */
 export const NEW_GLOBAL_CARS = [
   { brand: 'Toyota', model: 'Camry', year: 2026, body: 'Sedan', fuel: 'Hybrid', engine: '2.5L Hybrid', power: 225, price: 32000, trans: 'Automatic' },
@@ -19,12 +20,12 @@ export const NEW_GLOBAL_CARS = [
   { brand: 'Lexus', model: 'ES', year: 2025, body: 'Sedan', fuel: 'Hybrid', engine: '2.5L Hybrid', power: 215, price: 48000, trans: 'Automatic' },
   { brand: 'Lexus', model: 'NX', year: 2026, body: 'SUV', fuel: 'Hybrid', engine: '2.5L Hybrid', power: 239, price: 47000, trans: 'Automatic' },
   { brand: 'Porsche', model: 'Macan Electric', year: 2025, body: 'SUV', fuel: 'Electric', engine: 'Electric', power: 402, price: 82000, trans: 'Automatic' },
-  { brand: 'Porsche', model: '911', year: 2026, body: 'Sports', fuel: 'Petrol', engine: '3.0L Twin-Turbo', power: 379, price: 128000, trans: 'Automatic' },
+  { brand: 'Porsche', model: '911', year: 2026, body: 'Coupe', fuel: 'Petrol', engine: '3.0L Twin-Turbo', power: 379, price: 128000, trans: 'Automatic' },
   { brand: 'Porsche', model: 'Cayenne', year: 2025, body: 'SUV', fuel: 'Petrol', engine: '3.0L', power: 348, price: 89000, trans: 'Automatic' },
   { brand: 'Tesla', model: 'Model 3', year: 2026, body: 'Sedan', fuel: 'Electric', engine: 'Electric', power: 283, price: 42000, trans: 'Automatic' },
   { brand: 'Tesla', model: 'Model Y', year: 2026, body: 'SUV', fuel: 'Electric', engine: 'Electric', power: 295, price: 48000, trans: 'Automatic' },
   { brand: 'Tesla', model: 'Model S', year: 2025, body: 'Sedan', fuel: 'Electric', engine: 'Electric', power: 670, price: 92000, trans: 'Automatic' },
-  { brand: 'Ford', model: 'Mustang', year: 2025, body: 'Sports', fuel: 'Petrol', engine: '5.0L V8', power: 480, price: 45000, trans: 'Manual' },
+  { brand: 'Ford', model: 'Mustang', year: 2025, body: 'Coupe', fuel: 'Petrol', engine: '5.0L V8', power: 480, price: 45000, trans: 'Automatic' },
   { brand: 'Ford', model: 'Explorer', year: 2026, body: 'SUV', fuel: 'Hybrid', engine: '2.3L Hybrid', power: 318, price: 46000, trans: 'Automatic' },
   { brand: 'Ford', model: 'F-150 Lightning', year: 2025, body: 'Pickup', fuel: 'Electric', engine: 'Electric', power: 580, price: 62000, trans: 'Automatic' },
   { brand: 'Chevrolet', model: 'Equinox EV', year: 2025, body: 'SUV', fuel: 'Electric', engine: 'Electric', power: 213, price: 36000, trans: 'Automatic' },
@@ -54,8 +55,8 @@ export const NEW_GLOBAL_CARS = [
   { brand: 'Geely', model: 'Monjaro', year: 2025, body: 'SUV', fuel: 'Petrol', engine: '2.0L Turbo', power: 238, price: 34000, trans: 'Automatic' },
   { brand: 'Land Rover', model: 'Range Rover Sport', year: 2025, body: 'SUV', fuel: 'Petrol', engine: '3.0L', power: 395, price: 95000, trans: 'Automatic' },
   { brand: 'Land Rover', model: 'Defender', year: 2026, body: 'SUV', fuel: 'Petrol', engine: '3.0L', power: 395, price: 88000, trans: 'Automatic' },
-  { brand: 'Ferrari', model: 'Roma Spider', year: 2025, body: 'Sports', fuel: 'Petrol', engine: '3.9L V8', power: 612, price: 280000, trans: 'Automatic' },
-  { brand: 'Lamborghini', model: 'Temerario', year: 2026, body: 'Sports', fuel: 'Hybrid', engine: '4.0L V8 Hybrid', power: 907, price: 390000, trans: 'Automatic' },
+  { brand: 'Ferrari', model: 'Roma Spider', year: 2025, body: 'Coupe', fuel: 'Petrol', engine: '3.9L V8', power: 612, price: 280000, trans: 'Automatic' },
+  { brand: 'Lamborghini', model: 'Temerario', year: 2026, body: 'Coupe', fuel: 'Hybrid', engine: '4.0L V8 Hybrid', power: 907, price: 390000, trans: 'Automatic' },
   { brand: 'Jaguar', model: 'F-Pace', year: 2025, body: 'SUV', fuel: 'Petrol', engine: '2.0L', power: 247, price: 58000, trans: 'Automatic' },
   { brand: 'Mazda', model: 'CX-60', year: 2025, body: 'SUV', fuel: 'Hybrid', engine: '2.5L PHEV', power: 323, price: 48000, trans: 'Automatic' },
   { brand: 'Subaru', model: 'Forester', year: 2026, body: 'SUV', fuel: 'Petrol', engine: '2.5L', power: 180, price: 34000, trans: 'Automatic' },

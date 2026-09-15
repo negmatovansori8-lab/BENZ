@@ -42,18 +42,33 @@ export const CarModel = {
     return { rows, total: count.rows[0].total };
   },
 
-  async featured(limit = 8) {
+  async featured(limit = 24) {
+    const premium = [
+      'Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Lexus', 'Toyota', 'Tesla', 'Land Rover', 'Jaguar', 'Honda',
+    ];
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.is_featured = TRUE AND c.category = 'passenger'
-       ORDER BY c.updated_at DESC LIMIT $1`,
-      [limit]
+       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
+         AND b.name = ANY($2::text[])
+       ORDER BY
+         CASE b.name
+           WHEN 'Mercedes-Benz' THEN 0 WHEN 'BMW' THEN 1 WHEN 'Audi' THEN 2
+           WHEN 'Porsche' THEN 3 WHEN 'Lexus' THEN 4 WHEN 'Tesla' THEN 5
+           WHEN 'Toyota' THEN 6 ELSE 7
+         END,
+         CASE c.body
+           WHEN 'SUV' THEN 0 WHEN 'Sedan' THEN 1 WHEN 'Coupe' THEN 2
+           WHEN 'Pickup' THEN 3 ELSE 4
+         END,
+         c.year DESC, c.views DESC
+       LIMIT $1`,
+      [limit, premium]
     );
-    if (rows.length) return rows;
+    if (rows.length >= Math.min(8, limit)) return rows;
     const fallback = await query(
       `SELECT ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
-       ORDER BY c.views DESC, c.created_at DESC LIMIT $1`,
+       ORDER BY c.year DESC, c.views DESC LIMIT $1`,
       [limit]
     );
     return fallback.rows;

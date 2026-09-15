@@ -1,177 +1,104 @@
 /**
- * Listing covers:
- * - passenger → real brand/model studio render (Imagin)
- * - kamaz / parts / trucks → local gallery
- * - other specialty → unique fallback (not random landscapes for cars)
+ * Passenger covers: curated real car photos (no IMAGE studio watermark).
+ * Specialty: local /kamaz /parts /trucks galleries.
  */
 
-const TAG_HINT = {
-  passenger: 'car',
-  commercial: 'truck',
-  kamaz: 'lorry',
-  bus: 'bus',
-  special: 'excavator',
-  agricultural: 'tractor',
-  motorcycle: 'motorcycle',
-  marine: 'yacht',
-  aircraft: 'airplane',
-  parts: 'engine',
+const LOCAL_CAR_COUNT = 8;
+
+/** Verified Unsplash IDs — real automobiles only. */
+const PHOTOS = [
+  '1552519507-da1b975cd568',
+  '1618843479313-40f8ac5a9f65',
+  '1606664515524-ed2f786a0bd6',
+  '1492144534655-ae79c964c9d7',
+  '1503376780353-7e6692767b70',
+  '1542362567-b073e7c4e9f0',
+  '1555215695-3004980ad54e',
+  '1617531653332-bd460b3d65bb',
+  '1553440569-bcc3878deb59',
+  '1549399542-7e3f8b79c341',
+  '1606220945770-b5b6c2c55bf1',
+  '1609521263047-f8f205293f24',
+  '1605559424843-9e4c228bf1c2',
+  '1544636331-e26879cd4d9b',
+  '1511919884226-fd3cad54629b',
+  '1503736334956-4d8f2e29cd83',
+  '1614200179396-2bdb77e0f3e9',
+  '1583121274602-3e2820c69888',
+  '1494976388531-d1058494cdd8',
+  '1621007947382-bb3c3994e3fb',
+  '1563720223185-11003d516935',
+  '1606016157555-9c4c957df6b9',
+  '1560958089-b8a192261813',
+  '1533473359331-0135ef1b58bf',
+  '1519641471654-76ce0107ad1b',
+  '1494905998402-395d579af36f',
+  '1485291571150-772bcfc10da5',
+  '1449965408864-e677f2ad2a1a',
+  '1549317661-bd432e5588d4',
+  '1502877338535-766e1452684a',
+  '1550355291-bbee04a92027',
+  '1541899481282-d53bffe3c35d',
+  '1525609004556-c46c7d6cf023',
+  '1616422285623-13ff0162193b',
+];
+
+const BRAND_POOL = {
+  'mercedes-benz': [0, 1, 2, 3, 4, 5],
+  bmw: [6, 7, 8, 9, 10],
+  audi: [11, 12, 13, 14],
+  porsche: [15, 16, 17, 18],
+  toyota: [19, 20, 21, 23, 24],
+  lexus: [19, 20, 3, 4],
+  tesla: [22, 11, 12],
+  honda: [23, 24, 25],
+  hyundai: [25, 26, 27],
+  kia: [26, 27, 28],
+  ford: [28, 29, 30],
+  chevrolet: [29, 30, 31],
+  volkswagen: [11, 12, 13],
+  nissan: [23, 24, 32],
+  jeep: [25, 26, 33],
+  'land rover': [2, 3, 25],
+  jaguar: [15, 16, 3],
+  mazda: [19, 23, 27],
+  subaru: [23, 24, 28],
+  volvo: [11, 12, 25],
 };
 
-const MAKE_ALIAS = {
-  'mercedes-benz': 'mercedes',
-  mercedes: 'mercedes',
-  'land rover': 'landrover',
-  'land-rover': 'landrover',
-  volkswagen: 'volkswagen',
-};
-
-const MODEL_FAMILY = {
-  '5 series': '5',
-  '3 series': '3',
-  '7 series': '7',
-  'e-class': 'e-class',
-  'c-class': 'c-class',
-  's-class': 's-class',
-  'a-class': 'a-class',
-  'g-class': 'g-class',
-  'model 3': 'model-3',
-  'model y': 'model-y',
-  'model s': 'model-s',
-  'model x': 'model-x',
-  'land cruiser': 'land-cruiser',
-  'range rover': 'range-rover',
-  'range rover sport': 'range-rover-sport',
-  'f-pace': 'f-pace',
-  'f-type': 'f-type',
-  'ioniq 5': 'ioniq-5',
-  'cr-v': 'cr-v',
-  'grand cherokee': 'grand-cherokee',
-  'cx-5': 'cx-5',
-  'cx-9': 'cx-9',
-  'id.4': 'id.4',
-  'amg gt': 'amg-gt',
-  wrx: 'wrx',
-  mustang: 'mustang',
-  camry: 'camry',
-  corolla: 'corolla',
-  prado: 'land-cruiser-prado',
-  rav4: 'rav4',
-  x5: 'x5',
-  x3: 'x3',
-  x6: 'x6',
-  x1: 'x1',
-  gle: 'gle',
-  glc: 'glc',
-  q7: 'q7',
-  q5: 'q5',
-  a6: 'a6',
-  a4: 'a4',
-  rx: 'rx',
-  es: 'es',
-  nx: 'nx',
-  lx: 'lx',
-  '911': '911',
-  cayenne: 'cayenne',
-  macan: 'macan',
-  tucson: 'tucson',
-  'santa fe': 'santa-fe',
-  sportage: 'sportage',
-  sorento: 'sorento',
-  patrol: 'patrol',
-  civic: 'civic',
-  accord: 'accord',
-  highlander: 'highlander',
-  durango: 'durango',
-  charger: 'charger',
-  challenger: 'challenger',
-  cobalt: 'cobalt',
-  elantra: 'elantra',
-  sonata: 'sonata',
-  tiguan: 'tiguan',
-  passat: 'passat',
-  golf: 'golf',
-  forester: 'forester',
-  outback: 'outback',
-  'f-150': 'f-150',
-  explorer: 'explorer',
-  bronco: 'bronco',
-  focus: 'focus',
-  camaro: 'camaro',
-  tahoe: 'tahoe',
-  silverado: 'silverado',
-  malibu: 'malibu',
-  wrangler: 'wrangler',
-  compass: 'compass',
-  'x-trail': 'x-trail',
-  qashqai: 'qashqai',
-  sunny: 'sunny',
-  'gt-r': 'gt-r',
-  pilot: 'pilot',
-  fit: 'fit',
-  k5: 'k5',
-  ev6: 'ev6',
-  seltos: 'seltos',
-  touareg: 'touareg',
-  xc90: 'xc90',
-  xc60: 'xc60',
-  s90: 's90',
-  pajero: 'pajero',
-  outlander: 'outlander',
-  defender: 'defender',
-  discovery: 'discovery',
-  xf: 'xf',
-  seal: 'seal',
-  han: 'han',
-  'song plus': 'song-plus',
-  'yuan plus': 'yuan-plus',
-  jolion: 'jolion',
-  monjaro: 'monjaro',
-};
-
-function slug(s) {
-  return String(s || '')
-    .toLowerCase()
-    .trim()
-    .replace(/[._]/g, '-')
-    .replace(/\s+/g, '-');
-}
-
-export function imaginMake(brand) {
-  const key = String(brand || '').toLowerCase().trim();
-  return MAKE_ALIAS[key] || slug(brand).replace(/-/g, '');
-}
-
-export function imaginModelFamily(model) {
-  const key = String(model || '').toLowerCase().trim();
-  if (MODEL_FAMILY[key]) return MODEL_FAMILY[key];
-  const first = key.split(/\s+/)[0];
-  if (MODEL_FAMILY[first]) return MODEL_FAMILY[first];
-  return slug(model).replace(/--+/g, '-');
-}
-
-/** Real car render matched to brand + model (Mercedes, BMW, …). */
-export function carPhoto(brand, model, year, seed = 0, index = 0) {
-  const make = imaginMake(brand);
-  const modelFamily = imaginModelFamily(model);
-  if (!make || !modelFamily) {
-    return placeholderImage(seed, [brand, model].filter(Boolean).join(' ') || 'BENZ');
+function hashStr(s) {
+  let h = 2166136261;
+  const str = String(s || '');
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
   }
+  return Math.abs(h);
+}
+
+/** Real car photo — unique per listing, no IMAGE studio watermark. */
+export function carPhoto(brand, model, year, seed = 0, index = 0) {
   const id = Math.abs(Number(seed) || 0);
   const i = Math.abs(Number(index) || 0);
-  const angle = 1 + ((id * 3 + i * 11) % 28);
-  const y = Math.min(2100, Math.max(2015, Number(year) || 2024));
-  const paint = 40 + ((id + i) % 30);
+  const key = String(brand || '').toLowerCase().trim();
+  const brandKey = key.includes('land') ? 'land rover' : key;
+  const idxs = BRAND_POOL[brandKey];
+  let photoId;
+  if (idxs && idxs.length) {
+    const pick = idxs[(id + i * 3) % idxs.length];
+    photoId = PHOTOS[pick % PHOTOS.length];
+  } else {
+    photoId = PHOTOS[(id * 17 + i * 31 + hashStr(`${brand}|${model}|${year}`)) % PHOTOS.length];
+  }
   return (
-    `https://cdn.imagin.studio/getImage?customer=img` +
-    `&make=${encodeURIComponent(make)}` +
-    `&modelFamily=${encodeURIComponent(modelFamily)}` +
-    `&modelYear=${y}` +
-    `&angle=${angle}` +
-    `&zoomType=fullscreen` +
-    `&width=900` +
-    `&paintId=pspc00${paint}`
+    `https://images.unsplash.com/photo-${photoId}` +
+    `?auto=format&fit=crop&w=900&h=600&q=80&sig=${id}-${i}`
   );
+}
+
+export function localPassengerPhoto(seed = 0, index = 0) {
+  const n = (Math.abs(Number(seed) || 0) + Math.abs(Number(index) || 0) * 3) % LOCAL_CAR_COUNT;
+  return `/cars/${n + 1}.jpg`;
 }
 
 export function placeholderImage(seed = 0, label = 'BENZ') {
@@ -190,7 +117,6 @@ export function placeholderImage(seed = 0, label = 'BENZ') {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-/** Cover for a listing — passenger cars use real studio photos. */
 export function imageForVehicle(category, seed = 0, index = 0, meta = {}) {
   const cat = category || 'passenger';
   const id = Math.abs(Number(seed) || 0);
@@ -201,14 +127,14 @@ export function imageForVehicle(category, seed = 0, index = 0, meta = {}) {
   if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
     return `/trucks/${(id % 3) + 1}.jpg`;
   }
-  if (cat === 'passenger' && meta.brand && meta.model) {
-    return carPhoto(meta.brand, meta.model, meta.year, id, i);
+  if (cat === 'passenger') {
+    if (meta.brand && meta.model) return carPhoto(meta.brand, meta.model, meta.year, id, i);
+    return localPassengerPhoto(id, i);
   }
   if (meta.brand || meta.model) {
     return placeholderImage(id * 31 + i, [meta.brand, meta.model].filter(Boolean).join(' '));
   }
-  const hint = TAG_HINT[cat] || 'vehicle';
-  return `https://picsum.photos/seed/benz-${hint}-${id}-${i}/900/600`;
+  return localPassengerPhoto(id, i);
 }
 
 export function isRemoteVehicleImage(url) {
@@ -222,14 +148,13 @@ export function isImaginImage(url) {
 export function isStockRemoteImage(url) {
   const s = String(url || '');
   return (
-    /images\.unsplash\.com/i.test(s) ||
     /loremflickr\.com/i.test(s) ||
     /picsum\.photos/i.test(s) ||
+    /cdn\.imagin\.studio/i.test(s) ||
     /^data:image\/svg\+xml/i.test(s)
   );
 }
 
-/** Dedupe by id + full image URL (keep query for CDN uniqueness). */
 export function uniqueVehicles(rows = []) {
   const byId = new Set();
   const byTwin = new Set();

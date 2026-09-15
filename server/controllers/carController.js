@@ -60,17 +60,21 @@ function rewriteImageUrl(url, carId, index, category = 'passenger', meta = {}) {
   if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw;
   if (raw.startsWith('/parts/') || raw.startsWith('/kamaz/') || raw.startsWith('/trucks/')) return raw;
 
-  // Passenger cars always get a real brand/model studio photo (not landscapes)
+  // Never keep IMAGE studio / picsum landscapes for passenger cars
   if (cat === 'passenger' && meta.brand && meta.model) {
-    if (isImaginImage(raw) || !raw || isStockRemoteImage(raw) || raw.startsWith('/cars/') || raw.startsWith('http')) {
-      return carPhoto(meta.brand, meta.model, meta.year, carId, index);
-    }
+    return carPhoto(meta.brand, meta.model, meta.year, carId, index);
   }
 
-  if (!raw || isStockRemoteImage(raw) || raw.startsWith('/cars/')) {
+  if (!raw || isStockRemoteImage(raw) || isImaginImage(raw) || raw.startsWith('/cars/')) {
     return imageForVehicle(cat, carId, index, meta);
   }
-  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    // Drop leftover Imagin / random stock
+    if (isImaginImage(raw) || isStockRemoteImage(raw)) {
+      return imageForVehicle(cat, carId, index, meta);
+    }
+    return raw;
+  }
   return localCarUrl(carId, index, cat, meta);
 }
 

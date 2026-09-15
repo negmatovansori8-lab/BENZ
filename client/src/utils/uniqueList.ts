@@ -11,7 +11,7 @@ export function uniqueByIdAndImage(rows: Car[]): Car[] {
     const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`.toLowerCase();
     if (twins.has(twin)) continue;
     const url = c.images?.[0]?.url ? String(c.images[0].url) : '';
-    const isLocalCar = url.startsWith('/cars/');
+    const isLocalCar = url.startsWith('/stock/cars/') || url.startsWith('/cars/');
     if (url && !isLocalCar) {
       const key = url.split('?')[0];
       if (remoteImgs.has(key)) continue;

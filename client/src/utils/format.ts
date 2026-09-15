@@ -51,7 +51,17 @@ function hashSeed(s: string | number) {
 
 export function localCarSrc(seed?: string | number | null, index = 0) {
   const n = (hashSeed(seed ?? 'car') + index) % LOCAL_COUNT;
-  return `/cars/${n + 1}.jpg`;
+  return `/stock/cars/${n + 1}.jpg`;
+}
+
+/** Old /cars/*.jpg collided with SPA /cars/:id — map to /stock/... */
+export function stockUrl(url: string) {
+  if (!url) return url;
+  if (url.startsWith('/stock/')) return url;
+  for (const folder of ['cars', 'trucks', 'kamaz', 'parts', 'homes'] as const) {
+    if (url.startsWith(`/${folder}/`)) return `/stock${url}`;
+  }
+  return url;
 }
 
 function parseImageList(images: unknown): unknown[] {
@@ -122,12 +132,14 @@ export function isLocalMedia(url: string) {
   return (
     url.startsWith('http://') ||
     url.startsWith('https://') ||
+    url.startsWith('/stock/') ||
     url.startsWith('/cars/') ||
     url.startsWith('/trucks/') ||
     url.startsWith('/kamaz/') ||
     url.startsWith('/parts/') ||
     url.startsWith('/homes/') ||
     url === '/hero.jpg' ||
+    url === '/hero-benz.jpg' ||
     url.startsWith('/uploads/') ||
     url.startsWith('blob:') ||
     url.startsWith('data:')
@@ -136,7 +148,7 @@ export function isLocalMedia(url: string) {
 
 export function carImage(url?: string | null, seed?: string | number | null, index = 0) {
   if (url && (url.startsWith('http://') || url.startsWith('https://'))) return url;
-  if (url && isLocalMedia(url)) return mediaUrl(url);
+  if (url && isLocalMedia(url)) return mediaUrl(stockUrl(url));
   return localCarSrc(seed ?? url, index);
 }
 
@@ -153,7 +165,9 @@ export function galleryImages(images: unknown, seed?: string | number | null) {
 }
 
 export function avatarUrl(name?: string | null, url?: string | null) {
-  if (url && isLocalMedia(url) && !url.startsWith('/cars/')) return mediaUrl(url);
+  if (url && isLocalMedia(url) && !url.startsWith('/cars/') && !url.startsWith('/stock/cars/')) {
+    return mediaUrl(stockUrl(url));
+  }
   const letters = (name || 'AH')
     .split(/\s+/)
     .slice(0, 2)

@@ -7,7 +7,7 @@ function shape(row) {
     try { images = JSON.parse(images); } catch { images = []; }
   }
   if (!Array.isArray(images) || !images.length) {
-    images = [{ url: `/homes/${((row.id - 1) % 3) + 1}.jpg` }];
+    images = [{ url: `/stock/homes/${((row.id - 1) % 3) + 1}.jpg` }];
   }
   return {
     ...row,

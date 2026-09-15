@@ -35,7 +35,7 @@ export default function HomeDetails() {
   if (error) return <div className="container-ah py-16"><ErrorState onRetry={() => window.location.reload()} /></div>;
   if (!item) return <div className="container-ah py-16"><div className="skeleton h-[380px] w-full rounded-3xl" /></div>;
 
-  const cover = item.images?.[0]?.url || `/homes/${((item.id - 1) % 3) + 1}.jpg`;
+  const cover = item.images?.[0]?.url || `/stock/homes/${((item.id - 1) % 3) + 1}.jpg`;
   const kind = KIND_KEY[item.kind] || 'apartment';
 
   return (

@@ -8,7 +8,7 @@ import { pool, query, initDb, execSql, schemaPath } from '../config/db.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const img = (_id, carIndex = 0, photoIndex = 0) =>
-  `/cars/${((carIndex + photoIndex) % 8) + 1}.jpg`;
+  `/stock/cars/${((carIndex + photoIndex) % 8) + 1}.jpg`;
 
 const BRANDS = [
   { name: 'BMW', logo: 'https://logo.clearbit.com/bmw.com' },

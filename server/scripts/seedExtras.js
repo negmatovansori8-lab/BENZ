@@ -25,15 +25,15 @@ async function seedCommercial() {
   if (!sellerIds.length || !locIds.length) return;
 
   const items = [
-    { brand: 'Shacman', model: 'X3000', year: 2024, price: 62000, km: 18000, engine: '11.0L Diesel', power: 375, body: 'Pickup', cat: 'commercial', feat: true, img: '/trucks/1.jpg', desc: 'Самосвал Shacman X3000. Барои сохтмон ва кӯҳҳои Тоҷикистон.' },
-    { brand: 'HOWO', model: 'TX', year: 2023, price: 54800, km: 41000, engine: '10.0L Diesel', power: 371, body: 'Pickup', cat: 'commercial', feat: true, img: '/trucks/1.jpg', desc: 'HOWO TX самосвал. Евро-5, кабинаи хоб.' },
-    { brand: 'DAF', model: 'XF 105', year: 2014, price: 39200, km: 89000, engine: '12.9L Diesel', power: 460, body: 'Pickup', cat: 'commercial', feat: false, img: '/trucks/2.jpg', desc: 'Седельный тягач DAF XF 105. Барои масофаҳои дур.' },
-    { brand: 'GAZ', model: 'Gazelle Next', year: 2021, price: 16800, km: 67000, engine: '2.8L Diesel', power: 149, body: 'Minivan', cat: 'commercial', feat: false, img: '/trucks/2.jpg', desc: 'Газел Next тентованный. Барои боркашии шаҳрӣ.' },
-    { brand: 'Isuzu', model: 'NPR', year: 2019, price: 22400, km: 98000, engine: '5.2L Diesel', power: 150, body: 'Pickup', cat: 'commercial', feat: false, img: '/trucks/2.jpg', desc: 'Isuzu NPR. Боркаши миёна, боэътимод.' },
-    { brand: 'FAW', model: 'J6', year: 2022, price: 41000, km: 52000, engine: '8.6L Diesel', power: 350, body: 'Pickup', cat: 'commercial', feat: false, img: '/trucks/1.jpg', desc: 'FAW J6 самосвал. Нархи хуб, қисмҳо дастрас.' },
-    { brand: 'MAN', model: 'TGS', year: 2016, price: 45500, km: 210000, engine: '12.4L Diesel', power: 440, body: 'Pickup', cat: 'commercial', feat: false, img: '/trucks/2.jpg', desc: 'MAN TGS тягач. Европа, хидматрасонии пурра.' },
-    { brand: 'JCB', model: '3CX', year: 2020, price: 42000, km: 6200, engine: '4.4L Diesel', power: 109, body: 'Pickup', cat: 'special', feat: true, img: '/trucks/3.jpg', desc: 'Экскаватор-погрузчик JCB 3CX. Спецтехника барои сохтмон.' },
-    { brand: 'Shacman', model: 'Mixer', year: 2021, price: 51000, km: 38000, engine: '10.0L Diesel', power: 336, body: 'Pickup', cat: 'special', feat: false, img: '/trucks/3.jpg', desc: 'Бетономешалка Shacman. 10 м³.' },
+    { brand: 'Shacman', model: 'X3000', year: 2024, price: 62000, km: 18000, engine: '11.0L Diesel', power: 375, body: 'Pickup', cat: 'commercial', feat: true, img: '/stock/trucks/1.jpg', desc: 'Самосвал Shacman X3000. Барои сохтмон ва кӯҳҳои Тоҷикистон.' },
+    { brand: 'HOWO', model: 'TX', year: 2023, price: 54800, km: 41000, engine: '10.0L Diesel', power: 371, body: 'Pickup', cat: 'commercial', feat: true, img: '/stock/trucks/1.jpg', desc: 'HOWO TX самосвал. Евро-5, кабинаи хоб.' },
+    { brand: 'DAF', model: 'XF 105', year: 2014, price: 39200, km: 89000, engine: '12.9L Diesel', power: 460, body: 'Pickup', cat: 'commercial', feat: false, img: '/stock/trucks/2.jpg', desc: 'Седельный тягач DAF XF 105. Барои масофаҳои дур.' },
+    { brand: 'GAZ', model: 'Gazelle Next', year: 2021, price: 16800, km: 67000, engine: '2.8L Diesel', power: 149, body: 'Minivan', cat: 'commercial', feat: false, img: '/stock/trucks/2.jpg', desc: 'Газел Next тентованный. Барои боркашии шаҳрӣ.' },
+    { brand: 'Isuzu', model: 'NPR', year: 2019, price: 22400, km: 98000, engine: '5.2L Diesel', power: 150, body: 'Pickup', cat: 'commercial', feat: false, img: '/stock/trucks/2.jpg', desc: 'Isuzu NPR. Боркаши миёна, боэътимод.' },
+    { brand: 'FAW', model: 'J6', year: 2022, price: 41000, km: 52000, engine: '8.6L Diesel', power: 350, body: 'Pickup', cat: 'commercial', feat: false, img: '/stock/trucks/1.jpg', desc: 'FAW J6 самосвал. Нархи хуб, қисмҳо дастрас.' },
+    { brand: 'MAN', model: 'TGS', year: 2016, price: 45500, km: 210000, engine: '12.4L Diesel', power: 440, body: 'Pickup', cat: 'commercial', feat: false, img: '/stock/trucks/2.jpg', desc: 'MAN TGS тягач. Европа, хидматрасонии пурра.' },
+    { brand: 'JCB', model: '3CX', year: 2020, price: 42000, km: 6200, engine: '4.4L Diesel', power: 109, body: 'Pickup', cat: 'special', feat: true, img: '/stock/trucks/3.jpg', desc: 'Экскаватор-погрузчик JCB 3CX. Спецтехника барои сохтмон.' },
+    { brand: 'Shacman', model: 'Mixer', year: 2021, price: 51000, km: 38000, engine: '10.0L Diesel', power: 336, body: 'Pickup', cat: 'special', feat: false, img: '/stock/trucks/3.jpg', desc: 'Бетономешалка Shacman. 10 м³.' },
   ];
 
   console.log('Seeding large vehicles & special equipment…');
@@ -110,7 +110,7 @@ async function seedMorePassenger() {
   const locs = await query('SELECT id FROM locations ORDER BY id');
   if (!sellers.rows.length || !locs.rows.length) return;
 
-  const car = (i) => [`/cars/${(i % 8) + 1}.jpg`, `/cars/${((i + 2) % 8) + 1}.jpg`, `/cars/${((i + 4) % 8) + 1}.jpg`];
+  const car = (i) => [`/stock/cars/${(i % 8) + 1}.jpg`, `/stock/cars/${((i + 2) % 8) + 1}.jpg`, `/stock/cars/${((i + 4) % 8) + 1}.jpg`];
   const items = [
     { brand: 'Toyota', model: 'Prado', year: 2018, price: 42500, km: 98000, engine: '2.7L I4', power: 163, fuel: 'Petrol', trans: 'Automatic', body: 'SUV', color: 'Pearl White', cat: 'passenger', feat: true, views: 3420, desc: 'Land Cruiser Prado 150. 4WD, барои кӯҳҳои Тоҷикистон. Як соҳиб, бе садама.' },
     { brand: 'Toyota', model: 'Corolla', year: 2019, price: 16800, km: 72000, engine: '1.6L I4', power: 122, fuel: 'Petrol', trans: 'Automatic', body: 'Sedan', color: 'Silver', cat: 'passenger', feat: true, views: 2890, desc: 'Corolla классик. Сарфаи бензин, хидматрасонии пурра, ҳолати олӣ.' },
@@ -155,12 +155,12 @@ async function seedKamaz() {
   const locs = await query('SELECT id FROM locations ORDER BY id');
   if (!sellers.rows.length || !locs.rows.length) return;
   const items = [
-    { brand: 'KAMAZ', model: '65115', year: 2018, price: 28500, km: 142000, engine: '11.8L Diesel', power: 300, body: 'Pickup', cat: 'kamaz', feat: true, img: '/kamaz/3.jpg', desc: 'КамАЗ 65115 борбар. 15 тонна, ҳолати корӣ.' },
-    { brand: 'KAMAZ', model: '6520', year: 2021, price: 41200, km: 64000, engine: '11.8L Diesel', power: 400, body: 'Pickup', cat: 'kamaz', feat: true, img: '/kamaz/1.jpg', desc: 'КамАЗ 6520 самосвал. Барои сохтмон.' },
-    { brand: 'KAMAZ', model: '43118', year: 2016, price: 26800, km: 187000, engine: '10.8L Diesel', power: 260, body: 'Pickup', cat: 'kamaz', feat: true, img: '/kamaz/2.jpg', desc: 'КамАЗ 43118 шасси 6x6. Барои роҳҳои кӯҳӣ.' },
-    { brand: 'KAMAZ', model: '5490', year: 2019, price: 35500, km: 210000, engine: '12.0L Diesel', power: 401, body: 'Pickup', cat: 'kamaz', feat: false, img: '/kamaz/2.jpg', desc: 'КамАЗ 5490 тягач. Кабинаи хоб, круиз.' },
-    { brand: 'KAMAZ', model: '65117', year: 2017, price: 23900, km: 156000, engine: '11.8L Diesel', power: 300, body: 'Pickup', cat: 'kamaz', feat: false, img: '/kamaz/3.jpg', desc: 'КамАЗ 65117 тентованный. 15 тонна.' },
-    { brand: 'KAMAZ', model: '53215', year: 2014, price: 18500, km: 240000, engine: '10.8L Diesel', power: 240, body: 'Pickup', cat: 'kamaz', feat: false, img: '/kamaz/1.jpg', desc: 'КамАЗ 53215 классик. Қисмҳо дастрас.' },
+    { brand: 'KAMAZ', model: '65115', year: 2018, price: 28500, km: 142000, engine: '11.8L Diesel', power: 300, body: 'Pickup', cat: 'kamaz', feat: true, img: '/stock/kamaz/3.jpg', desc: 'КамАЗ 65115 борбар. 15 тонна, ҳолати корӣ.' },
+    { brand: 'KAMAZ', model: '6520', year: 2021, price: 41200, km: 64000, engine: '11.8L Diesel', power: 400, body: 'Pickup', cat: 'kamaz', feat: true, img: '/stock/kamaz/1.jpg', desc: 'КамАЗ 6520 самосвал. Барои сохтмон.' },
+    { brand: 'KAMAZ', model: '43118', year: 2016, price: 26800, km: 187000, engine: '10.8L Diesel', power: 260, body: 'Pickup', cat: 'kamaz', feat: true, img: '/stock/kamaz/2.jpg', desc: 'КамАЗ 43118 шасси 6x6. Барои роҳҳои кӯҳӣ.' },
+    { brand: 'KAMAZ', model: '5490', year: 2019, price: 35500, km: 210000, engine: '12.0L Diesel', power: 401, body: 'Pickup', cat: 'kamaz', feat: false, img: '/stock/kamaz/2.jpg', desc: 'КамАЗ 5490 тягач. Кабинаи хоб, круиз.' },
+    { brand: 'KAMAZ', model: '65117', year: 2017, price: 23900, km: 156000, engine: '11.8L Diesel', power: 300, body: 'Pickup', cat: 'kamaz', feat: false, img: '/stock/kamaz/3.jpg', desc: 'КамАЗ 65117 тентованный. 15 тонна.' },
+    { brand: 'KAMAZ', model: '53215', year: 2014, price: 18500, km: 240000, engine: '10.8L Diesel', power: 240, body: 'Pickup', cat: 'kamaz', feat: false, img: '/stock/kamaz/1.jpg', desc: 'КамАЗ 53215 классик. Қисмҳо дастрас.' },
   ];
   console.log('Seeding KAMAZ…');
   for (let i = 0; i < items.length; i++) {
@@ -173,31 +173,31 @@ async function seedParts() {
   const locs = await query('SELECT id FROM locations ORDER BY id');
   if (!sellers.rows.length || !locs.rows.length) return;
   const items = [
-    { brand: 'BMW', model: 'Engine N55', year: 2018, price: 2200, km: 0, engine: '3.0L', power: 306, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Муҳаррики BMW N55. Санҷидашуда, бо кафолат.' },
-    { brand: 'Toyota', model: 'Tires 205/55 R16', year: 2024, price: 280, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: '4 дона шинаи нав. Барои Camry ва Corolla.' },
-    { brand: 'Mercedes-Benz', model: 'LED headlights', year: 2020, price: 450, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Фараҳои LED аслӣ. C-Class / E-Class.' },
-    { brand: 'KAMAZ', model: 'Turbocharger', year: 2019, price: 890, km: 0, engine: '11.8L', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Турбинаи КамАЗ. Нав, бастабандӣ.' },
-    { brand: 'Hyundai', model: 'Battery 70Ah', year: 2025, price: 95, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Батарея 70Ah. 18 моҳ кафолат.' },
-    { brand: 'KAMAZ', model: 'Brake discs', year: 2023, price: 160, km: 0, engine: '—', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Дискҳои тормозӣ барои КамАЗ 65115 / 6520.' },
-    { brand: 'Audi', model: 'Gearbox 7G', year: 2017, price: 1800, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Қуттии суръати Audi 7G-Tronic. Санҷидашуда.' },
-    { brand: 'KAMAZ', model: 'Tires 315/80 R22.5', year: 2024, price: 420, km: 0, engine: '—', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: 'Шинаҳои боркаш 315/80. 4 дона.' },
-    { brand: 'Toyota', model: 'Oil filter', year: 2025, price: 18, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Филтри равған. Camry / Corolla / RAV4. Аслӣ.' },
-    { brand: 'Toyota', model: 'Air filter', year: 2025, price: 22, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Филтри ҳаво. Барои Prado ва Land Cruiser.' },
-    { brand: 'Mercedes-Benz', model: 'Shock absorbers', year: 2021, price: 320, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: 'Амортизаторҳои пеш. C-Class / E-Class. 2 дона.' },
-    { brand: 'BMW', model: 'Radiator', year: 2019, price: 210, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Радиатори BMW 3 / 5 Series. Нав.' },
-    { brand: 'Honda', model: 'Alternator', year: 2018, price: 140, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Генератор Civic / Accord. Санҷидашуда.' },
-    { brand: 'Hyundai', model: 'Spark plugs', year: 2025, price: 35, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'Шамҳо 4 дона. Tucson / Elantra / Sonata.' },
-    { brand: 'Kia', model: 'Bumper front', year: 2022, price: 180, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Бампери пеш Sportage. Ранг нашудааст.' },
-    { brand: 'Nissan', model: 'Timing belt kit', year: 2024, price: 95, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Комплекти ремни ГРМ. Patrol / X-Trail.' },
-    { brand: 'Mitsubishi', model: 'Transfer case', year: 2016, price: 650, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Раздаткаи Pajero 4. Ҳолати хуб.' },
-    { brand: 'Volkswagen', model: 'Clutch kit', year: 2018, price: 240, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'Комплекти сцепление Passat / Tiguan.' },
-    { brand: 'Lada', model: 'Starter', year: 2020, price: 55, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Стартер Vesta / Granta. Нав.' },
-    { brand: 'Chevrolet', model: 'Side mirror', year: 2021, price: 45, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'Оинаи паҳлӯ Cobalt. Бо гармидиҳӣ.' },
-    { brand: 'KAMAZ', model: 'Fuel pump', year: 2022, price: 380, km: 0, engine: '11.8L', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/parts/1.jpg', desc: 'Насоси сӯзишворӣ КамАЗ. Аслӣ.' },
-    { brand: 'Toyota', model: 'Brake pads', year: 2025, price: 48, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/parts/2.jpg', desc: 'Колодкаҳои тормоз. Camry / Corolla / Prado.' },
-    { brand: 'Mercedes-Benz', model: 'Air suspension', year: 2017, price: 720, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/3.jpg', desc: 'Баллони пневмо GLE / S-Class. Як дона.' },
-    { brand: 'BMW', model: 'Xenon ballast', year: 2016, price: 85, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/1.jpg', desc: 'Блок ксенон BMW. Кор мекунад.' },
-    { brand: 'Honda', model: 'CV joint', year: 2019, price: 70, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/parts/2.jpg', desc: 'ШРУС CR-V / Civic. Нав, бо кафолат.' },
+    { brand: 'BMW', model: 'Engine N55', year: 2018, price: 2200, km: 0, engine: '3.0L', power: 306, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/stock/parts/1.jpg', desc: 'Муҳаррики BMW N55. Санҷидашуда, бо кафолат.' },
+    { brand: 'Toyota', model: 'Tires 205/55 R16', year: 2024, price: 280, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/stock/parts/2.jpg', desc: '4 дона шинаи нав. Барои Camry ва Corolla.' },
+    { brand: 'Mercedes-Benz', model: 'LED headlights', year: 2020, price: 450, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Фараҳои LED аслӣ. C-Class / E-Class.' },
+    { brand: 'KAMAZ', model: 'Turbocharger', year: 2019, price: 890, km: 0, engine: '11.8L', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/stock/parts/1.jpg', desc: 'Турбинаи КамАЗ. Нав, бастабандӣ.' },
+    { brand: 'Hyundai', model: 'Battery 70Ah', year: 2025, price: 95, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Батарея 70Ah. 18 моҳ кафолат.' },
+    { brand: 'KAMAZ', model: 'Brake discs', year: 2023, price: 160, km: 0, engine: '—', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Дискҳои тормозӣ барои КамАЗ 65115 / 6520.' },
+    { brand: 'Audi', model: 'Gearbox 7G', year: 2017, price: 1800, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/1.jpg', desc: 'Қуттии суръати Audi 7G-Tronic. Санҷидашуда.' },
+    { brand: 'KAMAZ', model: 'Tires 315/80 R22.5', year: 2024, price: 420, km: 0, engine: '—', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/stock/parts/2.jpg', desc: 'Шинаҳои боркаш 315/80. 4 дона.' },
+    { brand: 'Toyota', model: 'Oil filter', year: 2025, price: 18, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/stock/parts/1.jpg', desc: 'Филтри равған. Camry / Corolla / RAV4. Аслӣ.' },
+    { brand: 'Toyota', model: 'Air filter', year: 2025, price: 22, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Филтри ҳаво. Барои Prado ва Land Cruiser.' },
+    { brand: 'Mercedes-Benz', model: 'Shock absorbers', year: 2021, price: 320, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/stock/parts/2.jpg', desc: 'Амортизаторҳои пеш. C-Class / E-Class. 2 дона.' },
+    { brand: 'BMW', model: 'Radiator', year: 2019, price: 210, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/1.jpg', desc: 'Радиатори BMW 3 / 5 Series. Нав.' },
+    { brand: 'Honda', model: 'Alternator', year: 2018, price: 140, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Генератор Civic / Accord. Санҷидашуда.' },
+    { brand: 'Hyundai', model: 'Spark plugs', year: 2025, price: 35, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/2.jpg', desc: 'Шамҳо 4 дона. Tucson / Elantra / Sonata.' },
+    { brand: 'Kia', model: 'Bumper front', year: 2022, price: 180, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Бампери пеш Sportage. Ранг нашудааст.' },
+    { brand: 'Nissan', model: 'Timing belt kit', year: 2024, price: 95, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/1.jpg', desc: 'Комплекти ремни ГРМ. Patrol / X-Trail.' },
+    { brand: 'Mitsubishi', model: 'Transfer case', year: 2016, price: 650, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Diesel', cat: 'parts', feat: true, img: '/stock/parts/1.jpg', desc: 'Раздаткаи Pajero 4. Ҳолати хуб.' },
+    { brand: 'Volkswagen', model: 'Clutch kit', year: 2018, price: 240, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/2.jpg', desc: 'Комплекти сцепление Passat / Tiguan.' },
+    { brand: 'Lada', model: 'Starter', year: 2020, price: 55, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Стартер Vesta / Granta. Нав.' },
+    { brand: 'Chevrolet', model: 'Side mirror', year: 2021, price: 45, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/2.jpg', desc: 'Оинаи паҳлӯ Cobalt. Бо гармидиҳӣ.' },
+    { brand: 'KAMAZ', model: 'Fuel pump', year: 2022, price: 380, km: 0, engine: '11.8L', power: 0, body: 'Pickup', fuel: 'Diesel', cat: 'parts', feat: true, img: '/stock/parts/1.jpg', desc: 'Насоси сӯзишворӣ КамАЗ. Аслӣ.' },
+    { brand: 'Toyota', model: 'Brake pads', year: 2025, price: 48, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: true, img: '/stock/parts/2.jpg', desc: 'Колодкаҳои тормоз. Camry / Corolla / Prado.' },
+    { brand: 'Mercedes-Benz', model: 'Air suspension', year: 2017, price: 720, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/3.jpg', desc: 'Баллони пневмо GLE / S-Class. Як дона.' },
+    { brand: 'BMW', model: 'Xenon ballast', year: 2016, price: 85, km: 0, engine: '—', power: 0, body: 'Sedan', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/1.jpg', desc: 'Блок ксенон BMW. Кор мекунад.' },
+    { brand: 'Honda', model: 'CV joint', year: 2019, price: 70, km: 0, engine: '—', power: 0, body: 'SUV', fuel: 'Petrol', cat: 'parts', feat: false, img: '/stock/parts/2.jpg', desc: 'ШРУС CR-V / Civic. Нав, бо кафолат.' },
   ];
   console.log('Seeding spare parts…');
   for (let i = 0; i < items.length; i++) {
@@ -222,12 +222,12 @@ async function seedHomes() {
   if (!sellers.rows.length || !locs.rows.length) return;
 
   const homes = [
-    { title: 'Квартираи 3-ҳуҷрагӣ, Сино', kind: 'apartment', rooms: 3, area: 86, floor: 5, floors: 9, price: 72000, feat: true, img: '/homes/3.jpg', desc: 'Квартираи таъмиршуда дар ноҳияи Сино. Лифт, барқи устувор, назди мактаб.' },
-    { title: 'Хонаи 2-ошёна бо ҳавлӣ', kind: 'house', rooms: 6, area: 210, floor: 2, floors: 2, price: 145000, feat: true, img: '/homes/2.jpg', desc: 'Хонаи шахсӣ дар Душанбе. Ҳавлӣ, гараж, об ва газ.' },
-    { title: 'Квартираи 1-ҳуҷрагӣ, Хуҷанд', kind: 'apartment', rooms: 1, area: 42, floor: 3, floors: 5, price: 28500, feat: false, img: '/homes/1.jpg', desc: 'Студия барои ҷуфтҳои ҷавон. Маркази Хуҷанд.' },
-    { title: 'Квартираи 2-ҳуҷрагӣ, Кӯлоб', kind: 'apartment', rooms: 2, area: 64, floor: 2, floors: 4, price: 34000, feat: false, img: '/homes/3.jpg', desc: 'Хонаи оилавӣ, ҳамсояҳои ором, бозори наздик.' },
-    { title: 'Офис 80 м², маркази шаҳр', kind: 'commerce', rooms: 3, area: 80, floor: 4, floors: 8, price: 98000, feat: false, img: '/homes/1.jpg', desc: 'Ҷойи тиҷоратӣ. Паркинг, интернет, назди бонкҳо.' },
-    { title: 'Замини 6 сотих, Варзоб', kind: 'land', rooms: 0, area: 600, floor: 0, floors: 0, price: 22000, feat: true, img: '/homes/2.jpg', desc: 'Замин барои хонаи тобистона. Роҳи хуб, манзараи кӯҳ.' },
+    { title: 'Квартираи 3-ҳуҷрагӣ, Сино', kind: 'apartment', rooms: 3, area: 86, floor: 5, floors: 9, price: 72000, feat: true, img: '/stock/homes/3.jpg', desc: 'Квартираи таъмиршуда дар ноҳияи Сино. Лифт, барқи устувор, назди мактаб.' },
+    { title: 'Хонаи 2-ошёна бо ҳавлӣ', kind: 'house', rooms: 6, area: 210, floor: 2, floors: 2, price: 145000, feat: true, img: '/stock/homes/2.jpg', desc: 'Хонаи шахсӣ дар Душанбе. Ҳавлӣ, гараж, об ва газ.' },
+    { title: 'Квартираи 1-ҳуҷрагӣ, Хуҷанд', kind: 'apartment', rooms: 1, area: 42, floor: 3, floors: 5, price: 28500, feat: false, img: '/stock/homes/1.jpg', desc: 'Студия барои ҷуфтҳои ҷавон. Маркази Хуҷанд.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, Кӯлоб', kind: 'apartment', rooms: 2, area: 64, floor: 2, floors: 4, price: 34000, feat: false, img: '/stock/homes/3.jpg', desc: 'Хонаи оилавӣ, ҳамсояҳои ором, бозори наздик.' },
+    { title: 'Офис 80 м², маркази шаҳр', kind: 'commerce', rooms: 3, area: 80, floor: 4, floors: 8, price: 98000, feat: false, img: '/stock/homes/1.jpg', desc: 'Ҷойи тиҷоратӣ. Паркинг, интернет, назди бонкҳо.' },
+    { title: 'Замини 6 сотих, Варзоб', kind: 'land', rooms: 0, area: 600, floor: 0, floors: 0, price: 22000, feat: true, img: '/stock/homes/2.jpg', desc: 'Замин барои хонаи тобистона. Роҳи хуб, манзараи кӯҳ.' },
   ];
 
   console.log('Seeding homes…');
@@ -263,22 +263,22 @@ async function seedMoreHomes() {
   if (!sellers.rows.length || !locs.rows.length) return;
 
   const homes = [
-    { title: 'Квартираи 4-ҳуҷрагӣ, Исмоили Сомонӣ', kind: 'apartment', rooms: 4, area: 128, floor: 8, floors: 12, price: 98000, feat: true, img: '/homes/3.jpg', desc: 'Квартираи калон дар марказ. Таъмири евро, 2 ҳаммом, паркинг.' },
-    { title: 'Квартираи 2-ҳуҷрагӣ, Фирдавсӣ', kind: 'apartment', rooms: 2, area: 58, floor: 4, floors: 9, price: 41000, feat: true, img: '/homes/1.jpg', desc: 'Хонаи тоза, назди бозор ва мактаб. Барқ ва об устувор.' },
-    { title: 'Квартираи 3-ҳуҷрагӣ, Шоҳмансур', kind: 'apartment', rooms: 3, area: 74, floor: 2, floors: 5, price: 52000, feat: false, img: '/homes/3.jpg', desc: 'Оилавӣ, ҳамсояҳои ором, балкон ба ҳавлӣ.' },
-    { title: 'Квартираи студия, Душанбе Сити', kind: 'apartment', rooms: 1, area: 38, floor: 11, floors: 16, price: 36500, feat: true, img: '/homes/1.jpg', desc: 'Бинои нав. Лифт, консьерж, назди гимн.' },
-    { title: 'Хонаи ҳавлигӣ, 82-мкр', kind: 'house', rooms: 5, area: 160, floor: 1, floors: 1, price: 89000, feat: true, img: '/homes/2.jpg', desc: 'Ҳавлии калон, 2 мошин ҷой, дарахт, обҳои худӣ.' },
-    { title: 'Хонаи 2-ошёна, Варзоб', kind: 'house', rooms: 7, area: 240, floor: 2, floors: 2, price: 175000, feat: true, img: '/homes/2.jpg', desc: 'Вилла бо манзараи кӯҳ. Ҳавзи хурд, генератор.' },
-    { title: 'Квартираи 3-ҳуҷрагӣ, Хуҷанд марказ', kind: 'apartment', rooms: 3, area: 82, floor: 6, floors: 9, price: 39000, feat: false, img: '/homes/3.jpg', desc: 'Маркази Хуҷанд. Таъмиршуда, мебел боқӣ мемонад.' },
-    { title: 'Квартираи 2-ҳуҷрагӣ, Бохтар', kind: 'apartment', rooms: 2, area: 55, floor: 1, floors: 4, price: 22000, feat: false, img: '/homes/1.jpg', desc: 'Ошёнаи якум. Барои оилаи ҷавон, бозор наздик.' },
-    { title: 'Квартираи 4-ҳуҷрагӣ, Кӯлоб', kind: 'apartment', rooms: 4, area: 96, floor: 3, floors: 5, price: 31000, feat: false, img: '/homes/3.jpg', desc: 'Хонаи васеъ. Мактаб ва шифохона 5 дақиқа.' },
-    { title: 'Хонаи нав, Ҳисор', kind: 'house', rooms: 6, area: 190, floor: 2, floors: 2, price: 67000, feat: true, img: '/homes/2.jpg', desc: 'Сохтмони 2024. Газ, об, барқ. Ҳавлии девордор.' },
-    { title: 'Замини 8 сотих, Рӯдакӣ', kind: 'land', rooms: 0, area: 800, floor: 0, floors: 0, price: 18500, feat: false, img: '/homes/2.jpg', desc: 'Замин барои хона. Роҳи асфалт, ҳуҷҷатҳо тайёр.' },
-    { title: 'Замини 12 сотих, Ваҳдат', kind: 'land', rooms: 0, area: 1200, floor: 0, floors: 0, price: 26000, feat: true, img: '/homes/1.jpg', desc: 'Қитъаи калон. Об ва барқ дар наздикӣ.' },
-    { title: 'Мағоза 45 м², бозори Корвон', kind: 'commerce', rooms: 1, area: 45, floor: 1, floors: 2, price: 54000, feat: true, img: '/homes/1.jpg', desc: 'Ҷойи тиҷоратӣ бо трафики баланд. Омода ба иҷора ё фурӯш.' },
-    { title: 'Офис 120 м², хиёбони Рӯдакӣ', kind: 'commerce', rooms: 4, area: 120, floor: 3, floors: 7, price: 128000, feat: false, img: '/homes/3.jpg', desc: 'Офиси премиум. Паркинг, интернет, назди вазоратҳо.' },
-    { title: 'Квартираи 2-ҳуҷрагӣ, 102-мкр', kind: 'apartment', rooms: 2, area: 61, floor: 7, floors: 9, price: 44500, feat: false, img: '/homes/1.jpg', desc: 'Таъмири нав. Кухняи алоҳида, балкон шишагӣ.' },
-    { title: 'Хонаи ҳавлигӣ, Ғафуров', kind: 'house', rooms: 4, area: 110, floor: 1, floors: 1, price: 28000, feat: false, img: '/homes/2.jpg', desc: 'Ҳавлӣ, ошхонаи тобистона, ҷойи мошин.' },
+    { title: 'Квартираи 4-ҳуҷрагӣ, Исмоили Сомонӣ', kind: 'apartment', rooms: 4, area: 128, floor: 8, floors: 12, price: 98000, feat: true, img: '/stock/homes/3.jpg', desc: 'Квартираи калон дар марказ. Таъмири евро, 2 ҳаммом, паркинг.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, Фирдавсӣ', kind: 'apartment', rooms: 2, area: 58, floor: 4, floors: 9, price: 41000, feat: true, img: '/stock/homes/1.jpg', desc: 'Хонаи тоза, назди бозор ва мактаб. Барқ ва об устувор.' },
+    { title: 'Квартираи 3-ҳуҷрагӣ, Шоҳмансур', kind: 'apartment', rooms: 3, area: 74, floor: 2, floors: 5, price: 52000, feat: false, img: '/stock/homes/3.jpg', desc: 'Оилавӣ, ҳамсояҳои ором, балкон ба ҳавлӣ.' },
+    { title: 'Квартираи студия, Душанбе Сити', kind: 'apartment', rooms: 1, area: 38, floor: 11, floors: 16, price: 36500, feat: true, img: '/stock/homes/1.jpg', desc: 'Бинои нав. Лифт, консьерж, назди гимн.' },
+    { title: 'Хонаи ҳавлигӣ, 82-мкр', kind: 'house', rooms: 5, area: 160, floor: 1, floors: 1, price: 89000, feat: true, img: '/stock/homes/2.jpg', desc: 'Ҳавлии калон, 2 мошин ҷой, дарахт, обҳои худӣ.' },
+    { title: 'Хонаи 2-ошёна, Варзоб', kind: 'house', rooms: 7, area: 240, floor: 2, floors: 2, price: 175000, feat: true, img: '/stock/homes/2.jpg', desc: 'Вилла бо манзараи кӯҳ. Ҳавзи хурд, генератор.' },
+    { title: 'Квартираи 3-ҳуҷрагӣ, Хуҷанд марказ', kind: 'apartment', rooms: 3, area: 82, floor: 6, floors: 9, price: 39000, feat: false, img: '/stock/homes/3.jpg', desc: 'Маркази Хуҷанд. Таъмиршуда, мебел боқӣ мемонад.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, Бохтар', kind: 'apartment', rooms: 2, area: 55, floor: 1, floors: 4, price: 22000, feat: false, img: '/stock/homes/1.jpg', desc: 'Ошёнаи якум. Барои оилаи ҷавон, бозор наздик.' },
+    { title: 'Квартираи 4-ҳуҷрагӣ, Кӯлоб', kind: 'apartment', rooms: 4, area: 96, floor: 3, floors: 5, price: 31000, feat: false, img: '/stock/homes/3.jpg', desc: 'Хонаи васеъ. Мактаб ва шифохона 5 дақиқа.' },
+    { title: 'Хонаи нав, Ҳисор', kind: 'house', rooms: 6, area: 190, floor: 2, floors: 2, price: 67000, feat: true, img: '/stock/homes/2.jpg', desc: 'Сохтмони 2024. Газ, об, барқ. Ҳавлии девордор.' },
+    { title: 'Замини 8 сотих, Рӯдакӣ', kind: 'land', rooms: 0, area: 800, floor: 0, floors: 0, price: 18500, feat: false, img: '/stock/homes/2.jpg', desc: 'Замин барои хона. Роҳи асфалт, ҳуҷҷатҳо тайёр.' },
+    { title: 'Замини 12 сотих, Ваҳдат', kind: 'land', rooms: 0, area: 1200, floor: 0, floors: 0, price: 26000, feat: true, img: '/stock/homes/1.jpg', desc: 'Қитъаи калон. Об ва барқ дар наздикӣ.' },
+    { title: 'Мағоза 45 м², бозори Корвон', kind: 'commerce', rooms: 1, area: 45, floor: 1, floors: 2, price: 54000, feat: true, img: '/stock/homes/1.jpg', desc: 'Ҷойи тиҷоратӣ бо трафики баланд. Омода ба иҷора ё фурӯш.' },
+    { title: 'Офис 120 м², хиёбони Рӯдакӣ', kind: 'commerce', rooms: 4, area: 120, floor: 3, floors: 7, price: 128000, feat: false, img: '/stock/homes/3.jpg', desc: 'Офиси премиум. Паркинг, интернет, назди вазоратҳо.' },
+    { title: 'Квартираи 2-ҳуҷрагӣ, 102-мкр', kind: 'apartment', rooms: 2, area: 61, floor: 7, floors: 9, price: 44500, feat: false, img: '/stock/homes/1.jpg', desc: 'Таъмири нав. Кухняи алоҳида, балкон шишагӣ.' },
+    { title: 'Хонаи ҳавлигӣ, Ғафуров', kind: 'house', rooms: 4, area: 110, floor: 1, floors: 1, price: 28000, feat: false, img: '/stock/homes/2.jpg', desc: 'Ҳавлӣ, ошхонаи тобистона, ҷойи мошин.' },
   ];
 
   console.log('Seeding extra homes…');

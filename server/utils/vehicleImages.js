@@ -1,21 +1,20 @@
 /**
  * Passenger covers: local real car photos only (no IMAGE studio / remote watermarks).
- * Specialty: /kamaz /parts /trucks.
+ * Specialty: /stock/kamaz /stock/parts /stock/trucks.
  */
 
 const LOCAL_CAR_COUNT = 8;
 
 export function carPhoto(brand, model, year, seed = 0, index = 0) {
-  // Unique local file per listing — never remote studio watermarks
   const id = Math.abs(Number(seed) || 0);
   const i = Math.abs(Number(index) || 0);
   const n = (id * 7 + i * 3 + String(brand || '').length * 5 + String(model || '').length) % LOCAL_CAR_COUNT;
-  return `/cars/${n + 1}.jpg`;
+  return `/stock/cars/${n + 1}.jpg`;
 }
 
 export function localPassengerPhoto(seed = 0, index = 0) {
   const n = (Math.abs(Number(seed) || 0) + Math.abs(Number(index) || 0) * 3) % LOCAL_CAR_COUNT;
-  return `/cars/${n + 1}.jpg`;
+  return `/stock/cars/${n + 1}.jpg`;
 }
 
 export function placeholderImage(seed = 0, label = 'BENZ') {
@@ -39,10 +38,10 @@ export function imageForVehicle(category, seed = 0, index = 0, meta = {}) {
   const id = Math.abs(Number(seed) || 0);
   const i = Math.abs(Number(index) || 0);
 
-  if (cat === 'parts') return `/parts/${(id % 3) + 1}.jpg`;
-  if (cat === 'kamaz') return `/kamaz/${(id % 3) + 1}.jpg`;
+  if (cat === 'parts') return `/stock/parts/${(id % 3) + 1}.jpg`;
+  if (cat === 'kamaz') return `/stock/kamaz/${(id % 3) + 1}.jpg`;
   if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
-    return `/trucks/${(id % 3) + 1}.jpg`;
+    return `/stock/trucks/${(id % 3) + 1}.jpg`;
   }
   if (cat === 'passenger') return carPhoto(meta.brand, meta.model, meta.year, id, i);
   if (meta.brand || meta.model) {
@@ -57,6 +56,18 @@ export function isRemoteVehicleImage(url) {
 
 export function isImaginImage(url) {
   return /cdn\.imagin\.studio|imagin\.studio|image\s*studio|mag\s*studio/i.test(String(url || ''));
+}
+
+export function isLocalStockUrl(url) {
+  const s = String(url || '');
+  return (
+    s.startsWith('/stock/') ||
+    s.startsWith('/cars/') ||
+    s.startsWith('/trucks/') ||
+    s.startsWith('/kamaz/') ||
+    s.startsWith('/parts/') ||
+    s.startsWith('/homes/')
+  );
 }
 
 export function isStockRemoteImage(url) {
@@ -83,10 +94,10 @@ export function uniqueVehicles(rows = []) {
     const img = Array.isArray(row.images)
       ? (row.images[0]?.url || row.images[0])
       : null;
-    // Local /cars/N.jpg will repeat — dedupe by twin+id only, not by image path alone
-    const imgKey = img && String(img).startsWith('/cars/')
+    const s = img ? String(img) : '';
+    const imgKey = s.startsWith('/stock/') || s.startsWith('/cars/')
       ? null
-      : (img ? String(img).split('?')[0] : null);
+      : (s ? s.split('?')[0] : null);
     if (imgKey && byImg.has(imgKey)) continue;
     byId.add(row.id);
     byTwin.add(twin);

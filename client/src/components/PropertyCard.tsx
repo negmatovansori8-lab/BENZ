@@ -18,7 +18,7 @@ const KIND_KEY: Record<string, Msg> = {
 export function PropertyCard({ item }: { item: Property }) {
   const { currency, rates } = useCurrency();
   const { t } = useI18n();
-  const cover = item.images?.[0]?.url || `/homes/${((item.id - 1) % 3) + 1}.jpg`;
+  const cover = item.images?.[0]?.url || `/stock/homes/${((item.id - 1) % 3) + 1}.jpg`;
   const kind = KIND_KEY[item.kind] || 'apartment';
 
   return (

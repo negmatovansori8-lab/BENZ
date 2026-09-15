@@ -40,9 +40,9 @@ export function CategoryGrid() {
               style={{ '--cat': c.rgb, animationDelay: `${i * 55}ms` } as CSSProperties}
               className="cat-enter cat-tile group flex flex-col items-center gap-2 rounded-2xl px-1 py-2 text-center sm:gap-3 sm:px-1.5 sm:py-3"
             >
-              <span className="cat-orb relative grid h-16 w-16 place-items-center rounded-[1.35rem] sm:h-[5.1rem] sm:w-[5.1rem] sm:rounded-[1.6rem]">
+              <span className="cat-orb relative grid h-[4.35rem] w-[4.35rem] place-items-center rounded-[1.55rem] sm:h-[5.4rem] sm:w-[5.4rem] sm:rounded-[1.75rem]">
                 <span className="cat-orb-glow" />
-                <c.Icon className="relative z-[1] h-9 w-9 drop-shadow-[0_6px_10px_rgb(var(--cat)/.35)] transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-110 group-hover:-translate-y-0.5 sm:h-11 sm:w-11" />
+                <c.Icon className="relative z-[1] h-10 w-10 sm:h-12 sm:w-12" />
               </span>
               <span className="cat-label max-w-[6.4rem] text-[10px] font-semibold leading-tight tracking-wide sm:max-w-[7.5rem] sm:text-sm">
                 {t(c.key)}

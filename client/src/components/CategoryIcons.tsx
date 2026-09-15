@@ -5,7 +5,7 @@ type P = SVGProps<SVGSVGElement>;
 
 function Svg({ className, children, ...rest }: P) {
   return (
-    <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden className={cn('h-8 w-8', className)} {...rest}>
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden className={cn('h-8 w-8', className)} {...rest}>
       {children}
     </svg>
   );
@@ -14,13 +14,26 @@ function Svg({ className, children, ...rest }: P) {
 export function CatSedan(props: P) {
   return (
     <Svg {...props}>
-      <path d="M8 52.5h48" opacity=".22" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <path d="M9.5 38.2h4.2l3.1-8.4A4.4 4.4 0 0 1 21 26.8h9.2l5.1-6.8A3.6 3.6 0 0 1 38.2 18.2h8.4a3.7 3.7 0 0 1 3.4 2.1L54.2 29.4H57v10.2h-3.4a6.2 6.2 0 0 1-12.1 0H23.5a6.2 6.2 0 0 1-12.1 0H9.5V38.2z" />
-      <path d="M22.4 27.2h12.6l4.4-5.8H31.2z" fill="#09090b" fillOpacity=".38" />
-      <circle cx="18.2" cy="46.2" r="5.4" />
-      <circle cx="18.2" cy="46.2" r="2.1" fill="#09090b" fillOpacity=".45" />
-      <circle cx="45.6" cy="46.2" r="5.4" />
-      <circle cx="45.6" cy="46.2" r="2.1" fill="#09090b" fillOpacity=".45" />
+      <defs>
+        <linearGradient id="sedanBody" x1="12" y1="16" x2="54" y2="50" gradientUnits="userSpaceOnUse">
+          <stop stopColor="currentColor" stopOpacity="1" />
+          <stop offset="1" stopColor="currentColor" stopOpacity=".72" />
+        </linearGradient>
+        <linearGradient id="sedanGlass" x1="22" y1="18" x2="40" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#fff" stopOpacity=".55" />
+          <stop offset="1" stopColor="#fff" stopOpacity=".12" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="32" cy="51.5" rx="22" ry="3.2" fill="currentColor" opacity=".16" />
+      <path fill="url(#sedanBody)" d="M10.5 38.5c.4-3.2 2-8.4 5.8-11.2 2.2-1.6 7.4-3.4 11.2-4.1 2.4-.4 4.6-3.8 8.4-5.6 3.2-1.5 8.1-1.6 11.6-.2 2.8 1.1 6.6 4.6 8.2 8.6 1.1 2.8 1.8 6.6 1.8 8.8 0 1.4-.6 2.7-2.4 3.1H13.2c-1.8-.2-2.9-1.6-2.7-3.4z" />
+      <path fill="url(#sedanGlass)" d="M28.2 19.4c3.6-1.5 8.2-1.6 11.2-.4 1.6.6 3.5 2.2 4.4 3.6-3.8.2-9.2.6-13.8 1.8-1.6.4-3.2 1.2-4.6 1.8-.2-1.4.2-4.4 2.8-6.8z" />
+      <path fill="url(#sedanGlass)" d="M18.6 25.6c2.8-.8 6.4-1.6 9.4-1.8.4 1.6.6 3.4.4 5.2H16.8c.2-1.4.8-2.6 1.8-3.4z" />
+      <path fill="currentColor" opacity=".28" d="M48.8 27.4c1.4 2.2 2.4 4.8 2.8 7.2h3.2c-.4-2.8-1.6-6-3.4-8.4-.8.2-1.8.6-2.6 1.2z" />
+      <ellipse cx="20.2" cy="43.4" rx="5.6" ry="5.6" fill="#121214" />
+      <ellipse cx="20.2" cy="43.4" rx="2.4" ry="2.4" fill="currentColor" opacity=".55" />
+      <ellipse cx="44.8" cy="43.4" rx="5.6" ry="5.6" fill="#121214" />
+      <ellipse cx="44.8" cy="43.4" rx="2.4" ry="2.4" fill="currentColor" opacity=".55" />
+      <path fill="#fff" opacity=".35" d="M14.2 34.2h7.4c.6 0 1 .5.9 1.1l-.3 1.4H13.8c-.5 0-.8-.5-.7-1l.4-1.3c.1-.1.4-.2.7-.2z" />
     </Svg>
   );
 }
@@ -28,17 +41,23 @@ export function CatSedan(props: P) {
 export function CatTruck(props: P) {
   return (
     <Svg {...props}>
-      <path d="M7 53h50" opacity=".22" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <rect x="8" y="20" width="29.5" height="22.5" rx="3.2" />
-      <path d="M37.5 29.5H50l6.8 8v6.5H37.5V29.5z" />
-      <path d="M41 29.5v-5.4h7.2" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="12.2" y="24.6" width="21" height="5.2" rx="1.2" fill="#09090b" fillOpacity=".32" />
-      <circle cx="18" cy="47.2" r="5.1" />
-      <circle cx="18" cy="47.2" r="2" fill="#09090b" fillOpacity=".45" />
-      <circle cx="31.6" cy="47.2" r="5.1" />
-      <circle cx="31.6" cy="47.2" r="2" fill="#09090b" fillOpacity=".45" />
-      <circle cx="49.2" cy="47.2" r="5.1" />
-      <circle cx="49.2" cy="47.2" r="2" fill="#09090b" fillOpacity=".45" />
+      <defs>
+        <linearGradient id="truckBody" x1="8" y1="14" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+          <stop stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity=".7" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="32" cy="52" rx="23" ry="3.1" fill="currentColor" opacity=".16" />
+      <rect x="8.5" y="18.5" width="30" height="23.5" rx="3.4" fill="url(#truckBody)" />
+      <path fill="url(#truckBody)" d="M38.5 28.2h12.6l5.4 7.6v7.6c0 1.2-1 2.2-2.2 2.2H38.5V28.2z" />
+      <rect x="12.4" y="23" width="22.2" height="6.2" rx="1.4" fill="#fff" fillOpacity=".28" />
+      <path fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" d="M42.2 28.2V22.6h7.6" opacity=".9" />
+      <ellipse cx="18.4" cy="46.4" rx="5.2" ry="5.2" fill="#121214" />
+      <ellipse cx="18.4" cy="46.4" rx="2.2" ry="2.2" fill="currentColor" opacity=".55" />
+      <ellipse cx="32.2" cy="46.4" rx="5.2" ry="5.2" fill="#121214" />
+      <ellipse cx="32.2" cy="46.4" rx="2.2" ry="2.2" fill="currentColor" opacity=".55" />
+      <ellipse cx="49.4" cy="46.4" rx="5.2" ry="5.2" fill="#121214" />
+      <ellipse cx="49.4" cy="46.4" rx="2.2" ry="2.2" fill="currentColor" opacity=".55" />
     </Svg>
   );
 }
@@ -46,18 +65,24 @@ export function CatTruck(props: P) {
 export function CatKamaz(props: P) {
   return (
     <Svg {...props}>
-      <path d="M6.5 53.2h51" opacity=".22" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <path d="M8.2 17.2h17.4v26.2H8.2z" />
-      <path d="M25.6 28.4h27.2l4.2 7.4v7.6H25.6V28.4z" />
-      <rect x="11.4" y="21.2" width="11" height="6.2" rx="1.2" fill="#09090b" fillOpacity=".32" />
-      <path d="M12.4 17.2V13.4h9v3.8" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" />
-      <path d="M30.4 28.4v-4.8h14.2l3.4 4.8" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="16.8" cy="47.6" r="5.1" />
-      <circle cx="16.8" cy="47.6" r="2" fill="#09090b" fillOpacity=".45" />
-      <circle cx="35.4" cy="47.6" r="5.1" />
-      <circle cx="35.4" cy="47.6" r="2" fill="#09090b" fillOpacity=".45" />
-      <circle cx="49.6" cy="47.6" r="5.1" />
-      <circle cx="49.6" cy="47.6" r="2" fill="#09090b" fillOpacity=".45" />
+      <defs>
+        <linearGradient id="kamazBody" x1="8" y1="12" x2="58" y2="50" gradientUnits="userSpaceOnUse">
+          <stop stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity=".68" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="32" cy="52.2" rx="24" ry="3.1" fill="currentColor" opacity=".16" />
+      <path fill="url(#kamazBody)" d="M8.4 16.4h18.2v26.4H8.4z" />
+      <path fill="url(#kamazBody)" d="M26.6 27.8H54l4 7.6v8.4H26.6V27.8z" />
+      <rect x="11.6" y="20.6" width="12" height="7.2" rx="1.4" fill="#fff" fillOpacity=".3" />
+      <path fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" d="M12.6 16.4V12.4h10" />
+      <path fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" d="M31.2 27.8v-5.4h15.2l3.6 5.4" />
+      <ellipse cx="17.4" cy="46.8" rx="5.1" ry="5.1" fill="#121214" />
+      <ellipse cx="17.4" cy="46.8" rx="2.1" ry="2.1" fill="currentColor" opacity=".55" />
+      <ellipse cx="35.8" cy="46.8" rx="5.1" ry="5.1" fill="#121214" />
+      <ellipse cx="35.8" cy="46.8" rx="2.1" ry="2.1" fill="currentColor" opacity=".55" />
+      <ellipse cx="50.2" cy="46.8" rx="5.1" ry="5.1" fill="#121214" />
+      <ellipse cx="50.2" cy="46.8" rx="2.1" ry="2.1" fill="currentColor" opacity=".55" />
     </Svg>
   );
 }
@@ -65,14 +90,20 @@ export function CatKamaz(props: P) {
 export function CatExcavator(props: P) {
   return (
     <Svg {...props}>
-      <path d="M7 53h33" opacity=".22" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <rect x="9" y="34.4" width="28.4" height="11.2" rx="3.2" />
-      <path d="M16.2 34.4V24.6h12.8v9.8" />
-      <rect x="18.4" y="26.2" width="8.4" height="5.2" rx="1" fill="#09090b" fillOpacity=".32" />
-      <path d="M28.6 26.4 45.2 13.2" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" />
-      <path d="M45.2 13.2 54.6 28" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" />
-      <path d="M49.2 26.8 57.6 24.6 55.2 35.4 47.2 32.4z" />
-      <rect x="12.6" y="45.2" width="21.6" height="3.2" rx="1.4" />
+      <defs>
+        <linearGradient id="exoBody" x1="10" y1="18" x2="40" y2="50" gradientUnits="userSpaceOnUse">
+          <stop stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity=".7" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="26" cy="52" rx="20" ry="3" fill="currentColor" opacity=".16" />
+      <rect x="9.2" y="34" width="30.4" height="12.2" rx="3.4" fill="url(#exoBody)" />
+      <path fill="url(#exoBody)" d="M16.8 34V23.2h14.2V34" />
+      <rect x="19.2" y="25.2" width="9.4" height="5.8" rx="1.3" fill="#fff" fillOpacity=".3" />
+      <path fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" d="M30.4 25.6 47.2 12.4" />
+      <path fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" d="M47.2 12.4 56.6 28.2" />
+      <path fill="currentColor" d="M51 26.6 59.8 24.2 57 36.4 48.6 32.8z" />
+      <rect x="13.4" y="45.4" width="22.4" height="3.6" rx="1.6" fill="#121214" />
     </Svg>
   );
 }
@@ -80,11 +111,17 @@ export function CatExcavator(props: P) {
 export function CatPiston(props: P) {
   return (
     <Svg {...props}>
-      <rect x="20.4" y="6.4" width="23.2" height="21.2" rx="4" />
-      <path d="M20.4 13.6h23.2M20.4 18.6h23.2" fill="none" stroke="#09090b" strokeOpacity=".35" strokeWidth="2.2" />
-      <rect x="27.2" y="27.2" width="9.6" height="9.2" rx="1.6" />
-      <path d="M32 36.4v10.2" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-      <path d="M23.6 48.2 32 44.8l8.4 3.4v5.2L32 57.2 23.6 53.4v-5.2z" />
+      <defs>
+        <linearGradient id="pistonBody" x1="20" y1="8" x2="44" y2="56" gradientUnits="userSpaceOnUse">
+          <stop stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity=".68" />
+        </linearGradient>
+      </defs>
+      <rect x="20.2" y="7.2" width="23.6" height="22" rx="4.2" fill="url(#pistonBody)" />
+      <path fill="none" stroke="#fff" strokeOpacity=".28" strokeWidth="2.2" d="M20.2 14.6h23.6M20.2 20.2h23.6" />
+      <rect x="27.2" y="28.6" width="9.6" height="9.4" rx="1.8" fill="url(#pistonBody)" />
+      <path fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" d="M32 38v10.6" />
+      <path fill="url(#pistonBody)" d="M23.4 50.2 32 46.6l8.6 3.6v5.4L32 59.2l-8.6-3.6v-5.4z" />
     </Svg>
   );
 }
@@ -92,13 +129,18 @@ export function CatPiston(props: P) {
 export function CatHouse(props: P) {
   return (
     <Svg {...props}>
-      <path d="M10 52.8h44" opacity=".22" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <path d="M10.8 30.4 32 11.6 53.2 30.4" />
-      <path d="M16.6 29.2V50.4h30.8V29.2" />
-      <path d="M44.2 15.4v8.6" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
-      <rect x="27.4" y="35.6" width="9.2" height="14.8" rx="1.4" fill="#09090b" fillOpacity=".38" />
-      <rect x="19.4" y="34.6" width="5.8" height="5.8" rx="1" fill="#09090b" fillOpacity=".32" />
-      <rect x="38.8" y="34.6" width="5.8" height="5.8" rx="1" fill="#09090b" fillOpacity=".32" />
+      <defs>
+        <linearGradient id="houseBody" x1="14" y1="12" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+          <stop stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity=".7" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="32" cy="52.6" rx="22" ry="3" fill="currentColor" opacity=".16" />
+      <path fill="url(#houseBody)" d="M10.4 31.2 32 12.2 53.6 31.2 48.2 31.2 48.2 50.8 15.8 50.8 15.8 31.2z" />
+      <path fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" d="M44.6 16.2v8.8" />
+      <rect x="27.2" y="36.2" width="9.6" height="14.6" rx="1.5" fill="#121214" fillOpacity=".4" />
+      <rect x="19.2" y="35" width="6" height="6" rx="1.1" fill="#fff" fillOpacity=".32" />
+      <rect x="38.8" y="35" width="6" height="6" rx="1.1" fill="#fff" fillOpacity=".32" />
     </Svg>
   );
 }

@@ -27,10 +27,16 @@ export function Logo({ className = '' }: { className?: string }) {
   return (
     <Link viewTransition to="/" className={cn('flex items-center gap-2', className)}>
       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold-500 text-zinc-950 shadow-glow">
-        <svg viewBox="0 0 32 32" className="h-6 w-6" aria-hidden>
-          <path d="M6 20h20l-2.2-6.2A3 3 0 0 0 21 12H11a3 3 0 0 0-2.8 1.8L6 20z" fill="currentColor" />
-          <circle cx="10" cy="21.5" r="2" fill="#0a0a0b" />
-          <circle cx="22" cy="21.5" r="2" fill="#0a0a0b" />
+        <svg viewBox="0 0 32 32" className="h-[1.35rem] w-[1.35rem]" aria-hidden>
+          <path
+            d="M6.2 20.4h19.6l-2-5.7A2.7 2.7 0 0 0 21.3 13H10.7a2.7 2.7 0 0 0-2.5 1.7l-2 5.7z"
+            fill="currentColor"
+          />
+          <path d="M11.2 13.2h6.4l2.4-3.1h-4.4" fill="none" stroke="#0a0a0b" strokeWidth="1.2" strokeLinejoin="round" />
+          <circle cx="10.6" cy="21.8" r="2.15" fill="#0a0a0b" />
+          <circle cx="21.4" cy="21.8" r="2.15" fill="#0a0a0b" />
+          <circle cx="10.6" cy="21.8" r=".7" fill="#c9a227" />
+          <circle cx="21.4" cy="21.8" r=".7" fill="#c9a227" />
         </svg>
       </span>
       <span className="font-display text-xl tracking-[0.18em]">
@@ -286,7 +292,7 @@ export function MobileNav() {
                 cn('flex min-h-[48px] flex-col items-center justify-center gap-0.5 py-1.5 text-[10px]', isActive ? 'text-gold-500' : 'text-[var(--ah-muted)]')
               }
             >
-              <it.icon className="h-5 w-5" />
+              <it.icon className="h-5 w-5" strokeWidth={1.75} absoluteStrokeWidth />
               {it.label}
             </NavLink>
           </li>

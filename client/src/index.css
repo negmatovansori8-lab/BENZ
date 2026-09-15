@@ -190,10 +190,10 @@ input {
 .cat-orb {
   color: rgb(var(--cat));
   background:
-    radial-gradient(120% 90% at 28% 18%, rgb(var(--cat) / 0.28), transparent 54%),
-    linear-gradient(180deg, rgb(var(--cat) / 0.16), rgb(var(--cat) / 0.07));
+    radial-gradient(120% 90% at 28% 18%, rgb(var(--cat) / 0.32), transparent 54%),
+    linear-gradient(180deg, rgb(var(--cat) / 0.2), rgb(var(--cat) / 0.08));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
     0 10px 24px -12px rgb(var(--cat) / 0.55);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -321,6 +321,10 @@ input {
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.lucide {
+  stroke-width: 1.75;
+}
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: rgba(201, 162, 39, 0.35); border-radius: 99px; }

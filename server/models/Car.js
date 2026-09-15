@@ -44,12 +44,13 @@ export const CarModel = {
 
   async featured(limit = 24) {
     const premium = [
-      'Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Lexus', 'Toyota', 'Tesla', 'Land Rover', 'Jaguar', 'Honda',
+      'Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Lexus', 'Toyota', 'Tesla', 'Land Rover', 'Honda',
     ];
     const { rows } = await query(
       `SELECT ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
          AND b.name = ANY($2::text[])
+         AND b.name <> 'Jaguar'
        ORDER BY
          CASE b.name
            WHEN 'Mercedes-Benz' THEN 0 WHEN 'BMW' THEN 1 WHEN 'Audi' THEN 2
@@ -67,7 +68,7 @@ export const CarModel = {
     if (rows.length >= Math.min(8, limit)) return rows;
     const fallback = await query(
       `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
+       WHERE c.status = 'APPROVED' AND c.category = 'passenger' AND b.name <> 'Jaguar'
        ORDER BY c.year DESC, c.views DESC LIMIT $1`,
       [limit]
     );
@@ -75,13 +76,24 @@ export const CarModel = {
   },
 
   async recent(limit = 24) {
+    const prefer = [
+      'Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Lexus', 'Toyota', 'Tesla',
+      'Honda', 'Hyundai', 'Kia', 'Volkswagen', 'Ford', 'Chevrolet', 'Nissan',
+    ];
     const { rows } = await query(
       `SELECT DISTINCT ON (b.name, m.name) ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
-       ORDER BY b.name, m.name, c.created_at DESC`
+         AND b.name = ANY($1::text[])
+         AND b.name <> 'Jaguar'
+       ORDER BY b.name, m.name, c.year DESC, c.created_at DESC`,
+      [prefer]
     );
-    // Distinct per brand+model, then newest first for the home strip
-    rows.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    rows.sort((a, b) => {
+      const ra = prefer.indexOf(a.brand);
+      const rb = prefer.indexOf(b.brand);
+      if (ra !== rb) return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
+      return Number(b.year) - Number(a.year);
+    });
     return rows.slice(0, limit);
   },
 

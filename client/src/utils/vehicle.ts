@@ -22,6 +22,22 @@ const BODY: Record<string, Msg> = {
   Wagon: 'bodyWagon',
   Pickup: 'bodyPickup',
   Minivan: 'bodyMinivan',
+  Sports: 'bodySports',
+  Truck: 'bodyTruck',
+  'Heavy Truck': 'bodyHeavyTruck',
+  Bus: 'catBus',
+  Coach: 'bodyCoach',
+  Tractor: 'bodyTractor',
+  Ambulance: 'bodyAmbulance',
+  'Fire Truck': 'bodyFireTruck',
+  Police: 'bodyPolice',
+  'Commercial Van': 'bodyCommercialVan',
+  Construction: 'bodyConstruction',
+  Marine: 'catMarine',
+  Aircraft: 'catAircraft',
+  Motorcycle: 'catMotorcycle',
+  Scooter: 'bodyScooter',
+  Bicycle: 'bodyBicycle',
 };
 
 const CAT: Record<string, Msg> = {
@@ -30,6 +46,12 @@ const CAT: Record<string, Msg> = {
   kamaz: 'catKamaz',
   special: 'catSpecial',
   parts: 'catParts',
+  bus: 'catBus',
+  agricultural: 'catAgricultural',
+  motorcycle: 'catMotorcycle',
+  marine: 'catMarine',
+  aircraft: 'catAircraft',
+  heavy: 'largeVehicles',
 };
 
 export function fuelMsg(v?: string | null): Msg {

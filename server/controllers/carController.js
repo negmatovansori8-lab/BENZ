@@ -6,11 +6,16 @@ import { query, withTransaction } from '../config/db.js';
 import { AppError, asyncHandler } from '../utils/AppError.js';
 import { parsePagination, paginate, sanitizeString } from '../utils/helpers.js';
 import { notify } from '../services/analyticsService.js';
-import { imageForVehicle, isStockRemoteImage } from '../utils/vehicleImages.js';
+import { imageForVehicle, isStockRemoteImage, uniqueVehicles } from '../utils/vehicleImages.js';
 
 const FUEL = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'Gas'];
 const TRANS = ['Automatic', 'Manual'];
-const BODY = ['Sedan', 'SUV', 'Coupe', 'Hatchback', 'Wagon', 'Pickup', 'Minivan'];
+const BODY = [
+  'Sedan', 'SUV', 'Coupe', 'Hatchback', 'Wagon', 'Minivan', 'Sports', 'Pickup',
+  'Truck', 'Heavy Truck', 'Bus', 'Coach', 'Tractor', 'Ambulance', 'Fire Truck',
+  'Police', 'Commercial Van', 'Construction', 'Marine', 'Aircraft', 'Motorcycle',
+  'Scooter', 'Bicycle',
+];
 
 export const carCreateRules = [
   body('brand_id').isInt(),
@@ -101,28 +106,29 @@ export const CarController = {
       minMileage: req.query.minMileage || req.query.min_mileage,
       maxMileage: req.query.maxMileage || req.query.max_mileage,
     });
+    const shaped = uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds)));
     res.json({
       success: true,
-      ...paginate({ rows: rows.map((r) => shapeCar(r, favoriteIds)), total, page, limit }),
+      ...paginate({ rows: shaped, total, page, limit }),
     });
   }),
 
   featured: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
     const rows = await CarModel.featured(8);
-    res.json({ success: true, data: rows.map((r) => shapeCar(r, favoriteIds)) });
+    res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
   }),
 
   recent: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
-    const rows = await CarModel.recent(8);
-    res.json({ success: true, data: rows.map((r) => shapeCar(r, favoriteIds)) });
+    const rows = await CarModel.recent(12);
+    res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
   }),
 
   popular: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
     const rows = await CarModel.popular(8);
-    res.json({ success: true, data: rows.map((r) => shapeCar(r, favoriteIds)) });
+    res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
   }),
 
   getOne: asyncHandler(async (req, res) => {

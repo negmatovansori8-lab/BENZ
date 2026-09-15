@@ -1,4 +1,4 @@
-import { Heart, Scale } from './icons';
+import { Heart, Scale, Share2 } from './icons';
 import { IconButton } from './icons/IconButton';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Car } from '../types';
@@ -23,6 +23,8 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
   const navigate = useNavigate();
   const [fav, setFav] = useState(!!car.is_favorite);
   const cover = coverImage(car.images, car.id);
+  const power = car.power ? `${car.power} ${t('hp')}` : null;
+  const isEv = car.fuel === 'Electric' || car.fuel === 'Hybrid';
 
   const toggleFav = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -56,6 +58,22 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
     else push(t('addedToCompare'), 'success');
   };
 
+  const share = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/cars/${car.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${car.brand} ${car.model}`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        push(t('linkCopied'), 'success');
+      }
+    } catch {
+      /* user cancelled */
+    }
+  };
+
   const facts = [
     { icon: <IconOdo />, text: `${formatNumber(car.mileage)} ${t('kmUnit')}` },
     { icon: <IconFuel />, text: t(fuelMsg(car.fuel)) },
@@ -71,6 +89,13 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
           tone="onMedia"
           className={cn(fav && '[&_.ah-icon]:fill-red-500 [&_.ah-icon]:text-red-500')}
           onClick={toggleFav}
+        />
+        <IconButton
+          icon={Share2}
+          label={t('shareBtn')}
+          tone="onMedia"
+          className="hidden sm:inline-flex"
+          onClick={share}
         />
         <IconButton
           icon={Scale}
@@ -90,9 +115,11 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
             className="img-zoom h-full w-full object-cover"
           />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-          <div className="absolute left-3 top-3 flex gap-1">
+          <div className="absolute left-3 top-3 flex flex-wrap gap-1">
             {car.is_featured && <span className="chip border-0 bg-gold-500 text-[10px] font-semibold text-zinc-950">{t('badgeFeatured')}</span>}
             {car.status === 'SOLD' && <span className="chip border-0 bg-zinc-950 text-[10px] text-white">{t('badgeSold')}</span>}
+            {isEv && <span className="chip border-0 bg-emerald-500/90 text-[10px] font-semibold text-white">{car.fuel}</span>}
+            {car.body && <span className="chip border-0 bg-black/55 text-[10px] text-white backdrop-blur">{car.body}</span>}
           </div>
           <p className="absolute bottom-3 left-3 font-display text-xl font-bold tracking-tight text-white drop-shadow sm:text-2xl">
             {formatPrice(car.price_usd, currency, rates)}
@@ -103,7 +130,11 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
             <h3 className="font-display text-[1.05rem] font-semibold leading-tight tracking-tight sm:text-lg">
               {car.brand} {car.model}
             </h3>
-            <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-[var(--ah-muted)]">{car.year}</p>
+            <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-[var(--ah-muted)]">
+              {car.year}
+              {power ? ` · ${power}` : ''}
+              {car.engine ? ` · ${car.engine}` : ''}
+            </p>
           </div>
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-2">
             {facts.map((f) => (
@@ -117,6 +148,9 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
             <IconPin className="h-3.5 w-3.5" />
             {car.city || car.location || '—'}
           </p>
+          <span className="btn-ghost mt-1 inline-flex w-full justify-center !py-2 text-xs">
+            {t('viewDetails')}
+          </span>
         </div>
       </Link>
     </article>

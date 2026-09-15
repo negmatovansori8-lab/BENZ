@@ -10,9 +10,11 @@ import { EmptyState, ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Car, Location, Paginated } from '../types';
-import { BRANDS } from '../types';
+import { BRANDS, BODIES, FUELS } from '../types';
 import { useI18n } from '../context/LocaleContext';
 import type { Msg } from '../i18n/dict';
+import { bodyMsg } from '../utils/vehicle';
+import { uniqueByIdAndImage } from '../utils/uniqueList';
 
 const SORT_KEYS: { id: string; key: Msg }[] = [
   { id: 'newest', key: 'sortNewest' },
@@ -39,6 +41,14 @@ export default function Cars() {
     : cat === 'kamaz' ? t('catKamaz')
     : cat === 'parts' ? t('catParts')
     : cat === 'passenger' ? t('catPassenger')
+    : cat === 'bus' ? t('catBus')
+    : cat === 'motorcycle' ? t('catMotorcycle')
+    : cat === 'agricultural' ? t('catAgricultural')
+    : cat === 'marine' ? t('catMarine')
+    : cat === 'aircraft' ? t('catAircraft')
+    : params.get('fuel') === 'Electric' ? t('catElectric')
+    : params.get('fuel') === 'Hybrid' ? t('catHybrid')
+    : params.get('body') ? t(bodyMsg(params.get('body')))
     : t('buyCars');
   const dq = useDebounce(q, 300);
 
@@ -60,18 +70,7 @@ export default function Cars() {
     api
       .get(`/cars?${queryString}`)
       .then((r) => {
-        const seen = new Set<string>();
-        const rows = (r.data.data || []).filter((c: Car) => {
-          const twinKey = cat === 'kamaz' || cat === 'heavy' || cat === 'commercial' || cat === 'special' || cat === 'parts'
-            ? `${c.brand}|${c.model}|${c.category}`
-            : `${c.brand}|${c.model}|${c.year}|${c.category}`;
-          const id = `id:${c.id}`;
-          if (seen.has(id) || seen.has(twinKey)) return false;
-          seen.add(id);
-          seen.add(twinKey);
-          return true;
-        });
-        setData({ ...r.data, data: rows });
+        setData({ ...r.data, data: uniqueByIdAndImage(r.data.data || []) });
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -88,6 +87,10 @@ export default function Cars() {
   const clearFilters = () => {
     const next = new URLSearchParams();
     if (cat) next.set('category', cat);
+    const body = params.get('body');
+    const fuel = params.get('fuel');
+    if (body) next.set('body', body);
+    if (fuel) next.set('fuel', fuel);
     setParams(next);
   };
 
@@ -97,6 +100,25 @@ export default function Cars() {
         <select className="input" value={params.get('brand') || ''} onChange={(e) => set('brand', e.target.value)}>
           <option value="">{t('allBrands')}</option>
           {BRANDS.map((b) => <option key={b}>{b}</option>)}
+        </select>
+      </Field>
+      <Field label={t('body')}>
+        <select className="input" value={params.get('body') || ''} onChange={(e) => set('body', e.target.value)}>
+          <option value="">{t('any')}</option>
+          {BODIES.map((b) => <option key={b} value={b}>{t(bodyMsg(b))}</option>)}
+        </select>
+      </Field>
+      <Field label={t('fuel')}>
+        <select className="input" value={params.get('fuel') || ''} onChange={(e) => set('fuel', e.target.value)}>
+          <option value="">{t('any')}</option>
+          {FUELS.map((f) => <option key={f} value={f}>{f}</option>)}
+        </select>
+      </Field>
+      <Field label={t('filterCondition')}>
+        <select className="input" value={params.get('condition') || ''} onChange={(e) => set('condition', e.target.value)}>
+          <option value="">{t('any')}</option>
+          <option value="new">{t('condNewShort')}</option>
+          <option value="used">{t('condUsedShort')}</option>
         </select>
       </Field>
       <Field label={t('city')}>

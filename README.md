@@ -118,15 +118,9 @@ Sort values: `newest`, `oldest`, `price_asc`, `price_desc`, `mileage_asc`, `popu
 
 Listing statuses: `PENDING` · `APPROVED` · `REJECTED` · `SOLD` · `PAUSED`.
 
-## 7. Admin Login
+## 7. Admin
 
-| Role | Email | Password |
-|---|---|---|
-| **Admin** | `admin@autohub.tj` | `Admin123!` |
-| Seller | `rustam@autohub.tj` | `Password123!` |
-| Buyer | `nigina@autohub.tj` | `Password123!` |
-
-Admin panel: **http://localhost:5173/admin**
+Admin panel: **http://localhost:5173/admin** — only an `ADMIN` account can open it. Do not publish admin credentials.
 
 ---
 

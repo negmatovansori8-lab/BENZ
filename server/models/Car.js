@@ -1,4 +1,5 @@
 import { query } from '../config/db.js';
+import { resolveCategoryFilter } from '../utils/catalogTaxonomy.js';
 
 export const CAR_SELECT = `
   c.id, c.seller_id, c.brand_id, c.model_id, c.year, c.price_usd, c.mileage,
@@ -183,7 +184,9 @@ function buildWhere(f) {
     where.push(`(
       b.name ILIKE $${i} OR m.name ILIKE $${i} OR
       (b.name || ' ' || m.name) ILIKE $${i} OR
-      c.description ILIKE $${i} OR c.color ILIKE $${i} OR c.engine ILIKE $${i}
+      c.description ILIKE $${i} OR c.color ILIKE $${i} OR c.engine ILIKE $${i} OR
+      c.body ILIKE $${i} OR c.category ILIKE $${i} OR c.fuel ILIKE $${i} OR
+      CAST(c.year AS TEXT) ILIKE $${i}
     )`);
     params.push(`%${f.q}%`);
     i++;
@@ -224,7 +227,11 @@ function buildWhere(f) {
     where.push(`c.mileage <= $${i++}`);
     params.push(f.maxMileage);
   }
-  if (f.fuel) {
+  if (f.fuel === 'Electric' || f.electric === 'true' || f.electric === true) {
+    where.push(`c.fuel = 'Electric'`);
+  } else if (f.fuel === 'Hybrid' || f.hybrid === 'true' || f.hybrid === true) {
+    where.push(`c.fuel = 'Hybrid'`);
+  } else if (f.fuel) {
     where.push(`c.fuel = $${i++}`);
     params.push(f.fuel);
   }
@@ -236,11 +243,18 @@ function buildWhere(f) {
     where.push(`c.body = $${i++}`);
     params.push(f.body);
   }
-  if (f.category === 'heavy') {
-    where.push(`c.category IN ('commercial', 'special')`);
-  } else if (f.category) {
+  if (f.condition === 'new') {
+    where.push(`c.mileage <= 500`);
+  } else if (f.condition === 'used') {
+    where.push(`c.mileage > 500`);
+  }
+  const cats = resolveCategoryFilter(f.category);
+  if (cats && cats.length === 1) {
     where.push(`c.category = $${i++}`);
-    params.push(f.category);
+    params.push(cats[0]);
+  } else if (cats && cats.length > 1) {
+    where.push(`c.category = ANY($${i++}::text[])`);
+    params.push(cats);
   }
   if (f.country) {
     where.push(`l.country ILIKE $${i++}`);

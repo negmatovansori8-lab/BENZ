@@ -142,12 +142,24 @@ export interface Paginated<T> {
 }
 
 export const BRANDS = [
-  'BMW', 'Mercedes-Benz', 'Toyota', 'Lexus', 'Audi', 'Tesla',
-  'Porsche', 'Hyundai', 'Kia', 'Honda', 'Ford', 'Chevrolet',
+  'Toyota', 'BMW', 'Mercedes-Benz', 'Audi', 'Lexus', 'Porsche', 'Ferrari', 'Lamborghini',
+  'Bentley', 'Rolls-Royce', 'Tesla', 'Ford', 'Chevrolet', 'Dodge', 'Jeep', 'Nissan',
+  'Honda', 'Hyundai', 'Kia', 'Volkswagen', 'Volvo', 'Subaru', 'Mazda', 'Mitsubishi',
+  'Land Rover', 'Jaguar', 'BYD', 'Geely', 'Chery', 'Haval', 'Lada', 'MAN', 'DAF',
+  'Scania', 'Isuzu', 'HOWO', 'Shacman', 'FAW', 'GAZ', 'KAMAZ', 'JCB', 'Caterpillar',
+  'Komatsu', 'XCMG', 'John Deere', 'Yamaha', 'Kawasaki', 'Harley-Davidson', 'Ducati',
 ] as const;
 
 export const FUELS = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'Gas'] as const;
 export const TRANSMISSIONS = ['Automatic', 'Manual'] as const;
-export const BODIES = ['Sedan', 'SUV', 'Coupe', 'Hatchback', 'Wagon', 'Pickup', 'Minivan'] as const;
-export const VEHICLE_CATEGORIES = ['passenger', 'commercial', 'kamaz', 'special', 'parts'] as const;
+export const BODIES = [
+  'Sedan', 'SUV', 'Coupe', 'Hatchback', 'Wagon', 'Minivan', 'Sports', 'Pickup',
+  'Truck', 'Heavy Truck', 'Bus', 'Coach', 'Tractor', 'Ambulance', 'Fire Truck',
+  'Police', 'Commercial Van', 'Construction', 'Marine', 'Aircraft', 'Motorcycle',
+  'Scooter', 'Bicycle',
+] as const;
+export const VEHICLE_CATEGORIES = [
+  'passenger', 'commercial', 'kamaz', 'bus', 'special', 'agricultural',
+  'motorcycle', 'marine', 'aircraft', 'parts',
+] as const;
 export const CURRENCIES: Currency[] = ['USD', 'TJS', 'EUR', 'RUB'];

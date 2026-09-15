@@ -10,6 +10,7 @@ import { api } from '../services/api';
 import type { Car, Property } from '../types';
 import { useI18n } from '../context/LocaleContext';
 import { useAuth } from '../context/AuthContext';
+import { uniqueByIdAndImage } from '../utils/uniqueList';
 
 export default function Home() {
   const { t } = useI18n();
@@ -25,9 +26,9 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/cars?featured=true&category=passenger&limit=48'),
-      api.get('/cars?category=passenger&sort=newest&limit=48'),
-      api.get('/cars?category=passenger&sort=popular&limit=48'),
+      api.get('/cars/featured'),
+      api.get('/cars/recent'),
+      api.get('/cars/popular'),
       api.get('/cars?category=heavy&limit=48'),
       api.get('/cars?category=kamaz&limit=48'),
       api.get('/cars?category=parts&limit=48'),
@@ -35,13 +36,11 @@ export default function Home() {
     ])
       .then(([f, r, p, h, kamazRes, partsRes, homesRes]) => {
         const used = new Set<string>();
-        const take = (list: Car[], n = 16, strict = false) => {
+        const take = (list: Car[], n = 16) => {
           const out: Car[] = [];
-          for (const c of list || []) {
-            const twin = strict || c.category === 'kamaz' || c.category === 'commercial' || c.category === 'special' || c.category === 'parts'
-              ? `${c.brand}|${c.model}|${c.category}`
-              : `${c.brand}|${c.model}|${c.year}|${c.category}`;
+          for (const c of uniqueByIdAndImage(list || [])) {
             const id = `id:${c.id}`;
+            const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`;
             if (used.has(id) || used.has(twin)) continue;
             used.add(id);
             used.add(twin);
@@ -53,9 +52,9 @@ export default function Home() {
         setFeatured(take(f.data.data || []));
         setRecent(take(r.data.data || []));
         setPopular(take(p.data.data || []));
-        setHeavy(take(h.data.data || [], 16, true));
-        setKamaz(take(kamazRes.data.data || [], 16, true));
-        setParts(take(partsRes.data.data || [], 16, true));
+        setHeavy(take(h.data.data || []));
+        setKamaz(take(kamazRes.data.data || []));
+        setParts(take(partsRes.data.data || []));
         const seenHome = new Set<string>();
         setHomes((homesRes.data.data || []).filter((x: Property) => {
           const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.location_id ?? x.title}`;
@@ -195,7 +194,7 @@ export default function Home() {
       <section className="container-ah pb-14">
         <div className="mb-8">
           <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('fresh')}</p>
-          <h2 className="font-display text-2xl sm:text-3xl">{t('recentlyAdded')}</h2>
+          <h2 className="font-display text-2xl sm:text-3xl">{t('newArrivals')}</h2>
         </div>
         <Grid cars={recent} loading={loading} empty={t('noCars')} />
       </section>

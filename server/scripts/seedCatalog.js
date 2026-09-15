@@ -3,49 +3,96 @@ import { query } from '../config/db.js';
 const BATCH = 80;
 
 const PASSENGER = [
-  { brand: 'Toyota', models: ['Camry', 'Corolla', 'Prado', 'RAV4', 'Land Cruiser', 'Highlander', 'Hilux', 'Yaris'], bodies: ['Sedan', 'SUV', 'Pickup', 'Hatchback'] },
-  { brand: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class', 'G-Class'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
-  { brand: 'BMW', models: ['3 Series', '5 Series', 'X5', 'X3', 'X6', 'X1', '7 Series'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Hyundai', models: ['Tucson', 'Santa Fe', 'Elantra', 'Sonata', 'Creta', 'Accent'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
-  { brand: 'Kia', models: ['Sportage', 'Sorento', 'Rio', 'K5', 'Cerato', 'Seltos'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
+  { brand: 'Toyota', models: ['Camry', 'Corolla', 'Prado', 'RAV4', 'Land Cruiser', 'Highlander', 'Hilux', 'Yaris', 'Supra'], bodies: ['Sedan', 'SUV', 'Pickup', 'Hatchback', 'Sports'] },
+  { brand: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class', 'G-Class', 'AMG GT'], bodies: ['Sedan', 'SUV', 'Hatchback', 'Sports'] },
+  { brand: 'BMW', models: ['3 Series', '5 Series', 'X5', 'X3', 'X6', 'X1', '7 Series', 'M4'], bodies: ['Sedan', 'SUV', 'Coupe', 'Sports'] },
+  { brand: 'Audi', models: ['A6', 'A4', 'Q7', 'Q5', 'A8', 'RS6', 'TT'], bodies: ['Sedan', 'SUV', 'Wagon', 'Coupe'] },
+  { brand: 'Lexus', models: ['LX', 'RX', 'GX', 'ES', 'IS', 'LC'], bodies: ['Sedan', 'SUV', 'Coupe'] },
+  { brand: 'Porsche', models: ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan'], bodies: ['Sports', 'SUV', 'Sedan'] },
+  { brand: 'Ferrari', models: ['Roma', 'F8 Tributo', 'SF90'], bodies: ['Sports', 'Coupe'] },
+  { brand: 'Lamborghini', models: ['Huracan', 'Urus'], bodies: ['Sports', 'SUV'] },
+  { brand: 'Bentley', models: ['Continental GT', 'Bentayga'], bodies: ['Coupe', 'SUV'] },
+  { brand: 'Rolls-Royce', models: ['Ghost', 'Cullinan'], bodies: ['Sedan', 'SUV'] },
+  { brand: 'Tesla', models: ['Model 3', 'Model Y', 'Model S', 'Model X'], bodies: ['Sedan', 'SUV'] },
+  { brand: 'Ford', models: ['Mustang', 'Explorer', 'F-150', 'Focus', 'Bronco'], bodies: ['Sports', 'SUV', 'Pickup', 'Hatchback'] },
+  { brand: 'Chevrolet', models: ['Camaro', 'Tahoe', 'Malibu', 'Tracker', 'Silverado'], bodies: ['Sports', 'SUV', 'Sedan', 'Pickup'] },
+  { brand: 'Dodge', models: ['Charger', 'Challenger', 'Durango'], bodies: ['Sedan', 'Coupe', 'SUV'] },
+  { brand: 'Jeep', models: ['Wrangler', 'Grand Cherokee', 'Compass'], bodies: ['SUV'] },
+  { brand: 'Nissan', models: ['Patrol', 'X-Trail', 'Sunny', 'Qashqai', 'GT-R'], bodies: ['SUV', 'Sedan', 'Sports'] },
   { brand: 'Honda', models: ['Civic', 'Accord', 'CR-V', 'Pilot', 'Fit'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
-  { brand: 'Nissan', models: ['Patrol', 'X-Trail', 'Sunny', 'Qashqai', 'Almera'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Volkswagen', models: ['Passat', 'Tiguan', 'Polo', 'Golf', 'Touareg'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
-  { brand: 'Lada', models: ['Vesta', 'Granta', 'Niva', 'Largus', 'Kalina'], bodies: ['Sedan', 'SUV', 'Wagon', 'Hatchback'] },
-  { brand: 'Chevrolet', models: ['Cobalt', 'Nexia', 'Malibu', 'Tracker', 'Captiva'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Lexus', models: ['LX', 'RX', 'GX', 'ES', 'IS'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Audi', models: ['A6', 'A4', 'Q7', 'Q5', 'A8'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Mitsubishi', models: ['Pajero', 'Outlander', 'Lancer', 'ASX', 'L200'], bodies: ['SUV', 'Sedan', 'Pickup'] },
-  { brand: 'Mazda', models: ['CX-5', 'CX-9', 'Mazda 6', 'Mazda 3'], bodies: ['SUV', 'Sedan', 'Hatchback'] },
-  { brand: 'Subaru', models: ['Forester', 'Outback', 'XV', 'Legacy'], bodies: ['SUV', 'Wagon', 'Sedan'] },
-  { brand: 'Geely', models: ['Coolray', 'Monjaro', 'Atlas', 'Emgrand'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Chery', models: ['Tiggo 7', 'Tiggo 4', 'Arrizo 8', 'Tiggo 8'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Haval', models: ['H6', 'Jolion', 'Dargo', 'H9'], bodies: ['SUV'] },
+  { brand: 'Hyundai', models: ['Tucson', 'Santa Fe', 'Elantra', 'Sonata', 'Ioniq 5'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Kia', models: ['Sportage', 'Sorento', 'K5', 'EV6', 'Seltos'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Volkswagen', models: ['Passat', 'Tiguan', 'Golf', 'Touareg', 'ID.4'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
+  { brand: 'Volvo', models: ['XC90', 'XC60', 'S90'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Subaru', models: ['Forester', 'Outback', 'WRX'], bodies: ['SUV', 'Wagon', 'Sedan'] },
+  { brand: 'Mazda', models: ['CX-5', 'CX-9', 'Mazda 6', 'MX-5'], bodies: ['SUV', 'Sedan', 'Sports'] },
+  { brand: 'Mitsubishi', models: ['Pajero', 'Outlander', 'L200'], bodies: ['SUV', 'Pickup'] },
+  { brand: 'Land Rover', models: ['Range Rover', 'Defender', 'Discovery'], bodies: ['SUV'] },
+  { brand: 'Jaguar', models: ['F-Pace', 'XF', 'F-Type'], bodies: ['SUV', 'Sedan', 'Sports'] },
   { brand: 'BYD', models: ['Song Plus', 'Han', 'Seal', 'Yuan Plus'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Daewoo', models: ['Nexia', 'Matiz', 'Gentra', 'Damas'], bodies: ['Sedan', 'Hatchback', 'Minivan'] },
+  { brand: 'Geely', models: ['Coolray', 'Monjaro', 'Atlas'], bodies: ['SUV'] },
+  { brand: 'Chery', models: ['Tiggo 7', 'Tiggo 8', 'Arrizo 8'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Haval', models: ['H6', 'Jolion', 'Dargo'], bodies: ['SUV'] },
+  { brand: 'Lada', models: ['Vesta', 'Granta', 'Niva'], bodies: ['Sedan', 'SUV'] },
 ];
 
 const COMMERCIAL = [
-  { brand: 'Shacman', models: ['X3000', 'X5000', 'F3000', 'Dump'], bodies: ['Pickup'] },
-  { brand: 'HOWO', models: ['TX', 'A7', 'Sinotruk', 'Dump'], bodies: ['Pickup'] },
-  { brand: 'GAZ', models: ['Gazelle Next', 'Valdai', 'Sobol', '3310'], bodies: ['Minivan', 'Pickup'] },
-  { brand: 'Isuzu', models: ['NPR', 'NQR', 'Elf', 'Forward'], bodies: ['Pickup'] },
-  { brand: 'FAW', models: ['J6', 'J7', 'Tiger', 'Dump'], bodies: ['Pickup'] },
-  { brand: 'MAN', models: ['TGS', 'TGX', 'TGM'], bodies: ['Pickup'] },
-  { brand: 'DAF', models: ['XF 105', 'CF', 'XF 106'], bodies: ['Pickup'] },
-  { brand: 'Volvo', models: ['FH', 'FM', 'FE'], bodies: ['Pickup'] },
+  { brand: 'Shacman', models: ['X3000', 'X5000', 'F3000'], bodies: ['Truck', 'Heavy Truck'] },
+  { brand: 'HOWO', models: ['TX', 'A7', 'Sinotruk'], bodies: ['Truck', 'Heavy Truck'] },
+  { brand: 'GAZ', models: ['Gazelle Next', 'Valdai', 'Sobol'], bodies: ['Commercial Van', 'Minivan'] },
+  { brand: 'Isuzu', models: ['NPR', 'NQR', 'Forward'], bodies: ['Truck'] },
+  { brand: 'FAW', models: ['J6', 'J7', 'Tiger'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'MAN', models: ['TGS', 'TGX', 'TGM'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'DAF', models: ['XF 105', 'CF', 'XF 106'], bodies: ['Heavy Truck'] },
+  { brand: 'Volvo', models: ['FH', 'FM', 'FE'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'Scania', models: ['R450', 'S500', 'G410'], bodies: ['Heavy Truck'] },
+  { brand: 'Ford', models: ['Transit', 'Ranger'], bodies: ['Commercial Van', 'Pickup'] },
+];
+
+const BUS = [
+  { brand: 'Yutong', models: ['ZK6122', 'City Bus', 'Coach 55'], bodies: ['Bus', 'Coach'] },
+  { brand: 'King Long', models: ['XMQ6129', 'City 12m'], bodies: ['Bus', 'Coach'] },
+  { brand: 'Mercedes-Benz', models: ['Sprinter Bus', 'Tourismo'], bodies: ['Bus', 'Coach'] },
+  { brand: 'Volvo', models: ['B8R', '9700'], bodies: ['Bus', 'Coach'] },
+  { brand: 'GAZ', models: ['Vector Next'], bodies: ['Bus'] },
 ];
 
 const SPECIAL = [
-  { brand: 'JCB', models: ['3CX', '4CX', 'JS220', 'Backhoe'], bodies: ['Pickup'] },
-  { brand: 'Caterpillar', models: ['320', '336', '950', 'Loader'], bodies: ['Pickup'] },
-  { brand: 'Komatsu', models: ['PC200', 'WA380', 'D65'], bodies: ['Pickup'] },
-  { brand: 'XCMG', models: ['XE215', 'LW300', 'QY25'], bodies: ['Pickup'] },
-  { brand: 'Shacman', models: ['Mixer', 'Crane', 'Pump'], bodies: ['Pickup'] },
+  { brand: 'JCB', models: ['3CX', '4CX', 'JS220'], bodies: ['Construction'] },
+  { brand: 'Caterpillar', models: ['320', '336', '950'], bodies: ['Construction'] },
+  { brand: 'Komatsu', models: ['PC200', 'WA380', 'D65'], bodies: ['Construction'] },
+  { brand: 'XCMG', models: ['XE215', 'LW300', 'QY25'], bodies: ['Construction'] },
+  { brand: 'Mercedes-Benz', models: ['Ambulance Sprinter', 'Police Sprinter'], bodies: ['Ambulance', 'Police'] },
+  { brand: 'MAN', models: ['Fire Truck TGM'], bodies: ['Fire Truck'] },
+  { brand: 'Shacman', models: ['Mixer', 'Crane'], bodies: ['Construction'] },
+];
+
+const AGRICULTURAL = [
+  { brand: 'John Deere', models: ['6R', '8R', 'Tractor 6120'], bodies: ['Tractor'] },
+  { brand: 'MTZ', models: ['82.1', '1221'], bodies: ['Tractor'] },
+  { brand: 'New Holland', models: ['T7', 'T6'], bodies: ['Tractor'] },
+];
+
+const MOTORCYCLE = [
+  { brand: 'Yamaha', models: ['R1', 'MT-07', 'NMAX'], bodies: ['Motorcycle', 'Scooter'] },
+  { brand: 'Honda', models: ['CBR650R', 'PCX', 'Africa Twin'], bodies: ['Motorcycle', 'Scooter'] },
+  { brand: 'Kawasaki', models: ['Ninja 650', 'Z900'], bodies: ['Motorcycle'] },
+  { brand: 'Harley-Davidson', models: ['Street Glide', 'Iron 883'], bodies: ['Motorcycle'] },
+  { brand: 'Ducati', models: ['Panigale V2', 'Monster'], bodies: ['Motorcycle', 'Sports'] },
+];
+
+const MARINE = [
+  { brand: 'Yamaha Marine', models: ['242X', 'SX190'], bodies: ['Marine'] },
+  { brand: 'BRP', models: ['Sea-Doo GTX', 'Spark'], bodies: ['Marine'] },
+];
+
+const AIRCRAFT = [
+  { brand: 'Cessna', models: ['172 Skyhawk', '182 Skylane'], bodies: ['Aircraft'] },
+  { brand: 'Airbus', models: ['H125 Helicopter'], bodies: ['Aircraft'] },
 ];
 
 const KAMAZ = [
-  { brand: 'KAMAZ', models: ['65115', '6520', '43118', '5490', '65117'], bodies: ['Pickup'] },
+  { brand: 'KAMAZ', models: ['65115', '6520', '43118', '5490', '65117', '54901'], bodies: ['Heavy Truck', 'Truck'] },
 ];
 
 const PARTS = [
@@ -131,46 +178,53 @@ async function insertCarBatch(rows) {
 
 function realisticPrice(g, year, cat, n) {
   if (cat === 'parts') return 15 + (n * 13) % 420;
-  const luxury = ['Mercedes-Benz', 'BMW', 'Lexus', 'Audi'].includes(g.brand);
+  if (cat === 'motorcycle') return 1800 + (n * 97) % 12000;
+  if (cat === 'marine') return 12000 + (n * 211) % 40000;
+  if (cat === 'aircraft') return 90000 + (n * 401) % 180000;
+  if (cat === 'bus' || cat === 'agricultural') return 18000 + (n * 173) % 55000;
+  const luxury = ['Mercedes-Benz', 'BMW', 'Lexus', 'Audi', 'Porsche', 'Ferrari', 'Lamborghini', 'Bentley', 'Rolls-Royce', 'Land Rover', 'Jaguar'].includes(g.brand);
   const age = Math.max(0, 2026 - year);
   if (cat === 'passenger') {
-    const base = luxury ? 16000 : 7200;
-    const drop = age * (luxury ? 700 : 260);
-    const jitter = (n * 97) % (luxury ? 4000 : 2200);
-    return Math.max(luxury ? 6500 : 1800, Math.round(base - drop + jitter));
+    const base = luxury ? 22000 : 7200;
+    const drop = age * (luxury ? 900 : 260);
+    const jitter = (n * 97) % (luxury ? 12000 : 2200);
+    return Math.max(luxury ? 8500 : 1800, Math.round(base - drop + jitter));
   }
   return Math.max(7000, Math.round(11000 + (n * 113) % 16000 - age * 180));
 }
 
 function buildCar(g, model, year, cat, n, sellers, locs) {
-  const km = cat === 'parts' ? 0 : 8000 + (n * 137) % 240000;
+  const km = cat === 'parts' ? 0
+    : cat === 'aircraft' || cat === 'marine' ? 200 + (n * 37) % 4000
+    : cat === 'motorcycle' ? 1500 + (n * 97) % 45000
+    : 8000 + (n * 137) % 240000;
   const price = realisticPrice(g, year, cat, n);
   const body = g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup';
-  const fuel = cat === 'parts' || cat === 'kamaz' || cat === 'commercial' || cat === 'special'
-    ? (cat === 'parts' ? 'Petrol' : 'Diesel')
-    : n % 17 === 0 ? 'Electric' : n % 9 === 0 ? 'Hybrid' : n % 4 === 0 ? 'Diesel' : n % 5 === 0 ? 'Gas' : 'Petrol';
+  const fuel = cat === 'parts'
+    ? 'Petrol'
+    : ['Tesla', 'BYD'].includes(g.brand) || /EV|Ioniq|ID\.|Taycan|Seal|Han/i.test(model)
+      ? 'Electric'
+      : cat === 'motorcycle' || cat === 'marine' || cat === 'aircraft'
+        ? 'Petrol'
+        : cat === 'kamaz' || cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural'
+          ? 'Diesel'
+          : n % 17 === 0 ? 'Electric' : n % 9 === 0 ? 'Hybrid' : n % 4 === 0 ? 'Diesel' : n % 5 === 0 ? 'Gas' : 'Petrol';
   const label = cat === 'parts'
     ? `${g.brand} ${model}. Қисми эҳтиётӣ, санҷидашуда. ${CITIES[n % CITIES.length]}.`
-    : cat === 'kamaz'
-      ? `${g.brand} ${model} ${year}. КамАЗ. ${CITIES[n % CITIES.length]}.`
-      : cat === 'special'
-        ? `${g.brand} ${model} ${year}. Спецтехника. ${CITIES[n % CITIES.length]}.`
-        : cat === 'commercial'
-          ? `${g.brand} ${model} ${year}. Нақлиёти калон. ${CITIES[n % CITIES.length]}.`
-          : `${g.brand} ${model} ${year}, ${km.toLocaleString('ru-RU')} км. ${CITIES[n % CITIES.length]}. Ҳолати хуб, ҳуҷҷатҳо тайёр.`;
+    : `${g.brand} ${model} ${year}. ${body}. ${CITIES[n % CITIES.length]}.`;
   return {
     key: `${g.brand}|${model}`,
     year,
     price,
     km,
-    engine: cat === 'parts' ? '—' : fuel === 'Electric' ? 'Electric motor' : `${(cat === 'passenger' ? 1.2 + (n % 40) / 10 : 4 + (n % 90) / 10).toFixed(1)}L`,
-    power: cat === 'parts' ? 0 : 80 + (n % 320),
+    engine: cat === 'parts' ? '—' : fuel === 'Electric' ? 'Electric motor' : `${(cat === 'passenger' || cat === 'motorcycle' ? 1.2 + (n % 40) / 10 : 4 + (n % 90) / 10).toFixed(1)}L`,
+    power: cat === 'parts' ? 0 : 80 + (n % 520),
     fuel,
-    trans: cat === 'parts' ? 'Manual' : TRANS[n % 2],
+    trans: cat === 'parts' || cat === 'motorcycle' ? 'Manual' : TRANS[n % 2],
     body,
     color: COLORS[n % COLORS.length],
     cat,
-    feat: n % 18 === 0,
+    feat: n % 22 === 0,
     views: 80 + (n % 4000),
     img: imgFor(cat, n),
     desc: label,
@@ -218,15 +272,15 @@ async function removeDuplicateCars() {
       ) t
     )
   `);
-  // Trucks / KamAZ / parts: one listing per model (no year twins that look identical)
+  // Trucks / specialty: one listing per model (no year twins)
   await query(`
     DELETE FROM cars
-    WHERE category IN ('kamaz', 'commercial', 'special', 'parts')
+    WHERE category IN ('kamaz', 'commercial', 'special', 'parts', 'bus', 'agricultural', 'motorcycle', 'marine', 'aircraft')
       AND id NOT IN (
         SELECT keep_id FROM (
           SELECT MIN(id) AS keep_id
           FROM cars
-          WHERE category IN ('kamaz', 'commercial', 'special', 'parts')
+          WHERE category IN ('kamaz', 'commercial', 'special', 'parts', 'bus', 'agricultural', 'motorcycle', 'marine', 'aircraft')
           GROUP BY brand_id, model_id, category
         ) t
       )
@@ -254,11 +308,12 @@ async function removeDuplicateHomes() {
 function uniqueGroupRows(groups, cat, sellers, locs, existing) {
   const rows = [];
   let n = 0;
+  // One year per model for specialty; a few years for passenger — uniqueness via brand|model|year|cat
   const years = cat === 'passenger'
-    ? [2012, 2014, 2016, 2018, 2020, 2022, 2024]
+    ? [2018, 2021, 2024, 2025]
     : cat === 'parts'
       ? [2024]
-      : [2019, 2023];
+      : [2022];
   for (const g of groups) {
     for (const model of g.models) {
       for (const year of years) {
@@ -273,13 +328,22 @@ function uniqueGroupRows(groups, cat, sellers, locs, existing) {
 }
 
 async function fillCars(_need, sellers, locs) {
-  const maps = {
-    passenger: await idMap(PASSENGER),
-    commercial: await idMap(COMMERCIAL),
-    special: await idMap(SPECIAL),
-    kamaz: await idMap(KAMAZ),
-    parts: await idMap(PARTS),
+  const groups = {
+    passenger: PASSENGER,
+    commercial: COMMERCIAL,
+    special: SPECIAL,
+    kamaz: KAMAZ,
+    parts: PARTS,
+    bus: BUS,
+    agricultural: AGRICULTURAL,
+    motorcycle: MOTORCYCLE,
+    marine: MARINE,
+    aircraft: AIRCRAFT,
   };
+  const maps = {};
+  for (const [cat, list] of Object.entries(groups)) {
+    maps[cat] = await idMap(list);
+  }
   const found = await query(`
     SELECT b.name AS brand, m.name AS model, c.year, c.category
     FROM cars c
@@ -287,13 +351,8 @@ async function fillCars(_need, sellers, locs) {
     JOIN models m ON m.id = c.model_id
   `);
   const existing = new Set(found.rows.map((r) => `${r.brand}|${r.model}|${r.year}|${r.category}`));
-  const pending = [
-    ...uniqueGroupRows(PASSENGER, 'passenger', sellers, locs, existing),
-    ...uniqueGroupRows(COMMERCIAL, 'commercial', sellers, locs, existing),
-    ...uniqueGroupRows(SPECIAL, 'special', sellers, locs, existing),
-    ...uniqueGroupRows(KAMAZ, 'kamaz', sellers, locs, existing),
-    ...uniqueGroupRows(PARTS, 'parts', sellers, locs, existing),
-  ]
+  const pending = Object.entries(groups)
+    .flatMap(([cat, list]) => uniqueGroupRows(list, cat, sellers, locs, existing))
     .map((raw) => {
       const ids = maps[raw.cat].get(raw.key);
       if (!ids) return null;
@@ -308,6 +367,23 @@ async function fillCars(_need, sellers, locs) {
   for (let offset = 0; offset < pending.length; offset += BATCH) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
+
+  // Bind every cover image to car id so URLs stay unique forever
+  await query(`
+    UPDATE car_images ci
+    SET url = 'https://picsum.photos/seed/benz-' || COALESCE(c.category, 'car') || '-' || c.id || '-0/900/600'
+    FROM cars c
+    WHERE ci.car_id = c.id
+      AND (
+        ci.url LIKE '%loremflickr%'
+        OR ci.url LIKE '%unsplash%'
+        OR ci.url LIKE '/cars/%'
+        OR ci.url LIKE '/trucks/%'
+        OR ci.url LIKE '/kamaz/%'
+        OR ci.url LIKE '/parts/%'
+        OR ci.url LIKE 'https://picsum.photos/seed/benz-%'
+      )
+  `);
 }
 
 async function fillHomes(sellers, locs) {

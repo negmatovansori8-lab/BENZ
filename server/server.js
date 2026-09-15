@@ -107,6 +107,8 @@ app.listen(PORT, '0.0.0.0', () => {
 try {
   await initDb();
   await UserModel.promoteOwnerAdmins();
+  const removed = await UserModel.removeDemoAccounts();
+  if (removed) console.log(`Removed ${removed} demo @autohub.tj accounts`);
   console.log(`Database ready [${dbMode}]`);
 } catch (err) {
   console.error('Database init failed:', err.message);

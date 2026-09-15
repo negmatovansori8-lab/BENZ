@@ -157,6 +157,30 @@ export const UserModel = {
     );
   },
 
+  /** Remove seeded fake *@autohub.tj accounts; keep real registrants. */
+  async removeDemoAccounts() {
+    const { rows: admins } = await query(
+      `SELECT id FROM users
+       WHERE role = 'ADMIN' AND lower(email) NOT LIKE '%@autohub.tj'
+       ORDER BY id LIMIT 1`
+    );
+    const adminId = admins[0]?.id || null;
+    if (adminId) {
+      await query(
+        `UPDATE cars SET seller_id = $1
+         WHERE seller_id IN (SELECT id FROM users WHERE lower(email) LIKE '%@autohub.tj')`,
+        [adminId]
+      );
+      await query(
+        `UPDATE properties SET seller_id = $1
+         WHERE seller_id IN (SELECT id FROM users WHERE lower(email) LIKE '%@autohub.tj')`,
+        [adminId]
+      );
+    }
+    const result = await query(`DELETE FROM users WHERE lower(email) LIKE '%@autohub.tj'`);
+    return result.rowCount || 0;
+  },
+
   async recordLogin(id) {
     try {
       await query(`UPDATE users SET last_login_at = NOW(), updated_at = NOW() WHERE id = $1`, [id]);

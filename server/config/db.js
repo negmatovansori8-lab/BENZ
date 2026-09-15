@@ -93,8 +93,9 @@ async function bootstrapPostgres(poolImpl) {
   await runSqlFile(poolImpl, schemaPath());
   const { rows } = await poolImpl.query('SELECT COUNT(*)::int AS n FROM users');
   if (Number(rows[0]?.n || 0) > 0) return;
-  if (process.env.SKIP_SEED === '1' || process.env.SKIP_SEED === 'true') {
-    console.log('Empty database — SKIP_SEED is set, not loading demo data.');
+  const isProd = process.env.NODE_ENV === 'production';
+  if (isProd || process.env.SKIP_SEED === '1' || process.env.SKIP_SEED === 'true') {
+    console.log('Empty database — demo user seed skipped (real signups only).');
     return;
   }
   console.log('Empty database — loading demo data…');

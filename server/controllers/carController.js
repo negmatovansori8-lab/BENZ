@@ -6,7 +6,7 @@ import { query, withTransaction } from '../config/db.js';
 import { AppError, asyncHandler } from '../utils/AppError.js';
 import { parsePagination, paginate, sanitizeString } from '../utils/helpers.js';
 import { notify } from '../services/analyticsService.js';
-import { imageForVehicle, isRemoteVehicleImage } from '../utils/vehicleImages.js';
+import { imageForVehicle, isStockRemoteImage } from '../utils/vehicleImages.js';
 
 const FUEL = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'Gas'];
 const TRANS = ['Automatic', 'Manual'];
@@ -51,21 +51,21 @@ function parseImages(images) {
 function rewriteImageUrl(url, carId, index, category = 'passenger') {
   const cat = category || 'passenger';
   const raw = url == null ? '' : String(url);
-  // Keep real uploads
+  // Keep real seller uploads and non-stock remotes
   if (raw.startsWith('/uploads/')) return raw;
-  if (isRemoteVehicleImage(raw)) return raw;
-  // Stock folders only have a few files — map each listing to a unique remote cover
-  if (cat === 'kamaz' || cat === 'commercial' || cat === 'special' || cat === 'parts' || cat === 'passenger') {
-    if (raw.startsWith('/cars/') || raw.startsWith('/trucks/') || raw.startsWith('/kamaz/') || raw.startsWith('/parts/') || !raw) {
-      return imageForVehicle(cat, carId, index);
-    }
-  }
+  if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw;
+  // Old stock paths + previous Unsplash duplicates → unique cover per listing id
   if (
-    raw.startsWith('/homes/') ||
-    raw === '/hero.jpg'
+    !raw ||
+    isStockRemoteImage(raw) ||
+    raw.startsWith('/cars/') ||
+    raw.startsWith('/trucks/') ||
+    raw.startsWith('/kamaz/') ||
+    raw.startsWith('/parts/')
   ) {
-    return raw;
+    return imageForVehicle(cat, carId, index);
   }
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
   return localCarUrl(carId, index, cat);
 }
 

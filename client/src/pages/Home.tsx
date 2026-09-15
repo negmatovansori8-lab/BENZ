@@ -95,8 +95,8 @@ export default function Home() {
             {t('heroTitle')}
           </h1>
           <p className="mt-3 max-w-xl text-sm text-white/75 sm:mt-4 sm:text-lg">{t('heroSubtitle')}</p>
-          <Link to="/cars?category=passenger" className="btn-gold mt-6">
-            {t('searchCars')}
+          <Link to="/cars?category=passenger" className="btn-gold mt-6 w-fit self-start !px-5 !py-2.5">
+            {t('searchShort')}
           </Link>
         </div>
       </section>

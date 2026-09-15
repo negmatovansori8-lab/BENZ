@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Heart, Mail, Scale, X, ZoomIn } from '../components/icons';
 import { Icon } from '../components/icons/Icon';
-import { IconButton } from '../components/icons/IconButton';
 import { Seo } from '../components/Seo';
 import { ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';

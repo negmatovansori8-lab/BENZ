@@ -128,6 +128,14 @@ import { imageForVehicle, carPhoto, NEW_CAR_YEAR_FROM, NEW_CAR_MAX_MILEAGE } fro
 import { NEW_GLOBAL_CARS } from '../catalog/newCars2026.js';
 
 function imgFor(cat, n, label = 'BENZ', meta = {}) {
+  if (cat === 'parts') return `/parts/${(n % 3) + 1}.jpg`;
+  if (cat === 'kamaz') return `/kamaz/${(n % 3) + 1}.jpg`;
+  if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
+    return `/trucks/${(n % 3) + 1}.jpg`;
+  }
+  if (cat === 'passenger' && meta.brand && meta.model) {
+    return carPhoto(meta.brand, meta.model, meta.year, n, 0);
+  }
   return imageForVehicle(cat, n, 0, label, meta);
 }
 
@@ -369,7 +377,7 @@ async function fillCars(_need, sellers, locs) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 
-  // Stock covers rewritten on API read to unique brand/model placeholders — clear bad remote stock
+  // Clear only random remote stock — keep local /kamaz /parts /trucks photos
   await query(`
     UPDATE car_images ci
     SET url = ''
@@ -379,10 +387,26 @@ async function fillCars(_need, sellers, locs) {
         ci.url LIKE '%loremflickr%'
         OR ci.url LIKE '%unsplash%'
         OR ci.url LIKE '%picsum.photos%'
-        OR ci.url LIKE '/cars/%'
-        OR ci.url LIKE '/trucks/%'
-        OR ci.url LIKE '/kamaz/%'
-        OR ci.url LIKE '/parts/%'
+      )
+  `);
+  // Restore local covers wiped earlier for specialty categories
+  await query(`
+    UPDATE car_images ci
+    SET url = CASE c.category
+      WHEN 'parts' THEN '/parts/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'kamaz' THEN '/kamaz/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'commercial' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'special' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'bus' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'agricultural' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      ELSE ci.url
+    END
+    FROM cars c
+    WHERE ci.car_id = c.id
+      AND c.category IN ('parts', 'kamaz', 'commercial', 'special', 'bus', 'agricultural')
+      AND (
+        ci.url IS NULL OR ci.url = '' OR ci.url LIKE 'data:image%'
+        OR ci.url LIKE '%imagin.studio%'
       )
   `);
 }

@@ -654,6 +654,7 @@ const en: typeof tg = {
   passwordChanged: 'Password updated',
   backToLogin: 'Back to login',
   registerTitle: 'Register',
+  registerCodeHint: 'After signup, a 6-digit code arrives by email. That same code is your login password.',
   createAccount: 'Create account',
   creating: 'Creating…',
   signingIn: 'Signing in…',

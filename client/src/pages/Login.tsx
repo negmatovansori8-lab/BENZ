@@ -206,7 +206,7 @@ export function Register() {
   const { t } = useI18n();
   const { push } = useToast();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [pending, setPending] = useState<RegisterPayload | null>(null);
@@ -216,17 +216,12 @@ export function Register() {
     setError('');
     setLoading(true);
     try {
-      if (form.password && form.password.length < 4) {
-        setError(t('passwordOptionalHint'));
-        setLoading(false);
-        return;
-      }
-      const result = await register(form);
+      const payload = { ...form, password: '' };
+      const result = await register(payload);
       if (result.needsConfirmation) {
-        setPending(form);
+        setPending(payload);
         return;
       }
-      rememberLogin(form.email, form.password);
       push(t('accountCreated'), 'success');
       navigate('/');
     } catch (err: unknown) {
@@ -249,7 +244,7 @@ export function Register() {
           email={pending.email}
           onConfirm={async (code) => {
             await confirmSignup(pending.email, code, pending);
-            rememberLogin(pending.email, pending.password || code);
+            rememberLogin(pending.email, code);
             push(t('accountCreated'), 'success');
             navigate('/');
           }}
@@ -264,23 +259,13 @@ export function Register() {
       <Seo title={`${t('registerTitle')} — BENZ`} />
       <form onSubmit={onSubmit} className="card w-full max-w-md space-y-3 p-8">
         <h1 className="font-display text-center text-3xl">{t('registerTitle')}</h1>
+        <p className="text-center text-sm text-[var(--ah-muted)]">{t('registerCodeHint')}</p>
         {error && (
           <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>
         )}
         <label><span className="label">{t('name')}</span><input className="input" required autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label><span className="label">{t('email')}</span><input className="input" type="email" required autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
         <label><span className="label">{t('phone')}</span><input className="input" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label>
-        <label>
-          <span className="label">{t('passwordOptional')}</span>
-          <input
-            className="input"
-            type="password"
-            autoComplete="new-password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
-        </label>
-        <p className="text-xs text-[var(--ah-muted)]">{t('passwordOptionalHint')}</p>
         <button className="btn-gold w-full" disabled={loading}>{loading ? t('creating') : t('createAccount')}</button>
         <p className="text-center text-sm">
           <Link to="/forgot-password" className="text-gold-600">{t('forgotPassword')}</Link>

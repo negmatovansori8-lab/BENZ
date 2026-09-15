@@ -134,7 +134,7 @@ export const AuthController = {
     if (!user) throw new AppError('Invalid email or password', 401);
 
     // Owner accounts always stay open + ADMIN
-    if (UserModel.isOwnerEmail(user.email)) {
+    if (await UserModel.isOwnerAccount(user)) {
       await UserModel.ensureOwnerAdmin(user.email);
       user = (await UserModel.findByEmail(user.email)) || user;
     }
@@ -159,7 +159,7 @@ export const AuthController = {
       throw new AppError('No account found for this email or phone', 404);
     }
 
-    if (UserModel.isOwnerEmail(user.email)) {
+    if (await UserModel.isOwnerAccount(user)) {
       await UserModel.ensureOwnerAdmin(user.email);
       user = await UserModel.findByEmail(user.email);
     }

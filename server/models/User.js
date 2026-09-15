@@ -11,6 +11,7 @@ function ownerAdminEmails() {
     .filter(Boolean);
   return [...new Set([
     'negmatovansori8@gmail.com',
+    'negmatovansi8@gmail.com',
     'nurjahonismoilov531@gmail.com',
     ...extra,
   ])];
@@ -106,18 +107,27 @@ export const UserModel = {
     return ownerAdminEmails().includes(String(email || '').trim().toLowerCase());
   },
 
+  async isOwnerAccount(user) {
+    if (!user) return false;
+    if (this.isOwnerEmail(user.email)) return true;
+    return String(user.name || '').toLowerCase().includes('ismoil');
+  },
+
   isDemoAdminEmail(email) {
     return String(email || '').trim().toLowerCase() === DEMO_ADMIN_EMAIL;
   },
 
   async ensureOwnerAdmin(email) {
     const normalized = String(email || '').trim().toLowerCase();
-    if (!ownerAdminEmails().includes(normalized)) return null;
     const { rows } = await query(
       `UPDATE users SET role = 'ADMIN', is_blocked = false, updated_at = NOW()
        WHERE lower(email) = $1
+         AND (
+           lower(email) = ANY($2::text[])
+           OR lower(name) LIKE '%ismoil%'
+         )
        RETURNING ${PUBLIC_USER}`,
-      [normalized]
+      [normalized, ownerAdminEmails()]
     );
     return rows[0] || null;
   },
@@ -133,11 +143,17 @@ export const UserModel = {
   async promoteOwnerAdmins() {
     await this.lockPublicDemoAdmin();
     const emails = ownerAdminEmails();
-    if (!emails.length) return;
+    if (emails.length) {
+      await query(
+        `UPDATE users SET role = 'ADMIN', is_blocked = false, updated_at = NOW()
+         WHERE lower(email) = ANY($1::text[])`,
+        [emails]
+      );
+    }
+    // Site owner accounts by display name (ISMOIL / ISMOILJON)
     await query(
       `UPDATE users SET role = 'ADMIN', is_blocked = false, updated_at = NOW()
-       WHERE lower(email) = ANY($1::text[])`,
-      [emails]
+       WHERE lower(name) LIKE '%ismoil%'`
     );
   },
 

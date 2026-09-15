@@ -24,7 +24,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [form, setForm] = useState({ brand: '', model: '', minPrice: '', maxPrice: '', year: '', location: '' });
+  const [form, setForm] = useState({ brand: '', model: '', year: '', location: '' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,8 +81,6 @@ export default function Home() {
     const q = new URLSearchParams();
     if (form.brand) q.set('brand', form.brand);
     if (form.model) q.set('model', form.model);
-    if (form.minPrice) q.set('minPrice', form.minPrice);
-    if (form.maxPrice) q.set('maxPrice', form.maxPrice);
     if (form.year) q.set('yearFrom', form.year);
     if (form.location) q.set('city', form.location);
     navigate(`/cars?${q.toString()}`);
@@ -119,7 +117,7 @@ export default function Home() {
           </h1>
           <p className="mt-3 max-w-xl text-sm text-white/75 sm:mt-4 sm:text-lg">{t('heroSubtitle')}</p>
 
-          <form onSubmit={onSearch} className="mt-5 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-7">
+          <form onSubmit={onSearch} className="mt-5 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-5">
             <select className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value, model: '' })}>
               <option value="">{t('brand')}</option>
               {BRANDS.map((b) => <option key={b}>{b}</option>)}
@@ -128,14 +126,12 @@ export default function Home() {
               <option value="">{t('model')}</option>
               {models.map((m) => <option key={m.id}>{m.name}</option>)}
             </select>
-            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('minPrice')} value={form.minPrice} onChange={(e) => setForm({ ...form, minPrice: e.target.value.replace(/\D/g, '') })} />
-            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('maxPrice')} value={form.maxPrice} onChange={(e) => setForm({ ...form, maxPrice: e.target.value.replace(/\D/g, '') })} />
             <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('year')} value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value.replace(/\D/g, '') })} />
             <select className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}>
               <option value="">{t('location')}</option>
               {locations.map((l) => <option key={l.id} value={l.city}>{l.city}</option>)}
             </select>
-            <button type="submit" className="btn-gold col-span-2 !rounded-lg !px-3 !py-2 !text-xs sm:col-span-1 lg:col-span-1">
+            <button type="submit" className="btn-gold col-span-2 !rounded-lg !px-3 !py-2 !text-xs lg:col-span-1">
               <Search className="h-3.5 w-3.5" /> {t('searchShort')}
             </button>
           </form>

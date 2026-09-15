@@ -98,8 +98,8 @@ export default function Home() {
           <h1 className="rise-in-delay mt-3 max-w-2xl font-display text-[1.35rem] font-semibold leading-tight tracking-tight text-white/95 sm:mt-4 sm:text-3xl">
             {t('heroTitle')}
           </h1>
-          <p className="rise-in-delay mt-3 max-w-lg text-sm text-white/70 sm:text-base">{t('heroSubtitle')}</p>
-          <div className="rise-in-delay-2 mt-7 flex justify-center sm:justify-start">
+          <p className="rise-in-delay mx-auto mt-3 max-w-lg text-center text-sm text-white/70 sm:text-base">{t('heroSubtitle')}</p>
+          <div className="rise-in-delay-2 mt-7 flex justify-center">
             <Link
               to="/cars?category=passenger"
               className="btn-gold !inline-flex !w-auto !px-9 !py-3.5 !text-base"

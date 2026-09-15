@@ -66,7 +66,13 @@ export function mapApiAuthMessage(message?: string): Msg | null {
   if (text.includes('code expired')) return 'authCodeExpired';
   if (text.includes('blocked')) return 'authBlocked';
   if (text.includes('too many')) return 'authTooMany';
-  if (text.includes('not sent') || text.includes('mail is not configured') || text.includes('smtp')) {
+  if (
+    text.includes('not sent') ||
+    text.includes('mail is not configured') ||
+    text.includes('smtp') ||
+    text.includes('verify hacerr') ||
+    text.includes('resend')
+  ) {
     return 'authEmailSendFailed';
   }
   if (text.includes('cannot reach') || text.includes('network')) return 'somethingWrong';

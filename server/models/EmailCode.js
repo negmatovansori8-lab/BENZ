@@ -43,6 +43,13 @@ export const EmailCodeModel = {
     return { row };
   },
 
+  async markUnsent(email, purpose) {
+    await query(
+      `UPDATE email_codes SET last_sent_at = NOW() - INTERVAL '2 minutes' WHERE email = $1 AND purpose = $2`,
+      [email, purpose]
+    );
+  },
+
   async remove(email, purpose) {
     await query(`DELETE FROM email_codes WHERE email = $1 AND purpose = $2`, [email, purpose]);
   },

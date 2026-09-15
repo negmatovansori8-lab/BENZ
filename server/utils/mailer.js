@@ -4,6 +4,15 @@ export function isMailConfigured() {
   return Boolean(String(process.env.RESEND_API_KEY || '').trim());
 }
 
+function resendMessage(text) {
+  try {
+    const json = JSON.parse(text);
+    return String(json?.message || json?.error || text || '').slice(0, 280);
+  } catch {
+    return String(text || '').slice(0, 280);
+  }
+}
+
 export async function sendCodeEmail(to, code) {
   const key = String(process.env.RESEND_API_KEY || '').trim();
   if (!key) {
@@ -20,10 +29,11 @@ export async function sendCodeEmail(to, code) {
     },
     body: JSON.stringify({
       from: FROM,
-      to: [to],
+      to: [String(to).trim().toLowerCase()],
       subject: `Рамзи BENZ: ${code}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:480px">
-        <h2>BENZ</h2>
+      text: `Рамзи BENZ: ${code}\nИн 6 рақамро дар сайт ворид кунед. Рамз 10 дақиқа эътибор дорад.`,
+      html: `<div style="font-family:Arial,sans-serif;max-width:480px;color:#111">
+        <h2 style="margin:0 0 12px">BENZ</h2>
         <p>Рамзи шумо:</p>
         <p style="font-size:32px;font-weight:bold;letter-spacing:6px">${code}</p>
         <p>Ин 6 рақамро дар сайт ворид кунед. Рамз 10 дақиқа эътибор дорад.</p>
@@ -31,11 +41,18 @@ export async function sendCodeEmail(to, code) {
     }),
   });
 
+  const body = await res.text();
   if (!res.ok) {
-    const text = await res.text();
-    const err = new Error('Email was not sent');
-    err.statusCode = 502;
-    err.details = text.slice(0, 200);
+    const hint = resendMessage(body);
+    console.error('Resend send failed', res.status, hint);
+    const testing = /own email|testing emails|verify a domain/i.test(hint);
+    const err = new Error(
+      testing
+        ? 'Email was not sent to this address. Verify hacerr.pp.ua in Resend.'
+        : 'Email was not sent'
+    );
+    err.statusCode = res.status === 429 ? 429 : 422;
+    err.details = hint;
     throw err;
   }
 }

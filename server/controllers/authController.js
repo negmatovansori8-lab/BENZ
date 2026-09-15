@@ -9,22 +9,22 @@ import { isMailConfigured, sendCodeEmail } from '../utils/mailer.js';
 
 export const registerRules = [
   body('name').trim().isLength({ min: 2, max: 120 }).withMessage('Name must be 2–120 characters'),
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }).withMessage('Valid email is required'),
   body('password').optional({ values: 'falsy' }).isLength({ min: 4, max: 72 }).withMessage('Code must be at least 4 characters'),
   body('phone').optional().isLength({ max: 40 }),
 ];
 
 export const loginRules = [
-  body('email').isEmail().normalizeEmail(),
+  body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
   body('password').notEmpty(),
 ];
 
 export const emailCodeRules = [
-  body('email').isEmail().normalizeEmail(),
+  body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
 ];
 
 export const confirmCodeRules = [
-  body('email').isEmail().normalizeEmail(),
+  body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
   body('code').trim().isLength({ min: 6, max: 6 }),
 ];
 
@@ -33,7 +33,7 @@ export const recoverRules = [
 ];
 
 export const resetPasswordRules = [
-  body('email').isEmail().normalizeEmail(),
+  body('email').isEmail().normalizeEmail({ gmail_remove_dots: false }),
   body('code').trim().isLength({ min: 6, max: 6 }),
   body('password').isLength({ min: 8, max: 72 }).withMessage('Password must be at least 8 characters'),
 ];
@@ -47,7 +47,8 @@ async function issueCode(email, purpose, payload) {
   try {
     await sendCodeEmail(email, code);
   } catch (err) {
-    throw new AppError('Email was not sent', err.statusCode || 502);
+    await EmailCodeModel.markUnsent(email, purpose);
+    throw new AppError(err.message || 'Email was not sent', err.statusCode || 502, err.details || null);
   }
 }
 

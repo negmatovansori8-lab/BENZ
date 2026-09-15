@@ -211,10 +211,6 @@ async function syncCategories() {
     WHERE category <> 'parts' AND brand_id IN (SELECT id FROM brands WHERE name = 'KAMAZ')
   `);
   await query(`UPDATE cars SET category = 'commercial' WHERE category = 'bus'`);
-  await query(`
-    UPDATE car_images SET url = '/kamaz/' || (((car_id - 1) % 3) + 1)::text || '.jpg'
-    WHERE car_id IN (SELECT id FROM cars WHERE category = 'kamaz')
-  `);
   const kamaz = await query(`SELECT COUNT(*)::int AS n FROM cars WHERE category = 'kamaz'`);
   if (Number(kamaz.rows[0]?.n || 0) < 4) await seedKamaz();
   await seedParts();

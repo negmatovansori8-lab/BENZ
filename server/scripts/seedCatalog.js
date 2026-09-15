@@ -77,11 +77,10 @@ async function ensureModel(brandId, name) {
   return rows[0].id;
 }
 
+import { imageForVehicle } from '../utils/vehicleImages.js';
+
 function imgFor(cat, n) {
-  if (cat === 'kamaz') return `/kamaz/${(n % 3) + 1}.jpg`;
-  if (cat === 'parts') return `/parts/${(n % 3) + 1}.jpg`;
-  if (cat === 'commercial' || cat === 'special') return `/trucks/${(n % 3) + 1}.jpg`;
-  return `/cars/${(n % 8) + 1}.jpg`;
+  return imageForVehicle(cat, n, 0);
 }
 
 function homeImg(n) {

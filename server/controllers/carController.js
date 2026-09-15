@@ -6,6 +6,7 @@ import { query, withTransaction } from '../config/db.js';
 import { AppError, asyncHandler } from '../utils/AppError.js';
 import { parsePagination, paginate, sanitizeString } from '../utils/helpers.js';
 import { notify } from '../services/analyticsService.js';
+import { imageForVehicle, isRemoteVehicleImage } from '../utils/vehicleImages.js';
 
 const FUEL = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'Gas'];
 const TRANS = ['Automatic', 'Manual'];
@@ -31,12 +32,7 @@ function imageUrlsFromRequest(req) {
 }
 
 function localCarUrl(carId, index = 0, category = 'passenger') {
-  const n = Math.abs(Number(carId) + index - 1);
-  if (category === 'kamaz') return `/kamaz/${(n % 3) + 1}.jpg`;
-  if (category === 'parts') return `/parts/${(n % 3) + 1}.jpg`;
-  if (category === 'special') return '/trucks/3.jpg';
-  if (category === 'commercial') return `/trucks/${(n % 2) + 1}.jpg`;
-  return `/cars/${(n % 8) + 1}.jpg`;
+  return imageForVehicle(category || 'passenger', carId, index);
 }
 
 function parseImages(images) {
@@ -54,35 +50,23 @@ function parseImages(images) {
 
 function rewriteImageUrl(url, carId, index, category = 'passenger') {
   const cat = category || 'passenger';
-  if (cat === 'kamaz') {
-    if (url && String(url).startsWith('/kamaz/')) return url;
-    return localCarUrl(carId, index, 'kamaz');
-  }
-  if (cat === 'parts') {
-    if (url && String(url).startsWith('/parts/')) return url;
-    return localCarUrl(carId, index, 'parts');
-  }
-  if (cat === 'special') {
-    if (url && String(url).startsWith('/trucks/')) return url;
-    return '/trucks/3.jpg';
-  }
-  if (cat === 'commercial') {
-    if (url && String(url).startsWith('/trucks/')) return url;
-    return localCarUrl(carId, index, 'commercial');
+  const raw = url == null ? '' : String(url);
+  // Keep real uploads
+  if (raw.startsWith('/uploads/')) return raw;
+  if (isRemoteVehicleImage(raw)) return raw;
+  // Stock folders only have a few files — map each listing to a unique remote cover
+  if (cat === 'kamaz' || cat === 'commercial' || cat === 'special' || cat === 'parts' || cat === 'passenger') {
+    if (raw.startsWith('/cars/') || raw.startsWith('/trucks/') || raw.startsWith('/kamaz/') || raw.startsWith('/parts/') || !raw) {
+      return imageForVehicle(cat, carId, index);
+    }
   }
   if (
-    url &&
-    (String(url).startsWith('/uploads/') ||
-      String(url).startsWith('/cars/') ||
-      String(url).startsWith('/trucks/') ||
-      String(url).startsWith('/homes/') ||
-      String(url).startsWith('/kamaz/') ||
-      String(url).startsWith('/parts/') ||
-      url === '/hero.jpg')
+    raw.startsWith('/homes/') ||
+    raw === '/hero.jpg'
   ) {
-    return url;
+    return raw;
   }
-  return localCarUrl(carId, index, 'passenger');
+  return localCarUrl(carId, index, cat);
 }
 
 export function shapeCar(row, favoriteIds = []) {

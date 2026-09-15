@@ -120,6 +120,8 @@ export function mediaUrl(url: string) {
 
 export function isLocalMedia(url: string) {
   return (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
     url.startsWith('/cars/') ||
     url.startsWith('/trucks/') ||
     url.startsWith('/kamaz/') ||
@@ -133,6 +135,7 @@ export function isLocalMedia(url: string) {
 }
 
 export function carImage(url?: string | null, seed?: string | number | null, index = 0) {
+  if (url && (url.startsWith('http://') || url.startsWith('https://'))) return url;
   if (url && isLocalMedia(url)) return mediaUrl(url);
   return localCarSrc(seed ?? url, index);
 }

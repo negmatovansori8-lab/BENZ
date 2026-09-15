@@ -3,36 +3,37 @@ import { query } from '../config/db.js';
 const BATCH = 80;
 
 const PASSENGER = [
-  { brand: 'Toyota', models: ['Camry', 'Corolla', 'Prado', 'RAV4', 'Land Cruiser', 'Highlander', 'Hilux', 'Yaris', 'Supra'], bodies: ['Sedan', 'SUV', 'Pickup', 'Hatchback', 'Sports'] },
-  { brand: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class', 'G-Class', 'AMG GT'], bodies: ['Sedan', 'SUV', 'Hatchback', 'Sports'] },
-  { brand: 'BMW', models: ['3 Series', '5 Series', 'X5', 'X3', 'X6', 'X1', '7 Series', 'M4'], bodies: ['Sedan', 'SUV', 'Coupe', 'Sports'] },
-  { brand: 'Audi', models: ['A6', 'A4', 'Q7', 'Q5', 'A8', 'RS6', 'TT'], bodies: ['Sedan', 'SUV', 'Wagon', 'Coupe'] },
-  { brand: 'Lexus', models: ['LX', 'RX', 'GX', 'ES', 'IS', 'LC'], bodies: ['Sedan', 'SUV', 'Coupe'] },
-  { brand: 'Porsche', models: ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan'], bodies: ['Sports', 'SUV', 'Sedan'] },
-  { brand: 'Ferrari', models: ['Roma', 'F8 Tributo', 'SF90'], bodies: ['Sports', 'Coupe'] },
-  { brand: 'Lamborghini', models: ['Huracan', 'Urus'], bodies: ['Sports', 'SUV'] },
-  { brand: 'Bentley', models: ['Continental GT', 'Bentayga'], bodies: ['Coupe', 'SUV'] },
-  { brand: 'Rolls-Royce', models: ['Ghost', 'Cullinan'], bodies: ['Sedan', 'SUV'] },
+  { brand: 'Toyota', models: ['Camry', 'Corolla', 'Prado', 'RAV4', 'Land Cruiser', 'Highlander', 'Hilux', 'Yaris', 'Supra', 'Fortuner', 'Alphard'], bodies: ['Sedan', 'SUV', 'Pickup', 'Hatchback', 'Minivan'] },
+  { brand: 'Mercedes-Benz', models: ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class', 'G-Class', 'AMG GT', 'CLA', 'GLS'], bodies: ['Sedan', 'SUV', 'Hatchback', 'Coupe'] },
+  { brand: 'BMW', models: ['3 Series', '5 Series', 'X5', 'X3', 'X6', 'X1', '7 Series', 'M4', 'X7', 'iX'], bodies: ['Sedan', 'SUV', 'Coupe'] },
+  { brand: 'Audi', models: ['A6', 'A4', 'Q7', 'Q5', 'A8', 'RS6', 'TT', 'Q8', 'e-tron', 'A3'], bodies: ['Sedan', 'SUV', 'Wagon', 'Coupe', 'Hatchback'] },
+  { brand: 'Lexus', models: ['LX', 'RX', 'GX', 'ES', 'IS', 'LC', 'NX', 'UX'], bodies: ['Sedan', 'SUV', 'Coupe'] },
+  { brand: 'Porsche', models: ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan', '718 Cayman'], bodies: ['Coupe', 'SUV', 'Sedan'] },
+  { brand: 'Ferrari', models: ['Roma', 'F8 Tributo', 'SF90', '296 GTB', 'Purosangue'], bodies: ['Coupe', 'SUV'] },
+  { brand: 'Lamborghini', models: ['Huracan', 'Urus', 'Revuelto', 'Temerario'], bodies: ['Coupe', 'SUV'] },
+  { brand: 'Bentley', models: ['Continental GT', 'Bentayga', 'Flying Spur'], bodies: ['Coupe', 'SUV', 'Sedan'] },
+  { brand: 'Rolls-Royce', models: ['Ghost', 'Cullinan', 'Spectre'], bodies: ['Sedan', 'SUV', 'Coupe'] },
   { brand: 'Tesla', models: ['Model 3', 'Model Y', 'Model S', 'Model X'], bodies: ['Sedan', 'SUV'] },
-  { brand: 'Ford', models: ['Mustang', 'Explorer', 'F-150', 'Focus', 'Bronco'], bodies: ['Sports', 'SUV', 'Pickup', 'Hatchback'] },
-  { brand: 'Chevrolet', models: ['Camaro', 'Tahoe', 'Malibu', 'Tracker', 'Silverado'], bodies: ['Sports', 'SUV', 'Sedan', 'Pickup'] },
+  { brand: 'Ford', models: ['Mustang', 'Explorer', 'F-150', 'Focus', 'Bronco', 'Edge'], bodies: ['Coupe', 'SUV', 'Pickup', 'Hatchback'] },
+  { brand: 'Chevrolet', models: ['Camaro', 'Tahoe', 'Malibu', 'Tracker', 'Silverado', 'Traverse'], bodies: ['Coupe', 'SUV', 'Sedan', 'Pickup'] },
   { brand: 'Dodge', models: ['Charger', 'Challenger', 'Durango'], bodies: ['Sedan', 'Coupe', 'SUV'] },
-  { brand: 'Jeep', models: ['Wrangler', 'Grand Cherokee', 'Compass'], bodies: ['SUV'] },
-  { brand: 'Nissan', models: ['Patrol', 'X-Trail', 'Sunny', 'Qashqai', 'GT-R'], bodies: ['SUV', 'Sedan', 'Sports'] },
-  { brand: 'Honda', models: ['Civic', 'Accord', 'CR-V', 'Pilot', 'Fit'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
-  { brand: 'Hyundai', models: ['Tucson', 'Santa Fe', 'Elantra', 'Sonata', 'Ioniq 5'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Kia', models: ['Sportage', 'Sorento', 'K5', 'EV6', 'Seltos'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Volkswagen', models: ['Passat', 'Tiguan', 'Golf', 'Touareg', 'ID.4'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
-  { brand: 'Volvo', models: ['XC90', 'XC60', 'S90'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Subaru', models: ['Forester', 'Outback', 'WRX'], bodies: ['SUV', 'Wagon', 'Sedan'] },
-  { brand: 'Mazda', models: ['CX-5', 'CX-9', 'Mazda 6', 'MX-5'], bodies: ['SUV', 'Sedan', 'Sports'] },
-  { brand: 'Mitsubishi', models: ['Pajero', 'Outlander', 'L200'], bodies: ['SUV', 'Pickup'] },
-  { brand: 'Land Rover', models: ['Range Rover', 'Defender', 'Discovery'], bodies: ['SUV'] },
-  { brand: 'Jaguar', models: ['F-Pace', 'XF', 'F-Type'], bodies: ['SUV', 'Sedan', 'Sports'] },
-  { brand: 'BYD', models: ['Song Plus', 'Han', 'Seal', 'Yuan Plus'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Geely', models: ['Coolray', 'Monjaro', 'Atlas'], bodies: ['SUV'] },
-  { brand: 'Chery', models: ['Tiggo 7', 'Tiggo 8', 'Arrizo 8'], bodies: ['SUV', 'Sedan'] },
-  { brand: 'Haval', models: ['H6', 'Jolion', 'Dargo'], bodies: ['SUV'] },
+  { brand: 'Jeep', models: ['Wrangler', 'Grand Cherokee', 'Compass', 'Gladiator'], bodies: ['SUV', 'Pickup'] },
+  { brand: 'Nissan', models: ['Patrol', 'X-Trail', 'Sunny', 'Qashqai', 'GT-R', 'Pathfinder'], bodies: ['SUV', 'Sedan', 'Coupe'] },
+  { brand: 'Honda', models: ['Civic', 'Accord', 'CR-V', 'Pilot', 'Fit', 'HR-V'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
+  { brand: 'Hyundai', models: ['Tucson', 'Santa Fe', 'Elantra', 'Sonata', 'Ioniq 5', 'Palisade'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Kia', models: ['Sportage', 'Sorento', 'K5', 'EV6', 'Seltos', 'Carnival'], bodies: ['SUV', 'Sedan', 'Minivan'] },
+  { brand: 'Volkswagen', models: ['Passat', 'Tiguan', 'Golf', 'Touareg', 'ID.4', 'Jetta'], bodies: ['Sedan', 'SUV', 'Hatchback'] },
+  { brand: 'Volvo', models: ['XC90', 'XC60', 'S90', 'XC40', 'EX30'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Subaru', models: ['Forester', 'Outback', 'WRX', 'Ascent'], bodies: ['SUV', 'Wagon', 'Sedan'] },
+  { brand: 'Mazda', models: ['CX-5', 'CX-9', 'Mazda 6', 'MX-5', 'CX-60'], bodies: ['SUV', 'Sedan', 'Coupe'] },
+  { brand: 'Mitsubishi', models: ['Pajero', 'Outlander', 'L200', 'Eclipse Cross'], bodies: ['SUV', 'Pickup'] },
+  { brand: 'Land Rover', models: ['Range Rover', 'Defender', 'Discovery', 'Range Rover Sport'], bodies: ['SUV'] },
+  { brand: 'Maserati', models: ['Ghibli', 'Levante', 'MC20'], bodies: ['Sedan', 'SUV', 'Coupe'] },
+  { brand: 'Genesis', models: ['G80', 'GV70', 'GV80'], bodies: ['Sedan', 'SUV'] },
+  { brand: 'BYD', models: ['Song Plus', 'Han', 'Seal', 'Yuan Plus', 'Tang'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Geely', models: ['Coolray', 'Monjaro', 'Atlas', 'Preface'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Chery', models: ['Tiggo 7', 'Tiggo 8', 'Arrizo 8', 'Tiggo 4'], bodies: ['SUV', 'Sedan'] },
+  { brand: 'Haval', models: ['H6', 'Jolion', 'Dargo', 'H9'], bodies: ['SUV'] },
   { brand: 'Lada', models: ['Vesta', 'Granta', 'Niva'], bodies: ['Sedan', 'SUV'] },
 ];
 
@@ -96,12 +97,15 @@ const KAMAZ = [
 ];
 
 const PARTS = [
-  { brand: 'Toyota', models: ['Engine 2AZ', 'Oil filter', 'Brake pads', 'Tires 205/55', 'Alternator', 'Radiator'] },
-  { brand: 'BMW', models: ['Engine N55', 'Radiator', 'Xenon ballast', 'Turbo', 'Control arm'] },
-  { brand: 'Mercedes-Benz', models: ['LED headlights', 'Shock absorbers', 'Air suspension', 'Gearbox 7G'] },
-  { brand: 'KAMAZ', models: ['Turbocharger', 'Brake discs', 'Tires 315/80', 'Fuel pump', 'Starter'] },
-  { brand: 'Hyundai', models: ['Battery 70Ah', 'Spark plugs', 'Bumper front', 'CV joint'] },
-  { brand: 'Honda', models: ['Alternator', 'Timing belt kit', 'Clutch kit', 'Air filter'] },
+  { brand: 'Toyota', models: ['Engine 2AZ', 'Oil filter', 'Brake pads', 'Tires 205/55', 'Alternator', 'Radiator', 'Spark plugs', 'Air filter', 'Timing belt', 'Water pump'] },
+  { brand: 'BMW', models: ['Engine N55', 'Radiator', 'Xenon ballast', 'Turbo', 'Control arm', 'Oil filter', 'Brake discs', 'Battery'] },
+  { brand: 'Mercedes-Benz', models: ['LED headlights', 'Shock absorbers', 'Air suspension', 'Gearbox 7G', 'Brake pads', 'Cabin filter'] },
+  { brand: 'Audi', models: ['Turbo TFSI', 'Quattro CV joint', 'LED matrix light', 'Oil filter', 'Brake pads'] },
+  { brand: 'KAMAZ', models: ['Turbocharger', 'Brake discs', 'Tires 315/80', 'Fuel pump', 'Starter', 'Clutch kit', 'Radiator'] },
+  { brand: 'Hyundai', models: ['Battery 70Ah', 'Spark plugs', 'Bumper front', 'CV joint', 'Air filter', 'Brake pads'] },
+  { brand: 'Honda', models: ['Alternator', 'Timing belt kit', 'Clutch kit', 'Air filter', 'Oil filter', 'Brake pads'] },
+  { brand: 'Lamborghini', models: ['Carbon brake pads', 'Air filter sport', 'Oil filter'], bodies: ['Coupe'] },
+  { brand: 'Porsche', models: ['PDK filter', 'Brake pads', 'Air filter'], bodies: ['Coupe'] },
 ];
 
 const COLORS = ['White', 'Black', 'Silver', 'Grey', 'Blue', 'Red', 'Green', 'Beige'];
@@ -109,6 +113,18 @@ const FUELS = ['Petrol', 'Diesel', 'Hybrid', 'Gas', 'Electric'];
 const TRANS = ['Automatic', 'Manual'];
 const CITIES = ['Душанбе', 'Хуҷанд', 'Кӯлоб', 'Бохтар', 'Ҳисор', 'Ваҳдат', 'Турсунзода', 'Панҷакент'];
 const DISTRICTS = ['Сино', 'Шоҳмансур', 'Фирдавсӣ', 'Исмоили Сомонӣ', '82-мкр', '102-мкр', 'Варзоб', 'Рӯдакӣ'];
+
+const ALLOWED_BODIES = new Set(['Sedan', 'SUV', 'Coupe', 'Hatchback', 'Wagon', 'Pickup', 'Minivan']);
+function safeBody(body, fallback = 'Sedan') {
+  const b = String(body || fallback);
+  if (ALLOWED_BODIES.has(b)) return b;
+  if (/sport|coupe|gt|roma|mustang|911|huracan|revuelto/i.test(b)) return 'Coupe';
+  if (/truck|pickup|van|bus|tractor|construction|marine|aircraft|motorcycle/i.test(b)) return 'Pickup';
+  if (/wagon/i.test(b)) return 'Wagon';
+  if (/hatch/i.test(b)) return 'Hatchback';
+  if (/suv|crossover/i.test(b)) return 'SUV';
+  return fallback;
+}
 
 async function ensureBrand(name) {
   const found = await query('SELECT id FROM brands WHERE name = $1', [name]);
@@ -124,10 +140,13 @@ async function ensureModel(brandId, name) {
   return rows[0].id;
 }
 
-import { imageForVehicle } from '../utils/vehicleImages.js';
-
 function imgFor(cat, n) {
-  return imageForVehicle(cat, n, 0);
+  if (cat === 'parts') return `/parts/${(n % 3) + 1}.jpg`;
+  if (cat === 'kamaz') return `/kamaz/${(n % 3) + 1}.jpg`;
+  if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
+    return `/trucks/${(n % 3) + 1}.jpg`;
+  }
+  return `/cars/${(n % 8) + 1}.jpg`;
 }
 
 function homeImg(n) {
@@ -155,7 +174,7 @@ async function insertCarBatch(rows) {
     values.push(`($${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},$${i++},'APPROVED',$${i++},$${i++},$${i++})`);
     params.push(
       r.sellerId, r.brandId, r.modelId, r.year, r.price, r.km, r.engine, r.power,
-      r.fuel, r.trans, r.body, r.color, r.locId, r.desc, r.phone, r.feat, r.views, r.cat
+      r.fuel, r.trans, safeBody(r.body), r.color, r.locId, r.desc, r.phone, r.feat, r.views, r.cat
     );
   }
   const { rows: inserted } = await query(
@@ -199,7 +218,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     : cat === 'motorcycle' ? 1500 + (n * 97) % 45000
     : 8000 + (n * 137) % 240000;
   const price = realisticPrice(g, year, cat, n);
-  const body = g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup';
+  const body = safeBody(g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup');
   const fuel = cat === 'parts'
     ? 'Petrol'
     : ['Tesla', 'BYD'].includes(g.brand) || /EV|Ioniq|ID\.|Taycan|Seal|Han/i.test(model)
@@ -310,10 +329,10 @@ function uniqueGroupRows(groups, cat, sellers, locs, existing) {
   let n = 0;
   // One year per model for specialty; a few years for passenger — uniqueness via brand|model|year|cat
   const years = cat === 'passenger'
-    ? [2018, 2021, 2024, 2025]
+    ? [2017, 2019, 2021, 2022, 2023, 2024, 2025, 2026]
     : cat === 'parts'
-      ? [2024]
-      : [2022];
+      ? [2023, 2024, 2025]
+      : [2020, 2022, 2024];
   for (const g of groups) {
     for (const model of g.models) {
       for (const year of years) {
@@ -368,20 +387,28 @@ async function fillCars(_need, sellers, locs) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 
-  // Bind every cover image to car id so URLs stay unique forever
+  // Keep visible local photos — never random landscapes
   await query(`
     UPDATE car_images ci
-    SET url = 'https://picsum.photos/seed/benz-' || COALESCE(c.category, 'car') || '-' || c.id || '-0/900/600'
+    SET url = CASE c.category
+      WHEN 'parts' THEN '/parts/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'kamaz' THEN '/kamaz/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'commercial' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'special' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'bus' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'agricultural' THEN '/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      ELSE '/cars/' || ((c.id % 8) + 1)::text || '.jpg'
+    END
     FROM cars c
     WHERE ci.car_id = c.id
       AND (
         ci.url LIKE '%loremflickr%'
         OR ci.url LIKE '%unsplash%'
-        OR ci.url LIKE '/cars/%'
-        OR ci.url LIKE '/trucks/%'
-        OR ci.url LIKE '/kamaz/%'
-        OR ci.url LIKE '/parts/%'
-        OR ci.url LIKE 'https://picsum.photos/seed/benz-%'
+        OR ci.url LIKE '%picsum%'
+        OR ci.url LIKE '%imagin.studio%'
+        OR ci.url IS NULL
+        OR ci.url = ''
+        OR ci.url LIKE 'data:image%'
       )
   `);
 }

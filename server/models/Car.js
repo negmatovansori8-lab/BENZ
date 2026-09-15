@@ -43,56 +43,48 @@ export const CarModel = {
   },
 
   async featured(limit = 24) {
-    const premium = [
-      'Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Lexus', 'Toyota', 'Tesla', 'Land Rover', 'Honda',
-    ];
+    // One of each premium brand first — Toyota, Audi, Lamborghini, Mercedes…
     const { rows } = await query(
-      `SELECT ${CAR_SELECT} ${FROM}
+      `SELECT DISTINCT ON (b.name) ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
-         AND b.name = ANY($2::text[])
-         AND b.name <> 'Jaguar'
-       ORDER BY
-         CASE b.name
-           WHEN 'Mercedes-Benz' THEN 0 WHEN 'BMW' THEN 1 WHEN 'Audi' THEN 2
-           WHEN 'Porsche' THEN 3 WHEN 'Lexus' THEN 4 WHEN 'Tesla' THEN 5
-           WHEN 'Toyota' THEN 6 ELSE 7
-         END,
-         CASE c.body
-           WHEN 'SUV' THEN 0 WHEN 'Sedan' THEN 1 WHEN 'Coupe' THEN 2
-           WHEN 'Pickup' THEN 3 ELSE 4
-         END,
-         c.year DESC, c.views DESC
-       LIMIT $1`,
-      [limit, premium]
+         AND b.name IN (
+           'Mercedes-Benz','BMW','Audi','Toyota','Lamborghini','Ferrari','Porsche',
+           'Lexus','Tesla','Honda','Hyundai','Land Rover','Bentley','Maserati','Chevrolet','Ford'
+         )
+       ORDER BY b.name, c.year DESC, c.views DESC`
     );
-    if (rows.length >= Math.min(8, limit)) return rows;
+    const order = [
+      'Mercedes-Benz', 'BMW', 'Audi', 'Toyota', 'Lamborghini', 'Ferrari', 'Porsche',
+      'Lexus', 'Tesla', 'Honda', 'Hyundai', 'Land Rover', 'Bentley', 'Maserati', 'Chevrolet', 'Ford',
+    ];
+    rows.sort((a, b) => order.indexOf(a.brand) - order.indexOf(b.brand));
+    if (rows.length >= 8) return rows.slice(0, limit);
     const fallback = await query(
-      `SELECT ${CAR_SELECT} ${FROM}
-       WHERE c.status = 'APPROVED' AND c.category = 'passenger' AND b.name <> 'Jaguar'
-       ORDER BY c.year DESC, c.views DESC LIMIT $1`,
-      [limit]
+      `SELECT DISTINCT ON (b.name) ${CAR_SELECT} ${FROM}
+       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
+       ORDER BY b.name, c.year DESC, c.views DESC`
     );
-    return fallback.rows;
+    fallback.rows.sort((a, b) => Number(b.year) - Number(a.year));
+    return fallback.rows.slice(0, limit);
   },
 
   async recent(limit = 24) {
     const prefer = [
-      'Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Lexus', 'Toyota', 'Tesla',
-      'Honda', 'Hyundai', 'Kia', 'Volkswagen', 'Ford', 'Chevrolet', 'Nissan',
+      'Mercedes-Benz', 'BMW', 'Audi', 'Toyota', 'Lamborghini', 'Ferrari', 'Porsche',
+      'Lexus', 'Tesla', 'Honda', 'Hyundai', 'Kia', 'Volkswagen', 'Ford', 'Chevrolet',
+      'Nissan', 'Land Rover', 'Bentley', 'Maserati', 'Genesis',
     ];
     const { rows } = await query(
-      `SELECT DISTINCT ON (b.name, m.name) ${CAR_SELECT} ${FROM}
+      `SELECT DISTINCT ON (b.name) ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
          AND b.name = ANY($1::text[])
-         AND b.name <> 'Jaguar'
-       ORDER BY b.name, m.name, c.year DESC, c.created_at DESC`,
+       ORDER BY b.name, c.year DESC, c.created_at DESC`,
       [prefer]
     );
     rows.sort((a, b) => {
       const ra = prefer.indexOf(a.brand);
       const rb = prefer.indexOf(b.brand);
-      if (ra !== rb) return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
-      return Number(b.year) - Number(a.year);
+      return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
     });
     return rows.slice(0, limit);
   },

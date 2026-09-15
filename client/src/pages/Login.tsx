@@ -124,7 +124,7 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(email, password);
-      rememberLogin(email, password);
+      rememberLogin(email, password, [user.email, user.phone || ''].filter(Boolean));
       push(t('welcomeBack'), 'success');
       goAfterAuth(user.role);
     } catch (err: unknown) {
@@ -151,7 +151,8 @@ export default function Login() {
           email={pending.email}
           onConfirm={async (code) => {
             const user = await confirmSignup(pending.email, code, pending);
-            rememberLogin(pending.email, pending.password || code);
+            const pin = code.replace(/\D/g, '') || pending.password;
+            rememberLogin(pending.email, pin, [user.email, user.phone || ''].filter(Boolean));
             push(t('accountCreated'), 'success');
             goAfterAuth(user.role);
           }}
@@ -180,16 +181,26 @@ export default function Login() {
             onChange={(e) => {
               const next = e.target.value;
               setEmail(next);
-              const saved = savedLoginCode(next);
-              if (saved) setPassword(saved);
+              setPassword(savedLoginCode(next));
             }}
+            onBlur={() => setPassword(savedLoginCode(email) || password)}
           />
         </label>
         <label className="mt-3 block">
           <span className="label">{t('password')}</span>
-          <input className="input" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input
+            className="input tracking-[0.35em]"
+            type="text"
+            inputMode="numeric"
+            autoComplete="current-password"
+            required
+            maxLength={12}
+            value={password}
+            onChange={(e) => setPassword(e.target.value.replace(/\s/g, ''))}
+          />
         </label>
-        <p className="mt-2 text-right text-sm">
+        <p className="mt-2 text-sm text-[var(--ah-muted)]">{t('loginCodeAutoHint')}</p>
+        <p className="mt-1 text-right text-sm">
           <Link to="/forgot-password" className="text-gold-600">{t('forgotPassword')}</Link>
         </p>
         <button className="btn-gold mt-6 w-full" disabled={loading}>{loading ? t('signingIn') : t('loginTitle')}</button>
@@ -243,8 +254,9 @@ export function Register() {
         <EmailConfirmPanel
           email={pending.email}
           onConfirm={async (code) => {
-            await confirmSignup(pending.email, code, pending);
-            rememberLogin(pending.email, code);
+            const user = await confirmSignup(pending.email, code, pending);
+            const pin = code.replace(/\D/g, '');
+            rememberLogin(pending.email, pin, [user.email, user.phone || '', form.phone].filter(Boolean));
             push(t('accountCreated'), 'success');
             navigate('/');
           }}

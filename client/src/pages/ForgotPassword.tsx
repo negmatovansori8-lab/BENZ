@@ -67,8 +67,8 @@ export default function ForgotPassword() {
     setError('');
     setLoading(true);
     try {
-      await confirmPasswordReset(email, token, token);
-      rememberLogin(email, token);
+      const user = await confirmPasswordReset(email, token, token);
+      rememberLogin(email, token, [user.email, user.phone || '', identifier].filter(Boolean));
       push(t('passwordChanged'), 'success');
       navigate('/');
     } catch (err: unknown) {

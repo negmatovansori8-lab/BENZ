@@ -1,13 +1,12 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { Seo } from '../components/Seo';
 import { CarCard, CarCardSkeleton } from '../components/CarCard';
 import { CategoryGrid } from '../components/CategoryGrid';
 import { PropertyCard } from '../components/PropertyCard';
 import { api } from '../services/api';
-import type { Brand, Car, Location, Property } from '../types';
-import { BRANDS } from '../types';
+import type { Car, Property } from '../types';
 import { useI18n } from '../context/LocaleContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,10 +21,6 @@ export default function Home() {
   const [parts, setParts] = useState<Car[]>([]);
   const [homes, setHomes] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [form, setForm] = useState({ brand: '', model: '', year: '', location: '' });
-  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([
@@ -36,10 +31,8 @@ export default function Home() {
       api.get('/cars?category=kamaz&limit=48'),
       api.get('/cars?category=parts&limit=48'),
       api.get('/homes?limit=8'),
-      api.get('/meta/brands'),
-      api.get('/meta/locations'),
     ])
-      .then(([f, r, p, h, kamazRes, partsRes, homesRes, b, l]) => {
+      .then(([f, r, p, h, kamazRes, partsRes, homesRes]) => {
         const used = new Set<string>();
         const take = (list: Car[], n = 16) => {
           const out: Car[] = [];
@@ -69,24 +62,10 @@ export default function Home() {
           seenHome.add(key);
           return true;
         }).slice(0, 8));
-        setBrands(b.data.data || []);
-        setLocations(l.data.data || []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  const onSearch = (e: FormEvent) => {
-    e.preventDefault();
-    const q = new URLSearchParams();
-    if (form.brand) q.set('brand', form.brand);
-    if (form.model) q.set('model', form.model);
-    if (form.year) q.set('yearFrom', form.year);
-    if (form.location) q.set('city', form.location);
-    navigate(`/cars?${q.toString()}`);
-  };
-
-  const models = brands.find((b) => b.name === form.brand)?.models || [];
 
   return (
     <>
@@ -116,25 +95,9 @@ export default function Home() {
             {t('heroTitle')}
           </h1>
           <p className="mt-3 max-w-xl text-sm text-white/75 sm:mt-4 sm:text-lg">{t('heroSubtitle')}</p>
-
-          <form onSubmit={onSearch} className="mt-5 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur-xl sm:grid-cols-2 lg:grid-cols-5">
-            <select className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value, model: '' })}>
-              <option value="">{t('brand')}</option>
-              {BRANDS.map((b) => <option key={b}>{b}</option>)}
-            </select>
-            <select className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })}>
-              <option value="">{t('model')}</option>
-              {models.map((m) => <option key={m.id}>{m.name}</option>)}
-            </select>
-            <input className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" inputMode="numeric" placeholder={t('year')} value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value.replace(/\D/g, '') })} />
-            <select className="input !rounded-lg !bg-white/90 !px-2.5 !py-1.5 !text-xs !text-zinc-900" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}>
-              <option value="">{t('location')}</option>
-              {locations.map((l) => <option key={l.id} value={l.city}>{l.city}</option>)}
-            </select>
-            <button type="submit" className="btn-gold col-span-2 !rounded-lg !px-3 !py-2 !text-xs lg:col-span-1">
-              <Search className="h-3.5 w-3.5" /> {t('searchShort')}
-            </button>
-          </form>
+          <Link to="/cars?category=passenger" className="btn-gold mt-6">
+            {t('searchCars')}
+          </Link>
         </div>
       </section>
 

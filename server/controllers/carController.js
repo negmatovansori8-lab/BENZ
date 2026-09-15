@@ -58,23 +58,9 @@ function rewriteImageUrl(url, carId, index, category = 'passenger', label = 'BEN
   const raw = url == null ? '' : String(url);
   if (raw.startsWith('/uploads/')) return raw;
   if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw;
-  // Keep real local gallery photos for trucks / KamAZ / parts
-  if (raw.startsWith('/parts/') || raw.startsWith('/kamaz/') || raw.startsWith('/trucks/')) return raw;
   if (isImaginImage(raw)) return raw;
-
-  const localByCategory = () => {
-    const n = Math.abs(Number(carId) || 0);
-    if (cat === 'parts') return `/parts/${(n % 3) + 1}.jpg`;
-    if (cat === 'kamaz') return `/kamaz/${(n % 3) + 1}.jpg`;
-    if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural' || cat === 'heavy') {
-      return `/trucks/${(n % 3) + 1}.jpg`;
-    }
-    return null;
-  };
-
   if (raw.startsWith('data:image/svg+xml')) {
-    const local = localByCategory();
-    if (local) return local;
+    // Prefer matched studio photo for passenger when we know brand/model
     if (meta.brand && meta.model && cat === 'passenger') {
       return carPhoto(meta.brand, meta.model, meta.year, carId, index);
     }
@@ -83,10 +69,11 @@ function rewriteImageUrl(url, carId, index, category = 'passenger', label = 'BEN
   if (
     !raw ||
     isStockRemoteImage(raw) ||
-    raw.startsWith('/cars/')
+    raw.startsWith('/cars/') ||
+    raw.startsWith('/trucks/') ||
+    raw.startsWith('/kamaz/') ||
+    raw.startsWith('/parts/')
   ) {
-    const local = localByCategory();
-    if (local) return local;
     return imageForVehicle(cat, carId, index, label, meta);
   }
   if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;

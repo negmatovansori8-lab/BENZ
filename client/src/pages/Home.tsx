@@ -36,43 +36,25 @@ export default function Home() {
     ])
       .then(([f, neu, p, h, kamazRes, partsRes, homesRes]) => {
         const used = new Set<string>();
-        const take = (list: Car[], n = 16, markUsed = true) => {
+        const take = (list: Car[], n = 16) => {
           const out: Car[] = [];
           for (const c of uniqueByIdAndImage(list || [])) {
             const id = `id:${c.id}`;
             const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`;
             if (used.has(id) || used.has(twin)) continue;
-            if (markUsed) {
-              used.add(id);
-              used.add(twin);
-            }
+            used.add(id);
+            used.add(twin);
             out.push(c);
             if (out.length >= n) break;
           }
           return out;
         };
-        // New Cars first — never leave this section empty because of featured
-        setNewCars(take(neu.data.data || [], 16));
         setFeatured(take(f.data.data || []));
+        setNewCars(take(neu.data.data || [], 16));
         setPopular(take(p.data.data || []));
-        // Heavy / KamAZ / parts keep their own pools (do not steal passenger slots)
-        const heavyUsed = new Set<string>();
-        const takeHeavy = (list: Car[], n = 16) => {
-          const out: Car[] = [];
-          for (const c of uniqueByIdAndImage(list || [])) {
-            const id = `id:${c.id}`;
-            const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`;
-            if (heavyUsed.has(id) || heavyUsed.has(twin)) continue;
-            heavyUsed.add(id);
-            heavyUsed.add(twin);
-            out.push(c);
-            if (out.length >= n) break;
-          }
-          return out;
-        };
-        setHeavy(takeHeavy(h.data.data || []));
-        setKamaz(takeHeavy(kamazRes.data.data || []));
-        setParts(takeHeavy(partsRes.data.data || []));
+        setHeavy(take(h.data.data || []));
+        setKamaz(take(kamazRes.data.data || []));
+        setParts(take(partsRes.data.data || []));
         const seenHome = new Set<string>();
         setHomes((homesRes.data.data || []).filter((x: Property) => {
           const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.location_id ?? x.title}`;

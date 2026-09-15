@@ -116,7 +116,7 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
           />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-1">
-            {car.is_new && (
+            {(car.is_new || Number(car.year) >= 2025) && (
               <span className="chip border-0 bg-emerald-500 text-[10px] font-bold tracking-wide text-white">NEW</span>
             )}
             {car.is_featured && <span className="chip border-0 bg-gold-500 text-[10px] font-semibold text-zinc-950">{t('badgeFeatured')}</span>}

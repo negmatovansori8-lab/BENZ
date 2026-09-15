@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { MapPin } from 'lucide-react';
+import { MapPin } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import type { Property } from '../types';
 import { formatPrice } from '../utils/format';
 import { useCurrency } from '../context/CurrencyContext';
@@ -37,7 +38,7 @@ export function PropertyCard({ item }: { item: Property }) {
           {item.area_m2 ? `${item.area_m2} ${t('area')}` : ''}
         </p>
         <p className="mt-auto flex items-center gap-1 pt-3 text-xs text-[var(--ah-muted)]">
-          <MapPin className="h-3.5 w-3.5" />
+          <Icon icon={MapPin} size="xs" decorative />
           {item.location || '—'}
         </p>
       </div>

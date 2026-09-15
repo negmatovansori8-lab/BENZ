@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { MapPin } from 'lucide-react';
+import { MapPin } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import { Seo } from '../components/Seo';
 import { ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
@@ -46,7 +47,7 @@ export default function HomeDetails() {
           <p className="text-xs uppercase tracking-wider text-gold-600">{t(kind)}</p>
           <h1 className="font-display mt-2 text-3xl">{item.title}</h1>
           <p className="mt-4 font-display text-4xl text-gold-600">{formatPrice(item.price_usd, currency, rates)}</p>
-          <p className="mt-2 flex items-center gap-1 text-sm text-[var(--ah-muted)]"><MapPin className="h-4 w-4" />{item.location}</p>
+          <p className="mt-2 flex items-center gap-1.5 text-sm text-[var(--ah-muted)]"><Icon icon={MapPin} size="sm" decorative />{item.location}</p>
           <dl className="mt-6 space-y-2 text-sm">
             {item.rooms > 0 && <div className="flex justify-between"><dt className="text-[var(--ah-muted)]">{t('rooms')}</dt><dd>{item.rooms}</dd></div>}
             {item.area_m2 ? <div className="flex justify-between"><dt className="text-[var(--ah-muted)]">{t('area')}</dt><dd>{item.area_m2}</dd></div> : null}

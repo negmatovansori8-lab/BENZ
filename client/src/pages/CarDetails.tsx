@@ -1,6 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Heart, Mail, Scale, X, ZoomIn } from 'lucide-react';
+import { ArrowLeft, Heart, Mail, Scale, X, ZoomIn } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
+import { IconButton } from '../components/icons/IconButton';
 import { Seo } from '../components/Seo';
 import { ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
@@ -117,7 +119,7 @@ export default function CarDetails() {
     <div className="container-ah py-5 sm:py-8">
       <Seo title={`${car.brand} ${car.model} ${car.year} — BENZ`} description={car.description || undefined} />
       <Link to="/cars" className="mb-5 inline-flex items-center gap-2 text-sm text-[var(--ah-muted)] transition hover:text-gold-600">
-        <ArrowLeft className="h-4 w-4" /> {t('back')}
+        <Icon icon={ArrowLeft} size="sm" decorative /> {t('back')}
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-[1.2fr_.8fr]">
@@ -131,7 +133,9 @@ export default function CarDetails() {
               alt={`${car.brand} ${car.model}`}
               className="fade-swap h-56 w-full object-cover sm:h-[420px]"
             />
-            <span className="absolute bottom-4 right-4 rounded-full bg-black/50 p-2 text-white backdrop-blur"><ZoomIn className="h-4 w-4" /></span>
+            <span className="absolute bottom-4 right-4 rounded-full bg-black/50 p-2 text-white backdrop-blur" aria-hidden>
+              <Icon icon={ZoomIn} size="sm" decorative />
+            </span>
           </button>
           <div className="mt-3 flex gap-2 overflow-auto">
             {images.map((src, i) => (
@@ -161,11 +165,11 @@ export default function CarDetails() {
           </p>
 
           <div className="mt-6 grid grid-cols-2 gap-2">
-            <button type="button" className="btn-ghost" onClick={favorite}>
-              <Heart className={cn('h-4 w-4', car.is_favorite && 'fill-red-500 text-red-500')} /> {t('favoriteBtn')}
+            <button type="button" className="btn-ghost inline-flex items-center gap-2" onClick={favorite}>
+              <Icon icon={Heart} size="sm" className={cn(car.is_favorite && 'fill-red-500 text-red-500')} decorative /> {t('favoriteBtn')}
             </button>
-            <button type="button" className="btn-ghost" onClick={() => { add(car); push(t('addedToCompare'), 'success'); }}>
-              <Scale className={cn('h-4 w-4', has(car.id) && 'text-gold-500')} /> {t('compareBtn')}
+            <button type="button" className="btn-ghost inline-flex items-center gap-2" onClick={() => { add(car); push(t('addedToCompare'), 'success'); }}>
+              <Icon icon={Scale} size="sm" className={cn(has(car.id) && 'text-gold-500')} decorative /> {t('compareBtn')}
             </button>
             <ContactActions phone={car.phone || car.seller_phone} />
           </div>
@@ -179,8 +183,8 @@ export default function CarDetails() {
               </div>
             </div>
             <textarea className="input mt-3 min-h-[90px]" placeholder={t('writeMessage')} value={msg} onChange={(e) => setMsg(e.target.value)} />
-            <button type="button" className="btn-gold mt-2 w-full" disabled={sending} onClick={sendMessage}>
-              <Mail className="h-4 w-4" /> {sending ? t('sending') : t('messageSeller')}
+            <button type="button" className="btn-gold mt-2 inline-flex w-full items-center justify-center gap-2" disabled={sending} onClick={sendMessage}>
+              <Icon icon={Mail} size="sm" decorative /> {sending ? t('sending') : t('messageSeller')}
             </button>
           </div>
         </aside>

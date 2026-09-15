@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import { Seo } from '../components/Seo';
 import { CarCard, CarCardSkeleton } from '../components/CarCard';
 import { CategoryGrid } from '../components/CategoryGrid';
@@ -119,7 +120,7 @@ export default function Home() {
             <h2 className="font-display text-2xl sm:text-3xl">{t('featured')}</h2>
           </div>
           <Link to="/cars?featured=true" className="shrink-0 inline-flex items-center gap-1 text-sm text-gold-600">
-            {t('viewAll')} <ArrowRight className="h-4 w-4" />
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
           </Link>
         </div>
         <Grid cars={featured} loading={loading} empty={t('noCars')} />
@@ -133,7 +134,7 @@ export default function Home() {
             <p className="mt-1 text-sm text-[var(--ah-muted)]">{t('largeVehiclesText')}</p>
           </div>
           <Link to="/cars?category=heavy" className="inline-flex items-center gap-1 text-sm text-gold-600">
-            {t('viewAll')} <ArrowRight className="h-4 w-4" />
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
           </Link>
         </div>
         <Grid cars={heavy} loading={loading} empty={t('noCars')} />
@@ -147,7 +148,7 @@ export default function Home() {
             <p className="mt-1 text-sm text-[var(--ah-muted)]">{t('kamazText')}</p>
           </div>
           <Link to="/cars?category=kamaz" className="inline-flex items-center gap-1 text-sm text-gold-600">
-            {t('viewAll')} <ArrowRight className="h-4 w-4" />
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
           </Link>
         </div>
         <Grid cars={kamaz} loading={loading} empty={t('noCars')} />
@@ -161,7 +162,7 @@ export default function Home() {
             <p className="mt-1 text-sm text-[var(--ah-muted)]">{t('partsText')}</p>
           </div>
           <Link to="/cars?category=parts" className="inline-flex items-center gap-1 text-sm text-gold-600">
-            {t('viewAll')} <ArrowRight className="h-4 w-4" />
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
           </Link>
         </div>
         <Grid cars={parts} loading={loading} empty={t('noCars')} />
@@ -175,7 +176,7 @@ export default function Home() {
             <p className="mt-1 text-sm text-[var(--ah-muted)]">{t('homesText')}</p>
           </div>
           <Link to="/homes" className="inline-flex items-center gap-1 text-sm text-gold-600">
-            {t('viewAll')} <ArrowRight className="h-4 w-4" />
+            {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
           </Link>
         </div>
         {loading && (

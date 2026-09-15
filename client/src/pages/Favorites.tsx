@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart } from 'lucide-react';
+import { Heart } from '../components/icons';
 import { Seo } from '../components/Seo';
 import { api } from '../services/api';
 import type { Car } from '../types';

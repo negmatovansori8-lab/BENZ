@@ -1,4 +1,5 @@
-import { Phone } from 'lucide-react';
+import { Phone } from './icons';
+import { Icon } from './icons/Icon';
 import { useI18n } from '../context/LocaleContext';
 import { useToast } from '../context/ToastContext';
 import { displayPhone, normalizePhone, whatsappLink } from '../utils/format';
@@ -26,8 +27,8 @@ export function ContactActions({ phone, className = '' }: { phone?: string | nul
     <div className={`col-span-2 space-y-2 ${className}`}>
       <p className="text-center text-sm font-semibold tracking-wide">{displayPhone(tel)}</p>
       <div className="grid grid-cols-2 gap-2">
-        <a className="btn-dark" href={`tel:${tel}`}>
-          <Phone className="h-4 w-4" /> {t('callNow')}
+        <a className="btn-dark inline-flex items-center justify-center gap-2" href={`tel:${tel}`}>
+          <Icon icon={Phone} size="sm" decorative /> {t('callNow')}
         </a>
         <a className="btn-gold" href={wa} target="_blank" rel="noreferrer">
           WhatsApp

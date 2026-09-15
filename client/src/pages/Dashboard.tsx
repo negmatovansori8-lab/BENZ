@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, Heart, Pause, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Eye, Heart, Pause, Pencil, Plus, Trash2, Car as CarIcon } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
+import { IconButton } from '../components/icons/IconButton';
 import { Seo } from '../components/Seo';
 import { api } from '../services/api';
 import type { Car } from '../types';
@@ -8,9 +8,10 @@ import { useToast } from '../context/ToastContext';
 import { formatPrice } from '../utils/format';
 import { useCurrency } from '../context/CurrencyContext';
 import { EmptyState } from '../components/EmptyState';
-import { Car as CarIcon } from 'lucide-react';
 import { useI18n } from '../context/LocaleContext';
 import { toastErrorKey } from '../utils/authErrors';
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 interface Dash {
   stats: { total: number; active: number; sold: number; pending: number; paused: number; views: number; favorites: number };
@@ -68,7 +69,9 @@ export default function Dashboard() {
           <h1 className="font-display text-3xl">{t('dashTitle')}</h1>
           <p className="text-sm text-[var(--ah-muted)]">{t('dashSubtitle')}</p>
         </div>
-        <Link to="/sell" className="btn-gold"><Plus className="h-4 w-4" /> {t('addCar')}</Link>
+        <Link to="/sell" className="btn-gold inline-flex items-center gap-2">
+          <Icon icon={Plus} size="sm" decorative /> {t('addCar')}
+        </Link>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
@@ -93,7 +96,14 @@ export default function Dashboard() {
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="border-b border-[var(--ah-line)] text-xs uppercase text-[var(--ah-muted)]">
               <tr>
-                <th className="p-3">{t('colCar')}</th><th>{t('colPrice')}</th><th>{t('colStatus')}</th><th>{t('specViews')}</th><th>♥</th><th></th>
+                <th className="p-3">{t('colCar')}</th>
+                <th>{t('colPrice')}</th>
+                <th>{t('colStatus')}</th>
+                <th>{t('specViews')}</th>
+                <th aria-label={t('navFavorites')}>
+                  <Icon icon={Heart} size="xs" label={t('navFavorites')} />
+                </th>
+                <th />
               </tr>
             </thead>
             <tbody>
@@ -104,17 +114,34 @@ export default function Dashboard() {
                   </td>
                   <td>{formatPrice(c.price_usd, currency, rates)}</td>
                   <td><span className="chip text-[10px]">{c.status}</span></td>
-                  <td className="inline-flex items-center gap-1"><Eye className="h-3 w-3" />{c.views}</td>
-                  <td><Heart className="mr-1 inline h-3 w-3" />{c.favorites_count}</td>
+                  <td className="p-3">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Icon icon={Eye} size="xs" decorative />
+                      {c.views}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Icon icon={Heart} size="xs" decorative />
+                      {c.favorites_count}
+                    </span>
+                  </td>
                   <td className="space-x-1 p-3 text-right">
-                    <Link to={`/sell?edit=${c.id}`} className="inline-flex rounded-full p-2 hover:bg-black/5 dark:hover:bg-white/5" title={t('sellEditBtn')}><Pencil className="h-4 w-4" /></Link>
+                    <Link
+                      to={`/sell?edit=${c.id}`}
+                      className="ah-icon-btn inline-flex rounded-full p-2 text-[var(--ah-muted)] transition hover:bg-[var(--ah-muted)]/10 hover:text-[var(--ah-text)]"
+                      title={t('sellEditBtn')}
+                      aria-label={t('sellEditBtn')}
+                    >
+                      <Icon icon={Pencil} size="sm" decorative />
+                    </Link>
                     {c.status !== 'SOLD' && (
-                      <button type="button" className="rounded-full p-2 hover:bg-black/5" title={t('markSold')} onClick={() => act(`/cars/${c.id}/sold`)}>{t('markSold')}</button>
+                      <button type="button" className="rounded-full px-2 py-1 text-xs hover:bg-[var(--ah-muted)]/10" title={t('markSold')} onClick={() => act(`/cars/${c.id}/sold`)}>{t('markSold')}</button>
                     )}
                     {c.status !== 'SOLD' && (
-                      <button type="button" className="rounded-full p-2 hover:bg-black/5" title={t('sellEditBtn')} onClick={() => act(`/cars/${c.id}/pause`)}><Pause className="h-4 w-4" /></button>
+                      <IconButton icon={Pause} label={t('sellEditBtn')} onClick={() => act(`/cars/${c.id}/pause`)} />
                     )}
-                    <button type="button" className="rounded-full p-2 text-red-500" title={t('sellRemove')} onClick={() => act(`/cars/${c.id}`, 'delete')}><Trash2 className="h-4 w-4" /></button>
+                    <IconButton icon={Trash2} label={t('sellRemove')} tone="danger" onClick={() => act(`/cars/${c.id}`, 'delete')} />
                   </td>
                 </tr>
               ))}

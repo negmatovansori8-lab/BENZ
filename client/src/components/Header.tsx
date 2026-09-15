@@ -2,8 +2,21 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Bell, Car, Heart, Home, Menu, MessageSquare, Moon, Sun, User, X,
-} from 'lucide-react';
+  Bell,
+  Car,
+  Heart,
+  Home,
+  Languages,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Moon,
+  Sun,
+  User,
+  X,
+} from './icons';
+import { Icon } from './icons/Icon';
+import { IconButton } from './icons/IconButton';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useCurrency } from '../context/CurrencyContext';
@@ -99,20 +112,23 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5">
-          <select
-            aria-label={t('language')}
-            translate="no"
-            className="notranslate rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white/80"
-            value={locale}
-            onChange={(e) => setLocale(e.target.value as typeof locale)}
-          >
-            {LOCALES.map((l) => (
-              <option key={l.id} value={l.id} className="text-zinc-900">
-                {l.label}
-              </option>
-            ))}
-          </select>
+        <div className="ml-auto flex items-center gap-1">
+          <label className="hidden items-center gap-1.5 rounded-full border border-white/10 px-2 py-1 sm:flex">
+            <Icon icon={Languages} size="xs" className="text-white/55" decorative />
+            <select
+              aria-label={t('language')}
+              translate="no"
+              className="notranslate bg-transparent text-xs text-white/80 outline-none"
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as typeof locale)}
+            >
+              {LOCALES.map((l) => (
+                <option key={l.id} value={l.id} className="text-zinc-900">
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <select
             aria-label="Currency"
             translate="no"
@@ -126,17 +142,23 @@ export function Header() {
               </option>
             ))}
           </select>
-          <button type="button" className="rounded-full p-2 text-white/80 hover:bg-white/10" onClick={toggle} aria-label="Toggle theme">
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+          <IconButton
+            icon={theme === 'dark' ? Sun : Moon}
+            label={theme === 'dark' ? t('themeLight') : t('themeDark')}
+            className="!text-white/80 hover:!bg-white/10 hover:!text-white"
+            onClick={toggle}
+          />
           {user && (
             <div className="relative">
-              <button type="button" className="relative rounded-full p-2 text-white/80 hover:bg-white/10" onClick={() => setBell((v) => !v)}>
-                <Bell className="h-4 w-4" />
-                {unread > 0 && (
-                  <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-gold-400" />
-                )}
-              </button>
+              <IconButton
+                icon={Bell}
+                label={t('notifications')}
+                className="relative !text-white/80 hover:!bg-white/10 hover:!text-white"
+                onClick={() => setBell((v) => !v)}
+              />
+              {unread > 0 && (
+                <span className="pointer-events-none absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-gold-400 ring-2 ring-zinc-950" />
+              )}
               {bell && (
                 <div className="absolute right-0 mt-2 w-80 overflow-hidden rounded-2xl border border-[var(--ah-line)] bg-[var(--ah-surface)] text-[var(--ah-text)] shadow-card">
                   <div className="flex items-center justify-between px-4 py-3 text-sm font-semibold">
@@ -170,16 +192,24 @@ export function Header() {
                   {t('navAdmin')}
                 </Link>
               )}
-              <Link to="/profile" title={`${t('youAreIn')}: ${user.email}`} className="flex items-center gap-2 rounded-full border border-white/10 px-2 py-0.5 text-xs text-white">
+              <Link
+                to="/profile"
+                title={`${t('youAreIn')}: ${user.email}`}
+                aria-label={t('navProfile')}
+                className="flex items-center gap-2 rounded-full border border-white/10 px-2 py-0.5 text-xs text-white transition hover:bg-white/10"
+              >
                 <span className="relative">
                   <img src={avatarUrl(user.name, user.avatar)} alt="" className="h-6 w-6 rounded-full bg-white/10 object-cover" />
                   <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-400 ring-2 ring-zinc-950" />
                 </span>
                 <span className="hidden max-w-[160px] truncate md:inline">{user.name}</span>
               </Link>
-              <button type="button" className="text-xs text-white/60 hover:text-white" onClick={() => { logout(); navigate('/'); }}>
-                {t('navLogout')}
-              </button>
+              <IconButton
+                icon={LogOut}
+                label={t('navLogout')}
+                className="!text-white/60 hover:!bg-white/10 hover:!text-white"
+                onClick={() => { logout(); navigate('/'); }}
+              />
             </div>
           ) : (
             <div className="hidden items-center gap-2 lg:flex">
@@ -187,29 +217,34 @@ export function Header() {
               <Link to="/register" className="btn-gold !py-1.5">{t('navRegister')}</Link>
             </div>
           )}
-          <button
-            type="button"
-            className="rounded-full p-2 text-white/80 hover:bg-white/10 lg:hidden"
+          <IconButton
+            icon={Menu}
+            label={t('menuOpen')}
+            size="md"
+            className="!text-white/80 hover:!bg-white/10 hover:!text-white lg:hidden"
             onClick={() => setOpen(true)}
-            aria-label="Menu"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+          />
         </div>
       </div>
     </header>
     {open && createPortal(
       <div className="fixed inset-0 z-[80] lg:hidden">
-        <button type="button" className="absolute inset-0 bg-black/70" aria-label="Close menu" onClick={() => setOpen(false)} />
+        <button type="button" className="absolute inset-0 bg-black/70" aria-label={t('menuClose')} onClick={() => setOpen(false)} />
         <aside className="absolute inset-y-0 right-0 flex h-[100dvh] w-[min(86vw,340px)] flex-col overflow-y-auto bg-zinc-950 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-white shadow-2xl">
           <div className="mb-6 flex items-center justify-between">
             <Logo />
-            <button type="button" className="rounded-full p-2 hover:bg-white/10" onClick={() => setOpen(false)} aria-label="Close">
-              <X />
-            </button>
+            <IconButton
+              icon={X}
+              label={t('menuClose')}
+              className="!text-white hover:!bg-white/10"
+              onClick={() => setOpen(false)}
+            />
           </div>
-          <label className="mb-3 flex items-center justify-between text-sm text-white/70">
-            {t('language')}
+          <label className="mb-3 flex items-center justify-between gap-3 text-sm text-white/70">
+            <span className="inline-flex items-center gap-2">
+              <Icon icon={Languages} size="sm" decorative />
+              {t('language')}
+            </span>
             <select
               className="rounded-full border border-white/10 bg-transparent px-2 py-1 text-xs text-white"
               value={locale}
@@ -239,21 +274,28 @@ export function Header() {
           </label>
           <div className="flex flex-col gap-1">
             {navKeys.map((l) => (
-              <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-white/10">
+              <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base transition hover:bg-white/10">
                 {t(l.key)}
               </Link>
             ))}
             {items.length >= 2 && (
-              <Link to="/compare" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-white/10">
+              <Link to="/compare" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base transition hover:bg-white/10">
                 {t('navCompare')} ({items.length})
               </Link>
             )}
             {user ? (
               <>
-                <Link to="/profile" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/10">{t('navProfile')}</Link>
-                <Link to="/dashboard" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/10">{t('navDashboard')}</Link>
+                <Link to="/profile" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 transition hover:bg-white/10">{t('navProfile')}</Link>
+                <Link to="/dashboard" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 transition hover:bg-white/10">{t('navDashboard')}</Link>
                 {user.role === 'ADMIN' && <Link to="/admin" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-gold-400">{t('navAdmin')}</Link>}
-                <button type="button" className="rounded-xl px-3 py-3 text-left text-red-300" onClick={() => { logout(); setOpen(false); }}>{t('navLogout')}</button>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-xl px-3 py-3 text-left text-red-300 transition hover:bg-white/10"
+                  onClick={() => { logout(); setOpen(false); }}
+                >
+                  <Icon icon={LogOut} size="sm" decorative />
+                  {t('navLogout')}
+                </button>
               </>
             ) : (
               <>
@@ -288,11 +330,15 @@ export function MobileNav() {
             <NavLink
               to={it.to}
               end={it.to === '/'}
+              aria-label={it.label}
               className={({ isActive }) =>
-                cn('flex min-h-[48px] flex-col items-center justify-center gap-0.5 py-1.5 text-[10px]', isActive ? 'text-gold-500' : 'text-[var(--ah-muted)]')
+                cn(
+                  'flex min-h-[48px] flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] transition',
+                  isActive ? 'text-gold-500' : 'text-[var(--ah-muted)]'
+                )
               }
             >
-              <it.icon className="h-5 w-5" strokeWidth={1.75} absoluteStrokeWidth />
+              <Icon icon={it.icon} size="md" decorative />
               {it.label}
             </NavLink>
           </li>
@@ -341,4 +387,3 @@ export function Footer() {
     </footer>
   );
 }
-

@@ -354,8 +354,37 @@ input {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.lucide {
+.lucide,
+.ah-icon {
   stroke-width: 1.75;
+  vector-effect: non-scaling-stroke;
+}
+
+.ah-icon-btn {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+.ah-icon-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.ah-icon-btn .ah-icon {
+  transition: transform 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ah-icon-btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.ah-icon-spin {
+  animation: ahIconSpin 0.7s linear infinite;
+}
+@keyframes ahIconSpin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ah-icon-spin {
+    animation: none;
+  }
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }

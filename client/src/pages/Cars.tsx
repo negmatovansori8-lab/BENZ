@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X, Search as SearchIcon } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
+import { IconButton } from '../components/icons/IconButton';
 import { Seo } from '../components/Seo';
 import { CarCard, CarCardSkeleton } from '../components/CarCard';
 import { EmptyState, ErrorState } from '../components/EmptyState';
@@ -9,7 +11,6 @@ import { api } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Car, Location, Paginated } from '../types';
 import { BRANDS } from '../types';
-import { Search as SearchIcon } from 'lucide-react';
 import { useI18n } from '../context/LocaleContext';
 import type { Msg } from '../i18n/dict';
 
@@ -121,7 +122,7 @@ export default function Cars() {
         </div>
           <div className="flex flex-1 flex-col gap-2 sm:flex-row md:max-w-xl">
             <div className="relative flex-1">
-              <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ah-muted)]" />
+              <Icon icon={SearchIcon} size="sm" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ah-muted)]" decorative />
               <input
                 className="input pl-9"
                 placeholder={t('searchPlaceholder')}
@@ -133,8 +134,8 @@ export default function Cars() {
               <select className="input flex-1 sm:w-48" value={params.get('sort') || 'newest'} onChange={(e) => set('sort', e.target.value)}>
                 {SORT_KEYS.map((s) => <option key={s.id} value={s.id}>{t(s.key)}</option>)}
               </select>
-              <button type="button" className="btn-ghost shrink-0 lg:hidden" onClick={() => setOpen(true)}>
-                <SlidersHorizontal className="h-4 w-4" /> {t('filters')}
+              <button type="button" className="btn-ghost inline-flex shrink-0 items-center gap-2 lg:hidden" onClick={() => setOpen(true)}>
+                <Icon icon={SlidersHorizontal} size="sm" decorative /> {t('filters')}
               </button>
             </div>
           </div>
@@ -189,12 +190,12 @@ export default function Cars() {
 
       {open && createPortal(
         <div className="fixed inset-0 z-[80] lg:hidden">
-          <button type="button" className="absolute inset-0 bg-black/60" aria-label="Close filters" onClick={() => setOpen(false)} />
+          <button type="button" className="absolute inset-0 bg-black/60" aria-label={t('menuClose')} onClick={() => setOpen(false)} />
           <div className="absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-auto rounded-t-3xl bg-[var(--ah-surface)] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl">
             <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-[var(--ah-line)]" />
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-semibold">{t('filters')}</h2>
-              <button type="button" className="rounded-full p-2" onClick={() => setOpen(false)} aria-label="Close"><X className="h-5 w-5" /></button>
+              <IconButton icon={X} label={t('menuClose')} size="md" onClick={() => setOpen(false)} />
             </div>
             {filters}
           </div>

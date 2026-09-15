@@ -1,6 +1,8 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import type { Role } from '../types';
+import { Loader2 } from './icons';
+import { Icon } from './icons/Icon';
 
 export function ProtectedRoute({
   children,
@@ -14,8 +16,8 @@ export function ProtectedRoute({
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-gold-500 border-t-transparent" />
+      <div className="flex min-h-[50vh] items-center justify-center" role="status" aria-label="Loading">
+        <Icon icon={Loader2} size="lg" className="ah-icon-spin text-gold-500" decorative />
       </div>
     );
   }

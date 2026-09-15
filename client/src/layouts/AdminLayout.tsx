@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { BarChart3, Car, LayoutDashboard, Users } from 'lucide-react';
+import { BarChart3, Car, LayoutDashboard, Users } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import { Header, MobileNav } from '../components/Header';
 import { RouteShell } from '../components/RouteShell';
 import { cn } from '../utils/format';
@@ -24,10 +25,13 @@ export function AdminLayout() {
               to={it.to}
               end={it.end}
               className={({ isActive }) =>
-                cn('flex items-center gap-2 rounded-xl px-3 py-2 text-sm', isActive && 'bg-gold-500/15 text-gold-600')
+                cn(
+                  'flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition',
+                  isActive ? 'bg-gold-500/15 text-gold-600' : 'text-[var(--ah-muted)] hover:bg-[var(--ah-muted)]/10 hover:text-[var(--ah-text)]'
+                )
               }
             >
-              <it.icon className="h-4 w-4" />
+              <Icon icon={it.icon} size="sm" decorative />
               {it.label}
             </NavLink>
           ))}

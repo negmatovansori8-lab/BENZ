@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Scale } from 'lucide-react';
+import { Scale } from '../components/icons';
 import { Seo } from '../components/Seo';
 import { useCompare } from '../context/CompareContext';
 import { useCurrency } from '../context/CurrencyContext';

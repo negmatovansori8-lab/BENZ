@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ImagePlus, Phone, X } from 'lucide-react';
+import { ImagePlus, Phone, X } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import { Seo } from '../components/Seo';
 import { api } from '../services/api';
 import type { Brand, Location } from '../types';
@@ -225,7 +226,7 @@ export default function Sell() {
               </Section>
 
               <Section n="03" title={t('sellStepContact')} cols={1}>
-                <Field label={t('phone')} icon={<Phone className="h-3.5 w-3.5" />}>
+                <Field label={t('phone')} icon={<Icon icon={Phone} size="xs" decorative />}>
                   <input className="input" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder={user?.phone || ''} />
                 </Field>
                 <label className="block">
@@ -254,7 +255,7 @@ export default function Sell() {
                   onDrop={(e) => { e.preventDefault(); setDrag(false); onFiles(e.dataTransfer.files); }}
                 >
                   <span className="mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gold-500/15 text-gold-400">
-                    <ImagePlus className="h-6 w-6" />
+                    <Icon icon={ImagePlus} size="md" decorative />
                   </span>
                   <p className="font-semibold text-white">{t('sellDropTitle')}</p>
                   <p className="mt-1 text-xs text-white/50">{t('sellDropHint')}</p>
@@ -270,7 +271,7 @@ export default function Sell() {
                           onClick={() => removePreview(i)}
                           aria-label={t('sellRemove')}
                         >
-                          <X className="h-3.5 w-3.5" />
+                          <Icon icon={X} size="xs" decorative />
                         </button>
                       </div>
                     ))}

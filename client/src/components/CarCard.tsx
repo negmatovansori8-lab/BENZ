@@ -1,4 +1,5 @@
-import { Heart, Scale } from 'lucide-react';
+import { Heart, Scale } from './icons';
+import { IconButton } from './icons/IconButton';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Car } from '../types';
 import { cn, coverImage, formatNumber, formatPrice } from '../utils/format';
@@ -64,12 +65,20 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
   return (
     <article className={cn('card card-lift group relative flex flex-col', car.is_featured && 'ring-1 ring-gold-500/60')}>
       <div className="absolute right-3 top-3 z-10 flex gap-1.5">
-        <button type="button" onClick={toggleFav} className="rounded-full bg-black/55 p-2 text-white backdrop-blur-md transition hover:bg-black/75" aria-label={t('favoriteBtn')}>
-          <Heart className={cn('h-4 w-4', fav && 'fill-red-500 text-red-500')} strokeWidth={1.75} />
-        </button>
-        <button type="button" onClick={toggleCompare} className="hidden rounded-full bg-black/55 p-2 text-white backdrop-blur-md transition hover:bg-black/75 sm:inline-flex" aria-label={t('compareBtn')}>
-          <Scale className={cn('h-4 w-4', has(car.id) && 'text-gold-400')} strokeWidth={1.75} />
-        </button>
+        <IconButton
+          icon={Heart}
+          label={t('favoriteBtn')}
+          tone="onMedia"
+          className={cn(fav && '[&_.ah-icon]:fill-red-500 [&_.ah-icon]:text-red-500')}
+          onClick={toggleFav}
+        />
+        <IconButton
+          icon={Scale}
+          label={t('compareBtn')}
+          tone="onMedia"
+          className={cn('hidden sm:inline-flex', has(car.id) && 'text-gold-400')}
+          onClick={toggleCompare}
+        />
       </div>
 
       <Link viewTransition to={`/cars/${car.id}`} className="flex flex-1 flex-col">

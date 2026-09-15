@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MessageSquare, Send } from 'lucide-react';
+import { MessageSquare, Send } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import { Seo } from '../components/Seo';
 import { api } from '../services/api';
 import type { ChatMessage, Conversation } from '../types';
@@ -100,7 +101,9 @@ export default function Messages() {
                 </div>
                 <form onSubmit={send} className="flex gap-2 border-t border-[var(--ah-line)] p-4">
                   <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder={t('writeMessage')} />
-                  <button className="btn-gold !px-4" disabled={sending}><Send className="h-4 w-4" /></button>
+                  <button className="btn-gold inline-flex !px-4" disabled={sending} aria-label={t('messageSeller')}>
+                    <Icon icon={Send} size="sm" className={sending ? 'ah-icon-spin' : undefined} decorative />
+                  </button>
                 </form>
               </>
             ) : (

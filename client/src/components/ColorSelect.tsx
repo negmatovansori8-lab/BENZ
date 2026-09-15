@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from '../components/icons';
+import { Icon } from '../components/icons/Icon';
 import { cn } from '../utils/format';
 
 export type PickOption = { value: string; label: string; color?: string };
@@ -96,7 +97,7 @@ export function ColorSelect({
         <span className={cn('flex-1 truncate', !selected && 'text-white/45')}>
           {selected?.label || placeholder}
         </span>
-        <ChevronDown className={cn('h-4 w-4 text-white/50 transition', open && 'rotate-180')} />
+        <Icon icon={ChevronDown} size="sm" className={cn('text-white/50 transition', open && 'rotate-180')} decorative />
       </button>
 
       {open && (

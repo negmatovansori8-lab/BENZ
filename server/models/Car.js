@@ -59,14 +59,15 @@ export const CarModel = {
     return fallback.rows;
   },
 
-  async recent(limit = 8) {
+  async recent(limit = 24) {
     const { rows } = await query(
-      `SELECT ${CAR_SELECT} ${FROM}
+      `SELECT DISTINCT ON (b.name, m.name) ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
-       ORDER BY c.created_at DESC LIMIT $1`,
-      [limit]
+       ORDER BY b.name, m.name, c.created_at DESC`
     );
-    return rows;
+    // Distinct per brand+model, then newest first for the home strip
+    rows.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return rows.slice(0, limit);
   },
 
   async popular(limit = 8) {

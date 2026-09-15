@@ -4,7 +4,7 @@ import { useI18n } from '../context/LocaleContext';
 import type { Msg } from '../i18n/dict';
 import { CatExcavator, CatHouse, CatKamaz, CatPiston, CatSedan, CatTruck } from './CategoryIcons';
 import {
-  Bike, Bus, Car, Plane, Ship, Tractor, Zap,
+  Car, Zap,
 } from './icons';
 import { Icon } from './icons/Icon';
 
@@ -29,11 +29,6 @@ const MORE: { to: string; key: Msg; icon: typeof Car }[] = [
   { to: '/cars?body=Sedan', key: 'bodySedan', icon: Car },
   { to: '/cars?body=SUV', key: 'bodySuv', icon: Car },
   { to: '/cars?body=Sports', key: 'bodySports', icon: Car },
-  { to: '/cars?category=bus', key: 'catBus', icon: Bus },
-  { to: '/cars?category=motorcycle', key: 'catMotorcycle', icon: Bike },
-  { to: '/cars?category=agricultural', key: 'catAgricultural', icon: Tractor },
-  { to: '/cars?category=marine', key: 'catMarine', icon: Ship },
-  { to: '/cars?category=aircraft', key: 'catAircraft', icon: Plane },
   { to: '/cars?fuel=Electric', key: 'catElectric', icon: Zap },
   { to: '/cars?fuel=Hybrid', key: 'catHybrid', icon: Zap },
 ];

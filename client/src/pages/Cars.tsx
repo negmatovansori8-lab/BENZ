@@ -8,7 +8,7 @@ import { EmptyState, ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Car, Location, Paginated } from '../types';
-import { BODIES, BRANDS, FUELS, TRANSMISSIONS } from '../types';
+import { BRANDS } from '../types';
 import { Search as SearchIcon } from 'lucide-react';
 import { useI18n } from '../context/LocaleContext';
 import type { Msg } from '../i18n/dict';
@@ -82,27 +82,19 @@ export default function Cars() {
     setParams(next);
   };
 
+  const clearFilters = () => {
+    const next = new URLSearchParams();
+    if (cat) next.set('category', cat);
+    setParams(next);
+  };
+
   const filters = (
     <div className="space-y-3">
-      <Field label={t('category')}>
-        <select className="input" value={params.get('category') || ''} onChange={(e) => set('category', e.target.value)}>
-          <option value="">{t('any')}</option>
-          <option value="passenger">{t('catPassenger')}</option>
-          <option value="commercial">{t('catCommercial')}</option>
-          <option value="kamaz">{t('catKamaz')}</option>
-          <option value="special">{t('catSpecial')}</option>
-          <option value="parts">{t('catParts')}</option>
-          <option value="heavy">{t('largeVehicles')}</option>
-        </select>
-      </Field>
       <Field label={t('brand')}>
         <select className="input" value={params.get('brand') || ''} onChange={(e) => set('brand', e.target.value)}>
           <option value="">{t('allBrands')}</option>
           {BRANDS.map((b) => <option key={b}>{b}</option>)}
         </select>
-      </Field>
-      <Field label={t('model')}>
-        <input className="input" placeholder="X5, Camry…" value={params.get('model') || ''} onChange={(e) => set('model', e.target.value)} />
       </Field>
       <p className="label !mb-0">{t('minPrice')}</p>
       <div className="grid grid-cols-2 gap-2">
@@ -114,29 +106,6 @@ export default function Cars() {
         <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('yearFrom') || ''} onChange={(e) => set('yearFrom', e.target.value.replace(/\D/g, ''))} />
         <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('yearTo') || ''} onChange={(e) => set('yearTo', e.target.value.replace(/\D/g, ''))} />
       </div>
-      <p className="label !mb-0">{t('minKm')}</p>
-      <div className="grid grid-cols-2 gap-2">
-        <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('minMileage') || ''} onChange={(e) => set('minMileage', e.target.value.replace(/\D/g, ''))} />
-        <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('maxMileage') || ''} onChange={(e) => set('maxMileage', e.target.value.replace(/\D/g, ''))} />
-      </div>
-      <Field label={t('fuel')}>
-        <select className="input" value={params.get('fuel') || ''} onChange={(e) => set('fuel', e.target.value)}>
-          <option value="">{t('any')}</option>
-          {FUELS.map((f) => <option key={f}>{f}</option>)}
-        </select>
-      </Field>
-      <Field label={t('transmission')}>
-        <select className="input" value={params.get('transmission') || ''} onChange={(e) => set('transmission', e.target.value)}>
-          <option value="">{t('any')}</option>
-          {TRANSMISSIONS.map((f) => <option key={f}>{f}</option>)}
-        </select>
-      </Field>
-      <Field label={t('body')}>
-        <select className="input" value={params.get('body') || ''} onChange={(e) => set('body', e.target.value)}>
-          <option value="">{t('any')}</option>
-          {BODIES.map((f) => <option key={f}>{f}</option>)}
-        </select>
-      </Field>
       <Field label={t('city')}>
         <select className="input" value={params.get('city') || ''} onChange={(e) => set('city', e.target.value)}>
           <option value="">{t('any')}</option>
@@ -144,7 +113,7 @@ export default function Cars() {
         </select>
       </Field>
       <div className="flex gap-2 pt-1">
-        <button type="button" className="btn-ghost flex-1 !py-2.5" onClick={() => setParams({})}>{t('clearFilters')}</button>
+        <button type="button" className="btn-ghost flex-1 !py-2.5" onClick={clearFilters}>{t('clearFilters')}</button>
         <button type="button" className="btn-gold flex-1 !py-2.5 lg:hidden" onClick={() => setOpen(false)}>{t('applyFilters')}</button>
       </div>
     </div>
@@ -179,7 +148,7 @@ export default function Cars() {
           </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
         <aside className="card hidden h-fit p-5 lg:block">{filters}</aside>
         <div>
           {error && <ErrorState onRetry={() => setParams(new URLSearchParams(params))} />}

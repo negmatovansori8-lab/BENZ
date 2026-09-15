@@ -96,11 +96,6 @@ export default function Cars() {
           {BRANDS.map((b) => <option key={b}>{b}</option>)}
         </select>
       </Field>
-      <p className="label !mb-0">{t('minPrice')}</p>
-      <div className="grid grid-cols-2 gap-2">
-        <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('minPrice') || ''} onChange={(e) => set('minPrice', e.target.value.replace(/\D/g, ''))} />
-        <input className="input" inputMode="numeric" placeholder={t('toShort')} value={params.get('maxPrice') || ''} onChange={(e) => set('maxPrice', e.target.value.replace(/\D/g, ''))} />
-      </div>
       <p className="label !mb-0">{t('year')}</p>
       <div className="grid grid-cols-2 gap-2">
         <input className="input" inputMode="numeric" placeholder={t('fromShort')} value={params.get('yearFrom') || ''} onChange={(e) => set('yearFrom', e.target.value.replace(/\D/g, ''))} />

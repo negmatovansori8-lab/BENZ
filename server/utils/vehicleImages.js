@@ -1,6 +1,6 @@
 /**
  * Passenger covers: brand-matched local photos under /stock/brands/{slug}-N.jpg
- * Specialty: /stock/kamaz /stock/parts /stock/trucks.
+ * Specialty: /stock/kamaz /stock/parts /stock/trucks /stock/homes
  */
 
 const BRAND_PHOTO_COUNT = {
@@ -45,6 +45,20 @@ const BRAND_PHOTO_COUNT = {
 };
 
 const LOCAL_CAR_COUNT = 8;
+export const STOCK_TRUCKS = 12;
+export const STOCK_KAMAZ = 12;
+export const STOCK_PARTS = 12;
+export const STOCK_HOMES = 12;
+
+function hashStr(s) {
+  let h = 2166136261;
+  const str = String(s || '');
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return Math.abs(h >>> 0);
+}
 
 export function brandSlug(brand) {
   return String(brand || '')
@@ -60,12 +74,12 @@ export function carPhoto(brand, model, year, seed = 0, index = 0) {
   const count = BRAND_PHOTO_COUNT[slug] || 0;
   const id = Math.abs(Number(seed) || 0);
   const i = Math.abs(Number(index) || 0);
-  const modelBoost = String(model || '').length * 3;
+  const modelHash = hashStr(`${slug}|${model}|${year}`);
   if (count > 0) {
-    const n = (id * 7 + i * 3 + modelBoost) % count;
+    const n = (id * 7 + i * 3 + modelHash) % count;
     return `/stock/brands/${slug}-${n + 1}.jpg`;
   }
-  const n = (id * 7 + i * 3 + String(brand || '').length * 5) % LOCAL_CAR_COUNT;
+  const n = (id * 7 + i * 3 + hashStr(brand)) % LOCAL_CAR_COUNT;
   return `/stock/cars/${n + 1}.jpg`;
 }
 
@@ -90,15 +104,20 @@ export function placeholderImage(seed = 0, label = 'BENZ') {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
+function stockIndex(seed, index, meta, pool) {
+  const h = hashStr(`${meta.brand || ''}|${meta.model || ''}|${meta.year || ''}|${seed}|${index}`);
+  return (h % pool) + 1;
+}
+
 export function imageForVehicle(category, seed = 0, index = 0, meta = {}) {
   const cat = category || 'passenger';
   const id = Math.abs(Number(seed) || 0);
   const i = Math.abs(Number(index) || 0);
 
-  if (cat === 'parts') return `/stock/parts/${(id % 3) + 1}.jpg`;
-  if (cat === 'kamaz') return `/stock/kamaz/${(id % 3) + 1}.jpg`;
+  if (cat === 'parts') return `/stock/parts/${stockIndex(id, i, meta, STOCK_PARTS)}.jpg`;
+  if (cat === 'kamaz') return `/stock/kamaz/${stockIndex(id, i, meta, STOCK_KAMAZ)}.jpg`;
   if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
-    return `/stock/trucks/${(id % 3) + 1}.jpg`;
+    return `/stock/trucks/${stockIndex(id, i, meta, STOCK_TRUCKS)}.jpg`;
   }
   if (cat === 'passenger') return carPhoto(meta.brand, meta.model, meta.year, id, i);
   if (meta.brand || meta.model) {
@@ -152,7 +171,7 @@ export function uniqueVehicles(rows = []) {
       ? (row.images[0]?.url || row.images[0])
       : null;
     const s = img ? String(img) : '';
-    const imgKey = s.startsWith('/stock/') || s.startsWith('/cars/')
+    const imgKey = isLocalStockUrl(s) || s.startsWith('/uploads/')
       ? null
       : (s ? s.split('?')[0] : null);
     if (imgKey && byImg.has(imgKey)) continue;

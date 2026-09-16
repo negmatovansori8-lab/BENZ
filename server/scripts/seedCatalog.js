@@ -44,40 +44,50 @@ const PASSENGER = [
 ];
 
 const COMMERCIAL = [
-  { brand: 'Shacman', models: ['X3000', 'X5000', 'F3000'], bodies: ['Truck', 'Heavy Truck'] },
-  { brand: 'HOWO', models: ['TX', 'A7', 'Sinotruk'], bodies: ['Truck', 'Heavy Truck'] },
-  { brand: 'GAZ', models: ['Gazelle Next', 'Valdai', 'Sobol'], bodies: ['Commercial Van', 'Minivan'] },
-  { brand: 'Isuzu', models: ['NPR', 'NQR', 'Forward'], bodies: ['Truck'] },
-  { brand: 'FAW', models: ['J6', 'J7', 'Tiger'], bodies: ['Heavy Truck', 'Truck'] },
-  { brand: 'MAN', models: ['TGS', 'TGX', 'TGM'], bodies: ['Heavy Truck', 'Truck'] },
-  { brand: 'DAF', models: ['XF 105', 'CF', 'XF 106'], bodies: ['Heavy Truck'] },
-  { brand: 'Volvo', models: ['FH', 'FM', 'FE'], bodies: ['Heavy Truck', 'Truck'] },
-  { brand: 'Scania', models: ['R450', 'S500', 'G410'], bodies: ['Heavy Truck'] },
-  { brand: 'Ford', models: ['Transit', 'Ranger'], bodies: ['Commercial Van', 'Pickup'] },
+  { brand: 'Shacman', models: ['X3000', 'X5000', 'F3000', 'X6000', 'H3000', 'Dump 8x4', 'Tractor 4x2'], bodies: ['Truck', 'Heavy Truck'] },
+  { brand: 'HOWO', models: ['TX', 'A7', 'Sinotruk', 'T5G', 'N7W', 'Dump 6x4', 'Mixer 8x4'], bodies: ['Truck', 'Heavy Truck'] },
+  { brand: 'GAZ', models: ['Gazelle Next', 'Valdai', 'Sobol', 'Gazelle NN', 'Next A21', 'Business Van'], bodies: ['Commercial Van', 'Minivan'] },
+  { brand: 'Isuzu', models: ['NPR', 'NQR', 'Forward', 'ELF', 'Giga', 'NPR 75'], bodies: ['Truck'] },
+  { brand: 'FAW', models: ['J6', 'J7', 'Tiger', 'CA3250', 'Liberation'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'MAN', models: ['TGS', 'TGX', 'TGM', 'TGL', 'TGX 18.510'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'DAF', models: ['XF 105', 'CF', 'XF 106', 'XF 480', 'CF 440'], bodies: ['Heavy Truck'] },
+  { brand: 'Volvo', models: ['FH', 'FM', 'FE', 'FH16', 'FMX', 'FL'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'Scania', models: ['R450', 'S500', 'G410', 'R500', 'S650', 'P360'], bodies: ['Heavy Truck'] },
+  { brand: 'Ford', models: ['Transit', 'Ranger', 'Transit Custom', 'Cargo 350'], bodies: ['Commercial Van', 'Pickup'] },
+  { brand: 'Mercedes-Benz', models: ['Actros', 'Atego', 'Arocs', 'Sprinter Chassis'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'Iveco', models: ['Stralis', 'Eurocargo', 'Daily', 'S-Way'], bodies: ['Heavy Truck', 'Truck', 'Commercial Van'] },
+  { brand: 'MAZ', models: ['5440', '6312', '6501', '5551'], bodies: ['Heavy Truck', 'Truck'] },
+  { brand: 'Dongfeng', models: ['Captain', 'Kinland', 'KC Dump'], bodies: ['Truck', 'Heavy Truck'] },
 ];
 
 const BUS = [
-  { brand: 'Yutong', models: ['ZK6122', 'City Bus', 'Coach 55'], bodies: ['Bus', 'Coach'] },
-  { brand: 'King Long', models: ['XMQ6129', 'City 12m'], bodies: ['Bus', 'Coach'] },
-  { brand: 'Mercedes-Benz', models: ['Sprinter Bus', 'Tourismo'], bodies: ['Bus', 'Coach'] },
-  { brand: 'Volvo', models: ['B8R', '9700'], bodies: ['Bus', 'Coach'] },
-  { brand: 'GAZ', models: ['Vector Next'], bodies: ['Bus'] },
+  { brand: 'Yutong', models: ['ZK6122', 'City Bus', 'Coach 55', 'ZK6899', 'E12 Electric'], bodies: ['Bus', 'Coach'] },
+  { brand: 'King Long', models: ['XMQ6129', 'City 12m', 'XMQ6112', 'Coach 49'], bodies: ['Bus', 'Coach'] },
+  { brand: 'Mercedes-Benz', models: ['Sprinter Bus', 'Tourismo', 'Citaro', 'Intouro'], bodies: ['Bus', 'Coach'] },
+  { brand: 'Volvo', models: ['B8R', '9700', '7900 Electric'], bodies: ['Bus', 'Coach'] },
+  { brand: 'GAZ', models: ['Vector Next', 'CityRide'], bodies: ['Bus'] },
+  { brand: 'PAZ', models: ['3205', '3204', 'Next'], bodies: ['Bus'] },
+  { brand: 'LiAZ', models: ['5292', '4270'], bodies: ['Bus'] },
 ];
 
 const SPECIAL = [
-  { brand: 'JCB', models: ['3CX', '4CX', 'JS220'], bodies: ['Construction'] },
-  { brand: 'Caterpillar', models: ['320', '336', '950'], bodies: ['Construction'] },
-  { brand: 'Komatsu', models: ['PC200', 'WA380', 'D65'], bodies: ['Construction'] },
-  { brand: 'XCMG', models: ['XE215', 'LW300', 'QY25'], bodies: ['Construction'] },
-  { brand: 'Mercedes-Benz', models: ['Ambulance Sprinter', 'Police Sprinter'], bodies: ['Ambulance', 'Police'] },
-  { brand: 'MAN', models: ['Fire Truck TGM'], bodies: ['Fire Truck'] },
-  { brand: 'Shacman', models: ['Mixer', 'Crane'], bodies: ['Construction'] },
+  { brand: 'JCB', models: ['3CX', '4CX', 'JS220', 'JS130', '3CX Eco', 'Teletruk'], bodies: ['Construction'] },
+  { brand: 'Caterpillar', models: ['320', '336', '950', '140M', 'D6', '730 Articulated'], bodies: ['Construction'] },
+  { brand: 'Komatsu', models: ['PC200', 'WA380', 'D65', 'PC300', 'HM300'], bodies: ['Construction'] },
+  { brand: 'XCMG', models: ['XE215', 'LW300', 'QY25', 'XS183', 'GR215'], bodies: ['Construction'] },
+  { brand: 'Mercedes-Benz', models: ['Ambulance Sprinter', 'Police Sprinter', 'Unimog U5023'], bodies: ['Ambulance', 'Police'] },
+  { brand: 'MAN', models: ['Fire Truck TGM', 'Rescue TGS'], bodies: ['Fire Truck'] },
+  { brand: 'Shacman', models: ['Mixer', 'Crane', 'Water Tanker'], bodies: ['Construction'] },
+  { brand: 'Liebherr', models: ['LTM 1050', 'A 918'], bodies: ['Construction'] },
+  { brand: 'Hitachi', models: ['ZX210', 'ZX350'], bodies: ['Construction'] },
 ];
 
 const AGRICULTURAL = [
-  { brand: 'John Deere', models: ['6R', '8R', 'Tractor 6120'], bodies: ['Tractor'] },
-  { brand: 'MTZ', models: ['82.1', '1221'], bodies: ['Tractor'] },
-  { brand: 'New Holland', models: ['T7', 'T6'], bodies: ['Tractor'] },
+  { brand: 'John Deere', models: ['6R', '8R', 'Tractor 6120', '7R', 'S780 Combine'], bodies: ['Tractor'] },
+  { brand: 'MTZ', models: ['82.1', '1221', '1523', 'BELARUS 952'], bodies: ['Tractor'] },
+  { brand: 'New Holland', models: ['T7', 'T6', 'T5', 'CR8.90'], bodies: ['Tractor'] },
+  { brand: 'Case IH', models: ['Puma 150', 'Magnum 280', 'Farmall 110'], bodies: ['Tractor'] },
+  { brand: 'Claas', models: ['Axion 800', 'Arion 630'], bodies: ['Tractor'] },
 ];
 
 const MOTORCYCLE = [
@@ -99,27 +109,38 @@ const AIRCRAFT = [
 ];
 
 const KAMAZ = [
-  { brand: 'KAMAZ', models: ['65115', '6520', '43118', '5490', '65117', '54901'], bodies: ['Heavy Truck', 'Truck'] },
+  {
+    brand: 'KAMAZ',
+    models: [
+      '65115', '6520', '43118', '5490', '65117', '54901', '53215', '54115',
+      '65225', '65201', '43114', '5350', '63501', '6460', '45143', '65116',
+      '5308', '4308', '43253', '53605', '54902', '65801',
+    ],
+    bodies: ['Heavy Truck', 'Truck'],
+  },
 ];
 
 const PARTS = [
-  { brand: 'Toyota', models: ['Engine 2AZ', 'Oil filter', 'Brake pads', 'Tires 205/55', 'Alternator', 'Radiator', 'Spark plugs', 'Air filter', 'Timing belt', 'Water pump', 'CV joint', 'Shock absorber', 'Battery 70Ah', 'Cabin filter'] },
-  { brand: 'BMW', models: ['Engine N55', 'Radiator', 'Xenon ballast', 'Turbo', 'Control arm', 'Oil filter', 'Brake discs', 'Battery', 'Air filter', 'Spark plugs'] },
-  { brand: 'Mercedes-Benz', models: ['LED headlights', 'Shock absorbers', 'Air suspension', 'Gearbox 7G', 'Brake pads', 'Cabin filter', 'Oil filter', 'Radiator'] },
-  { brand: 'Audi', models: ['Turbo TFSI', 'Quattro CV joint', 'LED matrix light', 'Oil filter', 'Brake pads', 'Air filter', 'DSG clutch'] },
-  { brand: 'Lamborghini', models: ['Carbon brake pads', 'Air filter sport', 'Oil filter', 'Spark plugs racing'] },
-  { brand: 'Porsche', models: ['PDK filter', 'Brake pads', 'Air filter', 'Oil filter', 'Spark plugs'] },
-  { brand: 'Lexus', models: ['Oil filter', 'Brake pads', 'Air filter', 'Cabin filter', 'Spark plugs'] },
-  { brand: 'Honda', models: ['Alternator', 'Timing belt kit', 'Clutch kit', 'Air filter', 'Oil filter', 'Brake pads', 'CV joint'] },
-  { brand: 'Hyundai', models: ['Battery 70Ah', 'Spark plugs', 'Bumper front', 'CV joint', 'Air filter', 'Brake pads', 'Oil filter'] },
-  { brand: 'Kia', models: ['Bumper front', 'Oil filter', 'Brake pads', 'Air filter', 'Battery 60Ah'] },
-  { brand: 'Nissan', models: ['Timing belt kit', 'Oil filter', 'Brake pads', 'Air filter', 'Radiator'] },
-  { brand: 'Ford', models: ['Brake pads', 'Oil filter', 'Air filter', 'Alternator', 'Spark plugs'] },
-  { brand: 'Volkswagen', models: ['Clutch kit', 'Oil filter', 'Brake pads', 'DSG filter', 'Air filter'] },
-  { brand: 'Mitsubishi', models: ['Transfer case', 'Oil filter', 'Brake pads', 'Air filter'] },
-  { brand: 'Chevrolet', models: ['Side mirror', 'Oil filter', 'Brake pads', 'Spark plugs'] },
-  { brand: 'Lada', models: ['Starter', 'Oil filter', 'Brake pads', 'Air filter'] },
-  { brand: 'KAMAZ', models: ['Turbocharger', 'Brake discs', 'Tires 315/80', 'Fuel pump', 'Starter', 'Clutch kit', 'Radiator', 'Oil filter'] },
+  { brand: 'Toyota', models: ['Engine 2AZ', 'Engine 1ZZ', 'Oil filter', 'Brake pads', 'Tires 205/55', 'Tires 265/65', 'Alternator', 'Radiator', 'Spark plugs', 'Air filter', 'Timing belt', 'Water pump', 'CV joint', 'Shock absorber', 'Battery 70Ah', 'Cabin filter', 'Fuel pump', 'Starter', 'Clutch kit', 'Thermostat'] },
+  { brand: 'BMW', models: ['Engine N55', 'Engine B48', 'Radiator', 'Xenon ballast', 'Turbo', 'Control arm', 'Oil filter', 'Brake discs', 'Battery', 'Air filter', 'Spark plugs', 'Water pump', 'Timing chain kit', 'Cabin filter', 'Shock absorber'] },
+  { brand: 'Mercedes-Benz', models: ['LED headlights', 'Shock absorbers', 'Air suspension', 'Gearbox 7G', 'Brake pads', 'Cabin filter', 'Oil filter', 'Radiator', 'Turbo OM651', 'Alternator', 'Battery 80Ah', 'CV joint', 'Water pump', 'Fuel filter'] },
+  { brand: 'Audi', models: ['Turbo TFSI', 'Quattro CV joint', 'LED matrix light', 'Oil filter', 'Brake pads', 'Air filter', 'DSG clutch', 'Radiator', 'Water pump', 'Spark plugs', 'Cabin filter', 'Control arm'] },
+  { brand: 'Lamborghini', models: ['Carbon brake pads', 'Air filter sport', 'Oil filter', 'Spark plugs racing', 'Clutch ceramic', 'Brake discs carbon'] },
+  { brand: 'Porsche', models: ['PDK filter', 'Brake pads', 'Air filter', 'Oil filter', 'Spark plugs', 'Coolant pump', 'Ignition coil'] },
+  { brand: 'Lexus', models: ['Oil filter', 'Brake pads', 'Air filter', 'Cabin filter', 'Spark plugs', 'Alternator', 'Water pump', 'Timing belt'] },
+  { brand: 'Honda', models: ['Alternator', 'Timing belt kit', 'Clutch kit', 'Air filter', 'Oil filter', 'Brake pads', 'CV joint', 'Radiator', 'Spark plugs', 'Water pump'] },
+  { brand: 'Hyundai', models: ['Battery 70Ah', 'Spark plugs', 'Bumper front', 'CV joint', 'Air filter', 'Brake pads', 'Oil filter', 'Radiator', 'Alternator', 'Timing belt'] },
+  { brand: 'Kia', models: ['Bumper front', 'Oil filter', 'Brake pads', 'Air filter', 'Battery 60Ah', 'Spark plugs', 'CV joint', 'Cabin filter'] },
+  { brand: 'Nissan', models: ['Timing belt kit', 'Oil filter', 'Brake pads', 'Air filter', 'Radiator', 'Alternator', 'Spark plugs', 'Clutch kit'] },
+  { brand: 'Ford', models: ['Brake pads', 'Oil filter', 'Air filter', 'Alternator', 'Spark plugs', 'Radiator', 'Water pump', 'CV joint'] },
+  { brand: 'Volkswagen', models: ['Clutch kit', 'Oil filter', 'Brake pads', 'DSG filter', 'Air filter', 'Water pump', 'Spark plugs', 'Timing belt'] },
+  { brand: 'Mitsubishi', models: ['Transfer case', 'Oil filter', 'Brake pads', 'Air filter', 'Radiator', 'CV joint', 'Spark plugs'] },
+  { brand: 'Chevrolet', models: ['Side mirror', 'Oil filter', 'Brake pads', 'Spark plugs', 'Alternator', 'Air filter', 'Radiator'] },
+  { brand: 'Lada', models: ['Starter', 'Oil filter', 'Brake pads', 'Air filter', 'Alternator', 'Clutch kit', 'Radiator', 'Spark plugs'] },
+  { brand: 'KAMAZ', models: ['Turbocharger', 'Brake discs', 'Tires 315/80', 'Fuel pump', 'Starter', 'Clutch kit', 'Radiator', 'Oil filter', 'Air compressor', 'Steering pump', 'Alternator', 'Water pump'] },
+  { brand: 'Scania', models: ['Brake pads', 'Oil filter', 'Fuel filter', 'Turbo', 'Clutch kit', 'Radiator'] },
+  { brand: 'Volvo', models: ['Brake pads', 'Oil filter', 'Air filter', 'Turbo', 'Alternator', 'Clutch kit'] },
+  { brand: 'MAN', models: ['Brake pads', 'Oil filter', 'Fuel filter', 'Radiator', 'Starter', 'Clutch kit'] },
 ];
 
 const COLORS = ['White', 'Black', 'Silver', 'Grey', 'Blue', 'Red', 'Green', 'Beige'];
@@ -154,20 +175,14 @@ async function ensureModel(brandId, name) {
   return rows[0].id;
 }
 
-import { carPhoto } from '../utils/vehicleImages.js';
+import { carPhoto, imageForVehicle } from '../utils/vehicleImages.js';
 
-function imgFor(cat, n, brand = '', model = '') {
-  if (cat === 'parts') return `/stock/parts/${(n % 3) + 1}.jpg`;
-  if (cat === 'kamaz') return `/stock/kamaz/${(n % 3) + 1}.jpg`;
-  if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
-    return `/stock/trucks/${(n % 3) + 1}.jpg`;
-  }
-  if (cat === 'passenger' && brand) return carPhoto(brand, model, 2024, n, 0);
-  return `/stock/cars/${(n % 8) + 1}.jpg`;
+function imgFor(cat, n, brand = '', model = '', year = 2024) {
+  return imageForVehicle(cat, n, 0, { brand, model, year });
 }
 
 function homeImg(n) {
-  return `/stock/homes/${(n % 3) + 1}.jpg`;
+  return `/stock/homes/${(Math.abs(n) % 12) + 1}.jpg`;
 }
 
 async function idMap(groups) {
@@ -262,7 +277,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     cat,
     feat: n % 22 === 0,
     views: 80 + (n % 4000),
-    img: imgFor(cat, n, g.brand, model),
+    img: imgFor(cat, n, g.brand, model, year),
     desc: label,
     sellerId: sellers[n % sellers.length],
     locId: locs[n % locs.length],
@@ -297,7 +312,7 @@ function makeHome(n, sellers, kind, rooms, area, locId) {
 }
 
 async function removeDuplicateCars() {
-  // Same brand + model + year + category
+  // Same brand + model + year + category — keep one
   await query(`
     DELETE FROM cars
     WHERE id NOT IN (
@@ -307,19 +322,6 @@ async function removeDuplicateCars() {
         GROUP BY brand_id, model_id, year, category
       ) t
     )
-  `);
-  // Trucks / specialty: one listing per model (no year twins)
-  await query(`
-    DELETE FROM cars
-    WHERE category IN ('kamaz', 'commercial', 'special', 'parts', 'bus', 'agricultural', 'motorcycle', 'marine', 'aircraft')
-      AND id NOT IN (
-        SELECT keep_id FROM (
-          SELECT MIN(id) AS keep_id
-          FROM cars
-          WHERE category IN ('kamaz', 'commercial', 'special', 'parts', 'bus', 'agricultural', 'motorcycle', 'marine', 'aircraft')
-          GROUP BY brand_id, model_id, category
-        ) t
-      )
   `);
 }
 
@@ -344,12 +346,12 @@ async function removeDuplicateHomes() {
 function uniqueGroupRows(groups, cat, sellers, locs, existing) {
   const rows = [];
   let n = 0;
-  // One year per model for specialty; a few years for passenger — uniqueness via brand|model|year|cat
+  // Many unique brand|model|year|cat combinations (no image-based collapse)
   const years = cat === 'passenger'
-    ? [2017, 2019, 2021, 2022, 2023, 2024, 2025, 2026]
+    ? [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
     : cat === 'parts'
-      ? [2023, 2024, 2025]
-      : [2020, 2022, 2024];
+      ? [2022, 2023, 2024, 2025, 2026]
+      : [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
   for (const g of groups) {
     for (const model of g.models) {
       for (const year of years) {
@@ -404,19 +406,19 @@ async function fillCars(_need, sellers, locs) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 
-  // Brand-matched covers for passenger; specialty keeps category stock
+  // Brand-matched covers for passenger; specialty uses larger local stock pools
   await query(`
     UPDATE car_images ci
     SET url = CASE c.category
-      WHEN 'parts' THEN '/stock/parts/' || ((c.id % 3) + 1)::text || '.jpg'
-      WHEN 'kamaz' THEN '/stock/kamaz/' || ((c.id % 3) + 1)::text || '.jpg'
-      WHEN 'commercial' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
-      WHEN 'special' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
-      WHEN 'bus' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
-      WHEN 'agricultural' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'parts' THEN '/stock/parts/' || ((((c.id * 13) + LENGTH(COALESCE(m.name, '')) * 5) % 12) + 1)::text || '.jpg'
+      WHEN 'kamaz' THEN '/stock/kamaz/' || ((((c.id * 11) + LENGTH(COALESCE(m.name, '')) * 7) % 12) + 1)::text || '.jpg'
+      WHEN 'commercial' THEN '/stock/trucks/' || ((((c.id * 17) + LENGTH(b.name) * 3 + LENGTH(COALESCE(m.name, ''))) % 12) + 1)::text || '.jpg'
+      WHEN 'special' THEN '/stock/trucks/' || ((((c.id * 19) + LENGTH(b.name) * 5 + LENGTH(COALESCE(m.name, ''))) % 12) + 1)::text || '.jpg'
+      WHEN 'bus' THEN '/stock/trucks/' || ((((c.id * 23) + LENGTH(COALESCE(m.name, '')) * 9) % 12) + 1)::text || '.jpg'
+      WHEN 'agricultural' THEN '/stock/trucks/' || ((((c.id * 29) + LENGTH(COALESCE(m.name, '')) * 11) % 12) + 1)::text || '.jpg'
       WHEN 'passenger' THEN '/stock/brands/' ||
         trim(both '-' from regexp_replace(lower(b.name), '[^a-z0-9]+', '-', 'g')) ||
-        '-' || ((MOD(c.id * 7 + LENGTH(COALESCE(m.name, '')), 3)) + 1)::text || '.jpg'
+        '-' || ((((c.id * 7) + LENGTH(COALESCE(m.name, '')) * 3 + (c.year % 10)) % 3) + 1)::text || '.jpg'
       ELSE '/stock/cars/' || ((c.id % 8) + 1)::text || '.jpg'
     END
     FROM cars c
@@ -478,8 +480,8 @@ async function fillHomes(sellers, locs) {
   }
   await query(`
     UPDATE property_images
-    SET url = '/stock/homes/' || (((property_id - 1) % 3) + 1)::text || '.jpg'
-    WHERE url NOT LIKE '/stock/homes/%' AND url NOT LIKE '/uploads/%'
+    SET url = '/stock/homes/' || ((((property_id * 17) % 12) + 1))::text || '.jpg'
+    WHERE url NOT LIKE '/uploads/%'
   `);
 }
 

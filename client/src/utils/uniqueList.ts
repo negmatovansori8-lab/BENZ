@@ -1,6 +1,6 @@
 import type { Car } from '../types';
 
-/** Keep unique vehicles by id and brand+model+year. Local /cars photos may repeat. */
+/** Unique by id and brand+model+year+category. Local stock photos may repeat. */
 export function uniqueByIdAndImage(rows: Car[]): Car[] {
   const ids = new Set<number>();
   const twins = new Set<string>();
@@ -11,8 +11,15 @@ export function uniqueByIdAndImage(rows: Car[]): Car[] {
     const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`.toLowerCase();
     if (twins.has(twin)) continue;
     const url = c.images?.[0]?.url ? String(c.images[0].url) : '';
-    const isLocalCar = url.startsWith('/stock/cars/') || url.startsWith('/cars/');
-    if (url && !isLocalCar) {
+    const isLocalStock =
+      url.startsWith('/stock/') ||
+      url.startsWith('/cars/') ||
+      url.startsWith('/trucks/') ||
+      url.startsWith('/kamaz/') ||
+      url.startsWith('/parts/') ||
+      url.startsWith('/homes/') ||
+      url.startsWith('/uploads/');
+    if (url && !isLocalStock) {
       const key = url.split('?')[0];
       if (remoteImgs.has(key)) continue;
       remoteImgs.add(key);

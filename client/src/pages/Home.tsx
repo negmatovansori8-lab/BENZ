@@ -25,9 +25,9 @@ export default function Home() {
   useEffect(() => {
     Promise.all([
       api.get('/cars/featured'),
-      api.get('/cars?category=heavy&limit=48'),
-      api.get('/cars?category=kamaz&limit=48'),
-      api.get('/cars?category=parts&limit=48'),
+      api.get('/cars?category=heavy&limit=96'),
+      api.get('/cars?category=kamaz&limit=96'),
+      api.get('/cars?category=parts&limit=96'),
       api.get('/homes?limit=8'),
     ])
       .then(([f, h, kamazRes, partsRes, homesRes]) => {
@@ -45,10 +45,10 @@ export default function Home() {
           }
           return out;
         };
-        setFeatured(takeSection(f.data.data || [], 16));
-        setHeavy(takeSection(h.data.data || [], 16));
-        setKamaz(takeSection(kamazRes.data.data || [], 16));
-        setParts(takeSection(partsRes.data.data || [], 16));
+        setFeatured(takeSection(f.data.data || [], 24));
+        setHeavy(takeSection(h.data.data || [], 24));
+        setKamaz(takeSection(kamazRes.data.data || [], 24));
+        setParts(takeSection(partsRes.data.data || [], 24));
         const seenHome = new Set<string>();
         setHomes((homesRes.data.data || []).filter((x: Property) => {
           const key = `${x.kind}|${x.rooms}|${x.area_m2}|${x.location_id ?? x.title}`;

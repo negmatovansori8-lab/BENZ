@@ -56,7 +56,7 @@ export default function Cars() {
     const p = new URLSearchParams(params);
     if (dq) p.set('q', dq);
     else p.delete('q');
-    if (!p.get('limit')) p.set('limit', '24');
+    if (!p.get('limit')) p.set('limit', '36');
     return p.toString();
   }, [params, dq]);
 

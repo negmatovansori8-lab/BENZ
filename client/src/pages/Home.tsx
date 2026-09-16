@@ -17,7 +17,6 @@ export default function Home() {
   const { user } = useAuth();
   const [featured, setFeatured] = useState<Car[]>([]);
   const [recent, setRecent] = useState<Car[]>([]);
-  const [popular, setPopular] = useState<Car[]>([]);
   const [heavy, setHeavy] = useState<Car[]>([]);
   const [kamaz, setKamaz] = useState<Car[]>([]);
   const [parts, setParts] = useState<Car[]>([]);
@@ -28,13 +27,12 @@ export default function Home() {
     Promise.all([
       api.get('/cars/featured'),
       api.get('/cars/recent'),
-      api.get('/cars/popular'),
       api.get('/cars?category=heavy&limit=48'),
       api.get('/cars?category=kamaz&limit=48'),
       api.get('/cars?category=parts&limit=48'),
       api.get('/homes?limit=8'),
     ])
-      .then(([f, r, p, h, kamazRes, partsRes, homesRes]) => {
+      .then(([f, r, h, kamazRes, partsRes, homesRes]) => {
         const takeSection = (list: Car[], n = 16) => {
           const out: Car[] = [];
           const seen = new Set<string>();
@@ -49,10 +47,8 @@ export default function Home() {
           }
           return out;
         };
-        // Cars stay in car blocks; heavy / kamaz / parts are separate
         setFeatured(takeSection(f.data.data || [], 16));
         setRecent(takeSection(r.data.data || [], 16));
-        setPopular(takeSection(p.data.data || [], 16));
         setHeavy(takeSection(h.data.data || [], 16));
         setKamaz(takeSection(kamazRes.data.data || [], 16));
         setParts(takeSection(partsRes.data.data || [], 16));

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { carImage } from '../utils/format';
 
 function placeholder(seed?: string | number | null, label = 'BENZ') {
@@ -22,12 +22,14 @@ export function SafeImg({
   index = 0,
   alt,
   className,
+  style,
 }: {
   src?: string | null;
   seed?: string | number | null;
   index?: number;
   alt: string;
   className?: string;
+  style?: CSSProperties;
 }) {
   const [failed, setFailed] = useState(false);
   const resolved = failed ? placeholder(seed, alt) : carImage(src, seed, index);
@@ -38,6 +40,7 @@ export function SafeImg({
 
   return (
     <img
+      style={style}
       key={`${resolved}-${failed ? 'fb' : 'ok'}`}
       src={resolved}
       alt={alt}

@@ -45,9 +45,9 @@ const BRAND_PHOTO_COUNT = {
 };
 
 const LOCAL_CAR_COUNT = 8;
-export const STOCK_TRUCKS = 12;
-export const STOCK_KAMAZ = 12;
-export const STOCK_PARTS = 12;
+export const STOCK_TRUCKS = 36;
+export const STOCK_KAMAZ = 36;
+export const STOCK_PARTS = 36;
 export const STOCK_HOMES = 12;
 
 function hashStr(s) {

@@ -1,6 +1,6 @@
 /**
- * Download diverse specialty stock photos (trucks, kamaz, parts, homes)
- * into client/public/stock/{folder}/N.jpg via Wikimedia Commons.
+ * Expand specialty stock to 36 unique photos per folder.
+ * Keeps existing 1..N; fills gaps via Wikimedia Commons; then tints copies for remaining slots.
  */
 import fs from 'fs';
 import path from 'path';
@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STOCK = path.join(__dirname, '../public/stock');
 const UA = 'BENZ-Autohub/1.0 (https://hacerr.pp.ua; catalog images)';
-const TARGET = 12;
+const TARGET = 36;
 
 const QUERIES = {
   trucks: [
@@ -25,6 +25,30 @@ const QUERIES = {
     'heavy duty truck side view',
     'construction dump truck',
     'freight truck trailer',
+    'Iveco Stralis truck',
+    'MAZ truck Belarus',
+    'Dongfeng dump truck',
+    'Ford Transit van cargo',
+    'cement mixer truck',
+    'water tanker truck',
+    'fire truck ladder',
+    'excavator construction site',
+    'backhoe loader yellow',
+    'semi trailer truck blue',
+    'box truck delivery white',
+    'tipper truck orange',
+    'logging truck timber',
+    'refrigerated truck',
+    'tow truck recovery',
+    'tank truck fuel',
+    'crane truck mobile',
+    'road roller construction',
+    'bulldozer construction',
+    'articulated dump truck',
+    'flatbed truck cargo',
+    'garbage truck municipal',
+    'concrete pump truck',
+    'truck tractor unit red',
   ],
   kamaz: [
     'Kamaz truck',
@@ -39,6 +63,30 @@ const QUERIES = {
     'Kamaz truck front',
     'KamAZ construction truck',
     'Kamaz cargo truck',
+    'KamAZ 6520 dump',
+    'KamAZ 43118',
+    'KamAZ 53215',
+    'KamAZ blue truck',
+    'KamAZ orange dump',
+    'KamAZ white truck',
+    'KamAZ green military',
+    'KamAZ red truck',
+    'KamAZ tanker',
+    'KamAZ flatbed',
+    'KamAZ 6x6',
+    'KamAZ snow truck',
+    'KamAZ desert truck',
+    'KamAZ convoy',
+    'KamAZ cabin close',
+    'KamAZ side view',
+    'KamAZ rear dump body',
+    'Ural truck Russia',
+    'Russian heavy truck dump',
+    'Soviet truck KamAZ',
+    'KamAZ 54901',
+    'KamAZ night highway',
+    'KamAZ quarry dump',
+    'KamAZ cargo covered',
   ],
   parts: [
     'car engine bay',
@@ -53,20 +101,30 @@ const QUERIES = {
     'car headlight LED',
     'automotive clutch kit',
     'car turbocharger',
-  ],
-  homes: [
-    'modern apartment interior living room',
-    'suburban house exterior',
-    'real estate apartment kitchen',
-    'modern villa exterior',
-    'city apartment balcony',
-    'house with garden',
-    'office commercial interior',
-    'luxury apartment bedroom',
-    'townhouse exterior',
-    'land plot countryside',
-    'modern flat living room',
-    'cottage house facade',
+    'car brake disc rotor',
+    'car air filter',
+    'car starter motor',
+    'car water pump',
+    'automotive timing belt',
+    'car suspension spring',
+    'car exhaust muffler',
+    'car fuel injector',
+    'car gearbox transmission',
+    'car piston engine',
+    'car spark plug wire',
+    'car cabin filter',
+    'car CV joint',
+    'car thermostat housing',
+    'truck tire heavy',
+    'truck brake pad',
+    'diesel engine truck',
+    'car oil pan',
+    'car coil ignition',
+    'car serpentine belt',
+    'car wheel hub',
+    'car AC compressor',
+    'car catalytic converter',
+    'car oxygen sensor',
   ],
 };
 
@@ -111,54 +169,84 @@ async function searchCommons(query) {
     });
 }
 
+function countExisting(dir) {
+  let n = 0;
+  for (let i = 1; i <= TARGET; i++) {
+    if (fs.existsSync(path.join(dir, `${i}.jpg`))) n += 1;
+  }
+  return n;
+}
+
+function nextFreeSlot(dir) {
+  for (let i = 1; i <= TARGET; i++) {
+    if (!fs.existsSync(path.join(dir, `${i}.jpg`))) return i;
+  }
+  return 0;
+}
+
+/** Copy base images into empty slots with different filenames (visual diversify via CSS hue on client). */
+function fillByCopy(folder) {
+  const dir = path.join(STOCK, folder);
+  const bases = [];
+  for (let i = 1; i <= TARGET; i++) {
+    const p = path.join(dir, `${i}.jpg`);
+    if (fs.existsSync(p)) bases.push(p);
+  }
+  if (!bases.length) return 0;
+  let added = 0;
+  let bi = 0;
+  for (let slot = 1; slot <= TARGET; slot++) {
+    const dest = path.join(dir, `${slot}.jpg`);
+    if (fs.existsSync(dest)) continue;
+    fs.copyFileSync(bases[bi % bases.length], dest);
+    bi += 1;
+    added += 1;
+  }
+  return added;
+}
+
 async function fillFolder(folder, queries) {
   const dir = path.join(STOCK, folder);
   fs.mkdirSync(dir, { recursive: true });
   const usedUrls = new Set();
-  let got = 0;
-  // Keep existing 1..N if present; fill up to TARGET
-  for (let i = 1; i <= TARGET; i++) {
-    if (fs.existsSync(path.join(dir, `${i}.jpg`))) got += 1;
-  }
+  let got = countExisting(dir);
   console.log(`${folder}: have ${got}/${TARGET}`);
 
   for (const q of queries) {
     if (got >= TARGET) break;
     try {
       const hits = await searchCommons(q);
-      await sleep(450);
+      await sleep(400);
       for (const hit of hits) {
         if (got >= TARGET) break;
         if (!hit.url || usedUrls.has(hit.url)) continue;
-        const next = got + 1;
-        const dest = path.join(dir, `${next}.jpg`);
-        if (fs.existsSync(dest) && next <= got) continue;
-        // Find next free slot
-        let slot = 1;
-        while (slot <= TARGET && fs.existsSync(path.join(dir, `${slot}.jpg`))) slot += 1;
-        if (slot > TARGET) break;
+        const slot = nextFreeSlot(dir);
+        if (!slot) break;
         try {
           const n = await save(hit.url, path.join(dir, `${slot}.jpg`));
           usedUrls.add(hit.url);
           got += 1;
           console.log('ok', folder, slot, Math.round(n / 1024) + 'kb', hit.title.slice(0, 50));
-          await sleep(250);
+          await sleep(220);
         } catch (e) {
           console.log('skip', folder, e.message);
         }
       }
     } catch (e) {
       console.log('fail', folder, q, e.message);
-      await sleep(1500);
+      await sleep(1200);
     }
   }
-  return got;
+
+  const copied = fillByCopy(folder);
+  if (copied) console.log(`${folder}: copied ${copied} filler slots`);
+  return countExisting(dir);
 }
 
 const summary = {};
 for (const [folder, queries] of Object.entries(QUERIES)) {
   summary[folder] = await fillFolder(folder, queries);
-  await sleep(600);
+  await sleep(500);
 }
 console.log('DONE', summary);
 fs.writeFileSync(path.join(STOCK, 'specialty-manifest.json'), JSON.stringify(summary, null, 2));

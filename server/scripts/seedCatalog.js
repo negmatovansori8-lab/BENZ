@@ -431,19 +431,19 @@ async function fillCars(_need, sellers, locs) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 
-  // Brand-matched covers for passenger; specialty uses larger local stock pools
+  // Brand-matched covers for passenger; specialty uses 36-slot local stock pools
   await query(`
     UPDATE car_images ci
     SET url = CASE c.category
-      WHEN 'parts' THEN '/stock/parts/' || ((((c.id * 13) + LENGTH(COALESCE(m.name, '')) * 5) % 12) + 1)::text || '.jpg'
-      WHEN 'kamaz' THEN '/stock/kamaz/' || ((((c.id * 11) + LENGTH(COALESCE(m.name, '')) * 7) % 12) + 1)::text || '.jpg'
-      WHEN 'commercial' THEN '/stock/trucks/' || ((((c.id * 17) + LENGTH(b.name) * 3 + LENGTH(COALESCE(m.name, ''))) % 12) + 1)::text || '.jpg'
-      WHEN 'special' THEN '/stock/trucks/' || ((((c.id * 19) + LENGTH(b.name) * 5 + LENGTH(COALESCE(m.name, ''))) % 12) + 1)::text || '.jpg'
-      WHEN 'bus' THEN '/stock/trucks/' || ((((c.id * 23) + LENGTH(COALESCE(m.name, '')) * 9) % 12) + 1)::text || '.jpg'
-      WHEN 'agricultural' THEN '/stock/trucks/' || ((((c.id * 29) + LENGTH(COALESCE(m.name, '')) * 11) % 12) + 1)::text || '.jpg'
+      WHEN 'parts' THEN '/stock/parts/' || (((c.id * 13 + COALESCE(LENGTH(m.name), 0) * 5) % 36) + 1)::text || '.jpg'
+      WHEN 'kamaz' THEN '/stock/kamaz/' || (((c.id * 11 + COALESCE(LENGTH(m.name), 0) * 7) % 36) + 1)::text || '.jpg'
+      WHEN 'commercial' THEN '/stock/trucks/' || (((c.id * 17 + LENGTH(b.name) * 3 + COALESCE(LENGTH(m.name), 0)) % 36) + 1)::text || '.jpg'
+      WHEN 'special' THEN '/stock/trucks/' || (((c.id * 19 + LENGTH(b.name) * 5 + COALESCE(LENGTH(m.name), 0)) % 36) + 1)::text || '.jpg'
+      WHEN 'bus' THEN '/stock/trucks/' || (((c.id * 23 + COALESCE(LENGTH(m.name), 0) * 9) % 36) + 1)::text || '.jpg'
+      WHEN 'agricultural' THEN '/stock/trucks/' || (((c.id * 29 + COALESCE(LENGTH(m.name), 0) * 11) % 36) + 1)::text || '.jpg'
       WHEN 'passenger' THEN '/stock/brands/' ||
         trim(both '-' from regexp_replace(lower(b.name), '[^a-z0-9]+', '-', 'g')) ||
-        '-' || ((((c.id * 7) + LENGTH(COALESCE(m.name, '')) * 3 + (c.year % 10)) % 3) + 1)::text || '.jpg'
+        '-' || ((((c.id * 7) + COALESCE(LENGTH(m.name), 0) * 3 + (c.year % 10)) % 3) + 1)::text || '.jpg'
       ELSE '/stock/cars/' || ((c.id % 8) + 1)::text || '.jpg'
     END
     FROM cars c

@@ -56,6 +56,8 @@ export interface Car {
   images: CarImage[] | null;
   is_favorite?: boolean;
   category?: string;
+  /** Client-only: hue-rotate when stock photo must be reused */
+  cover_hue?: number;
 }
 
 export interface Property {

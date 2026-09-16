@@ -106,12 +106,17 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
       </div>
 
       <Link viewTransition to={`/cars/${car.id}`} className="flex flex-1 flex-col">
-        <div className="relative block aspect-[4/3] overflow-hidden bg-zinc-900 sm:aspect-[5/4]">
+        <div className="relative block aspect-[4/3] overflow-hidden bg-zinc-200 dark:bg-zinc-900 sm:aspect-[5/4]">
           <SafeImg
             src={cover}
             seed={car.id}
             alt={`${car.brand} ${car.model}`}
             className="img-zoom h-full w-full object-cover"
+            style={
+              car.cover_hue
+                ? { filter: `hue-rotate(${car.cover_hue}deg) saturate(1.15)` }
+                : undefined
+            }
           />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
           {car.status === 'SOLD' && (

@@ -221,8 +221,27 @@ async function insertCarBatch(rows) {
   const imgValues = [];
   let j = 1;
   inserted.forEach((row, idx) => {
-    imgValues.push(`($${j++},$${j++},0)`);
-    imgParams.push(row.id, rows[idx].img);
+    const r = rows[idx];
+    const gallery = [
+      r.img,
+      imgFor(r.cat, r.n ?? idx + 1, r.brandName || '', r.modelName || '', r.year),
+      imgFor(r.cat, (r.n ?? idx) + 17, r.brandName || '', r.modelName || '', r.year),
+      imgFor(r.cat, (r.n ?? idx) + 31, r.brandName || '', r.modelName || '', r.year),
+    ];
+    const seen = new Set();
+    let sort = 0;
+    for (const url of gallery) {
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      imgValues.push(`($${j++},$${j++},$${j++})`);
+      imgParams.push(row.id, url, sort);
+      sort += 1;
+      if (sort >= 4) break;
+    }
+    if (sort === 0) {
+      imgValues.push(`($${j++},$${j++},0)`);
+      imgParams.push(row.id, r.img || '/stock/cars/1.jpg');
+    }
   });
   await query(`INSERT INTO car_images (car_id, url, sort_order) VALUES ${imgValues.join(',')}`, imgParams);
 }
@@ -268,6 +287,9 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     : `${g.brand} ${model} ${year}. ${body}. ${CITIES[n % CITIES.length]}.`;
   return {
     key: `${g.brand}|${model}`,
+    brandName: g.brand,
+    modelName: model,
+    n,
     year,
     price,
     km,

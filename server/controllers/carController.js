@@ -87,13 +87,33 @@ function rewriteImageUrl(url, carId, index, category = 'passenger', meta = {}) {
 export function shapeCar(row, favoriteIds = []) {
   if (!row) return row;
   const meta = { brand: row.brand, model: row.model, year: row.year };
-  const images = parseImages(row.images).map((img, i) => ({
+  const cat = row.category || 'passenger';
+  const parsed = parseImages(row.images).map((img, i) => ({
     ...(typeof img === 'object' && img ? img : { url: img }),
-    url: rewriteImageUrl(typeof img === 'object' ? img.url : img, row.id, i, row.category, meta),
+    url: rewriteImageUrl(typeof img === 'object' ? img.url : img, row.id, i, cat, meta),
   }));
-  const filled = images.length
-    ? images
-    : [{ id: 0, url: localCarUrl(row.id, 0, row.category, meta), sort_order: 0 }];
+
+  // Always show several distinct gallery shots (not just one cover)
+  const want = cat === 'passenger' ? 4 : 3;
+  const seen = new Set();
+  const filled = [];
+  for (const img of parsed) {
+    const key = String(img.url || '').split('?')[0];
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    filled.push({ ...img, sort_order: filled.length });
+  }
+  for (let i = 0; filled.length < want && i < want + 8; i++) {
+    const url = localCarUrl(row.id, i, cat, meta);
+    const key = String(url).split('?')[0];
+    if (seen.has(key)) continue;
+    seen.add(key);
+    filled.push({ id: 0, url, sort_order: filled.length });
+  }
+  if (!filled.length) {
+    filled.push({ id: 0, url: localCarUrl(row.id, 0, cat, meta), sort_order: 0 });
+  }
+
   return {
     ...row,
     images: filled,

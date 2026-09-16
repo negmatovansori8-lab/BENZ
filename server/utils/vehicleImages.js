@@ -76,7 +76,8 @@ export function carPhoto(brand, model, year, seed = 0, index = 0) {
   const i = Math.abs(Number(index) || 0);
   const modelHash = hashStr(`${slug}|${model}|${year}`);
   if (count > 0) {
-    const n = (id * 7 + i * 3 + modelHash) % count;
+    // Index must change the shot — never use (i * count) which collapses to 0
+    const n = (modelHash + id + i * 5) % count;
     return `/stock/brands/${slug}-${n + 1}.jpg`;
   }
   const n = (id * 7 + i * 3 + hashStr(brand)) % LOCAL_CAR_COUNT;

@@ -160,8 +160,25 @@ export function coverImage(images: unknown, seed?: string | number | null, index
 
 export function galleryImages(images: unknown, seed?: string | number | null) {
   const list = parseImageList(images);
-  if (!list.length) return [localCarSrc(seed, 0), localCarSrc(seed, 1), localCarSrc(seed, 2)];
-  return list.map((item, i) => carImage(pickUrl(item), seed, i));
+  if (!list.length) {
+    return [localCarSrc(seed, 0), localCarSrc(seed, 1), localCarSrc(seed, 2), localCarSrc(seed, 3)];
+  }
+  const out = list.map((item, i) => carImage(pickUrl(item), seed, i));
+  const seen = new Set<string>();
+  const unique = out.filter((u) => {
+    const k = String(u).split('?')[0];
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  for (let i = 0; unique.length < 3 && i < 6; i++) {
+    const u = localCarSrc(seed, i);
+    const k = String(u).split('?')[0];
+    if (seen.has(k)) continue;
+    seen.add(k);
+    unique.push(u);
+  }
+  return unique;
 }
 
 export function avatarUrl(name?: string | null, url?: string | null) {

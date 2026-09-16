@@ -513,15 +513,28 @@ async function normalizePrices() {
     SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
     WHERE price_usd > 95000
   `);
-  // Featured cars = passenger only (not planes / boats / bikes)
-  await query(`UPDATE cars SET is_featured = FALSE WHERE category <> 'passenger'`);
+  // Featured = dream cars people love to look at
+  await query(`UPDATE cars SET is_featured = FALSE`);
   await query(`
     UPDATE cars SET is_featured = TRUE
     WHERE id IN (
-      SELECT id FROM cars
-      WHERE status = 'APPROVED' AND category = 'passenger'
-      ORDER BY views DESC, favorites_count DESC
-      LIMIT 32
+      SELECT c.id FROM cars c
+      JOIN brands b ON b.id = c.brand_id
+      JOIN models m ON m.id = c.model_id
+      WHERE c.status = 'APPROVED' AND c.category = 'passenger'
+        AND b.name IN (
+          'Lamborghini','Ferrari','Porsche','Bentley','Rolls-Royce','Maserati',
+          'Mercedes-Benz','BMW','Audi','Lexus','Tesla','Land Rover','Genesis'
+        )
+      ORDER BY
+        CASE b.name
+          WHEN 'Lamborghini' THEN 0 WHEN 'Ferrari' THEN 1 WHEN 'Porsche' THEN 2
+          WHEN 'Bentley' THEN 3 WHEN 'Rolls-Royce' THEN 4 WHEN 'Maserati' THEN 5
+          ELSE 10
+        END,
+        c.power DESC NULLS LAST,
+        c.year DESC
+      LIMIT 40
     )
   `);
 }

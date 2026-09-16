@@ -43,28 +43,41 @@ export const CarModel = {
   },
 
   async featured(limit = 24) {
-    // One of each premium brand first — Toyota, Audi, Lamborghini, Mercedes…
+    // Dream cars people love to look at — exotic, luxury, sports
+    const dreamBrands = [
+      'Lamborghini', 'Ferrari', 'Porsche', 'Bentley', 'Rolls-Royce', 'Maserati',
+      'Mercedes-Benz', 'BMW', 'Audi', 'Lexus', 'Tesla', 'Land Rover', 'Genesis', 'Cadillac',
+    ];
+    const brandList = dreamBrands.map((b) => `'${b}'`).join(',');
     const { rows } = await query(
       `SELECT DISTINCT ON (b.name) ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
-         AND b.name IN (
-           'Mercedes-Benz','BMW','Audi','Toyota','Lamborghini','Ferrari','Porsche',
-           'Lexus','Tesla','Honda','Hyundai','Land Rover','Bentley','Maserati','Chevrolet','Ford'
+         AND b.name IN (${brandList})
+         AND (
+           c.power >= 250
+           OR c.body IN ('Coupe', 'SUV')
+           OR m.name ~* '(AMG|M[0-9]|RS|GT|G-Class|Urus|Huracan|Revuelto|Temerario|Roma|SF90|911|Cayenne|Panamera|Continental|Flying|Cullinan|Ghost|Levante|MC20|Model [SYX]|Range Rover|LX|LC)'
          )
-       ORDER BY b.name, c.year DESC, c.views DESC`
+       ORDER BY b.name,
+         CASE
+           WHEN m.name ~* '(Huracan|Revuelto|Temerario|Urus|SF90|Roma|F8|911|GT|AMG|G-Class|Cullinan|MC20)' THEN 0
+           WHEN c.power >= 400 THEN 1
+           ELSE 2
+         END,
+         c.year DESC,
+         c.views DESC`
     );
-    const order = [
-      'Toyota', 'Audi', 'Lamborghini', 'Mercedes-Benz', 'BMW', 'Ferrari', 'Porsche',
-      'Lexus', 'Tesla', 'Honda', 'Hyundai', 'Land Rover', 'Bentley', 'Maserati', 'Chevrolet', 'Ford',
-    ];
+    const order = dreamBrands;
     rows.sort((a, b) => order.indexOf(a.brand) - order.indexOf(b.brand));
     if (rows.length >= 8) return rows.slice(0, limit);
+
     const fallback = await query(
       `SELECT DISTINCT ON (b.name) ${CAR_SELECT} ${FROM}
        WHERE c.status = 'APPROVED' AND c.category = 'passenger'
-       ORDER BY b.name, c.year DESC, c.views DESC`
+         AND b.name IN (${brandList})
+       ORDER BY b.name, c.power DESC NULLS LAST, c.year DESC`
     );
-    fallback.rows.sort((a, b) => Number(b.year) - Number(a.year));
+    fallback.rows.sort((a, b) => order.indexOf(a.brand) - order.indexOf(b.brand));
     return fallback.rows.slice(0, limit);
   },
 

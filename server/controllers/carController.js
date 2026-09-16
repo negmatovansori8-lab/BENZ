@@ -149,7 +149,17 @@ export const CarController = {
   featured: asyncHandler(async (req, res) => {
     const favoriteIds = req.user ? await FavoriteModel.ids(req.user.id) : [];
     const rows = await CarModel.featured(24);
-    res.json({ success: true, data: uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds))) });
+    const shaped = uniqueVehicles(rows.map((r) => shapeCar(r, favoriteIds)));
+    // Hard guarantee: one car per brand in dream strip
+    const seenBrand = new Set();
+    const data = [];
+    for (const c of shaped) {
+      const b = String(c.brand || '').toLowerCase();
+      if (b && seenBrand.has(b)) continue;
+      if (b) seenBrand.add(b);
+      data.push(c);
+    }
+    res.json({ success: true, data });
   }),
 
   recent: asyncHandler(async (req, res) => {

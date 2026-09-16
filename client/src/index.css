@@ -129,18 +129,16 @@ input {
 }
 
 .card-lift {
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .card-lift:hover {
   transform: translateY(-6px);
-  border-color: rgba(184, 146, 31, 0.35);
   box-shadow: 0 28px 60px -28px rgba(0, 0, 0, 0.55);
 }
 @media (hover: none) {
   .card-lift:hover {
     transform: none;
     box-shadow: none;
-    border-color: var(--ah-line);
   }
 }
 .img-zoom {

@@ -31,21 +31,29 @@ export default function Home() {
       api.get('/homes?limit=8'),
     ])
       .then(([f, h, kamazRes, partsRes, homesRes]) => {
-        const takeSection = (list: Car[], n = 16) => {
+        const takeSection = (list: Car[], n = 16, opts?: { onePerBrand?: boolean }) => {
           const out: Car[] = [];
           const seen = new Set<string>();
+          const brands = new Set<string>();
+          const covers = new Set<string>();
           for (const c of uniqueByIdAndImage(list || [])) {
             const id = `id:${c.id}`;
             const twin = `${c.brand}|${c.model}|${c.year}|${c.category}`;
+            const brand = String(c.brand || '').toLowerCase();
+            const cover = c.images?.[0]?.url ? String(c.images[0].url).split('?')[0] : '';
             if (seen.has(id) || seen.has(twin)) continue;
+            if (opts?.onePerBrand && brand && brands.has(brand)) continue;
+            if (cover && covers.has(cover)) continue;
             seen.add(id);
             seen.add(twin);
+            if (brand) brands.add(brand);
+            if (cover) covers.add(cover);
             out.push(c);
             if (out.length >= n) break;
           }
           return out;
         };
-        setFeatured(takeSection(f.data.data || [], 24));
+        setFeatured(takeSection(f.data.data || [], 16, { onePerBrand: true }));
         setHeavy(takeSection(h.data.data || [], 24));
         setKamaz(takeSection(kamazRes.data.data || [], 24));
         setParts(takeSection(partsRes.data.data || [], 24));

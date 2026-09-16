@@ -106,7 +106,7 @@ async function searchCommons(query) {
     }))
     .filter((x) => {
       if (!x.url || !/jpeg|jpg|png|webp/i.test(x.mime)) return false;
-      if (/svg|logo|icon|badge|emblem|diagram|drawing|map|flag/i.test(x.title)) return false;
+      if (/svg|logo|icon|badge|emblem|diagram|drawing|map|flag|cutaway|chassis|skeleton|exploded|collage|montage/i.test(x.title)) return false;
       return true;
     });
 }

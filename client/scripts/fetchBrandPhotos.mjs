@@ -148,7 +148,7 @@ async function searchCommons(query) {
     }))
     .filter((x) => {
       if (!x.url || !/jpeg|jpg|png|webp/i.test(x.mime)) return false;
-      if (/svg|logo|icon|badge|emblem|wordmark/i.test(x.title)) return false;
+      if (/svg|logo|icon|badge|emblem|wordmark|cutaway|chassis|skeleton|diagram|exploded|collage|montage/i.test(x.title)) return false;
       const t = x.title.toLowerCase();
       // prefer title containing brand token
       return t.includes(brandHint) || brandHint.length < 3;

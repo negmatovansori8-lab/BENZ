@@ -154,12 +154,15 @@ async function ensureModel(brandId, name) {
   return rows[0].id;
 }
 
-function imgFor(cat, n) {
+import { carPhoto } from '../utils/vehicleImages.js';
+
+function imgFor(cat, n, brand = '', model = '') {
   if (cat === 'parts') return `/stock/parts/${(n % 3) + 1}.jpg`;
   if (cat === 'kamaz') return `/stock/kamaz/${(n % 3) + 1}.jpg`;
   if (cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural') {
     return `/stock/trucks/${(n % 3) + 1}.jpg`;
   }
+  if (cat === 'passenger' && brand) return carPhoto(brand, model, 2024, n, 0);
   return `/stock/cars/${(n % 8) + 1}.jpg`;
 }
 
@@ -259,7 +262,7 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
     cat,
     feat: n % 22 === 0,
     views: 80 + (n % 4000),
-    img: imgFor(cat, n),
+    img: imgFor(cat, n, g.brand, model),
     desc: label,
     sellerId: sellers[n % sellers.length],
     locId: locs[n % locs.length],
@@ -401,7 +404,7 @@ async function fillCars(_need, sellers, locs) {
     await insertCarBatch(pending.slice(offset, offset + BATCH));
   }
 
-  // Keep visible local photos — never random landscapes; rewrite every cover
+  // Brand-matched covers for passenger; specialty keeps category stock
   await query(`
     UPDATE car_images ci
     SET url = CASE c.category
@@ -411,9 +414,14 @@ async function fillCars(_need, sellers, locs) {
       WHEN 'special' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
       WHEN 'bus' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
       WHEN 'agricultural' THEN '/stock/trucks/' || ((c.id % 3) + 1)::text || '.jpg'
+      WHEN 'passenger' THEN '/stock/brands/' ||
+        trim(both '-' from regexp_replace(lower(b.name), '[^a-z0-9]+', '-', 'g')) ||
+        '-' || ((MOD(c.id * 7 + LENGTH(COALESCE(m.name, '')), 3)) + 1)::text || '.jpg'
       ELSE '/stock/cars/' || ((c.id % 8) + 1)::text || '.jpg'
     END
     FROM cars c
+    JOIN brands b ON b.id = c.brand_id
+    LEFT JOIN models m ON m.id = c.model_id
     WHERE ci.car_id = c.id
   `);
 }

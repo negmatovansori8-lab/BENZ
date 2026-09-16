@@ -1,14 +1,71 @@
 /**
- * Passenger covers: local real car photos only (no IMAGE studio / remote watermarks).
+ * Passenger covers: brand-matched local photos under /stock/brands/{slug}-N.jpg
  * Specialty: /stock/kamaz /stock/parts /stock/trucks.
  */
 
+const BRAND_PHOTO_COUNT = {
+  toyota: 3,
+  audi: 3,
+  lamborghini: 3,
+  'mercedes-benz': 3,
+  bmw: 3,
+  porsche: 3,
+  ferrari: 3,
+  lexus: 3,
+  tesla: 3,
+  honda: 3,
+  hyundai: 3,
+  kia: 3,
+  ford: 3,
+  chevrolet: 3,
+  nissan: 3,
+  volkswagen: 3,
+  'land-rover': 3,
+  jeep: 3,
+  mazda: 3,
+  subaru: 3,
+  mitsubishi: 3,
+  volvo: 3,
+  bentley: 3,
+  maserati: 3,
+  dodge: 3,
+  'rolls-royce': 3,
+  cadillac: 3,
+  peugeot: 3,
+  renault: 3,
+  skoda: 3,
+  lada: 3,
+  byd: 3,
+  haval: 3,
+  geely: 3,
+  chery: 3,
+  genesis: 3,
+  infiniti: 3,
+  acura: 3,
+};
+
 const LOCAL_CAR_COUNT = 8;
 
+export function brandSlug(brand) {
+  return String(brand || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[._]/g, ' ')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+}
+
 export function carPhoto(brand, model, year, seed = 0, index = 0) {
+  const slug = brandSlug(brand);
+  const count = BRAND_PHOTO_COUNT[slug] || 0;
   const id = Math.abs(Number(seed) || 0);
   const i = Math.abs(Number(index) || 0);
-  const n = (id * 7 + i * 3 + String(brand || '').length * 5 + String(model || '').length) % LOCAL_CAR_COUNT;
+  const modelBoost = String(model || '').length * 3;
+  if (count > 0) {
+    const n = (id * 7 + i * 3 + modelBoost) % count;
+    return `/stock/brands/${slug}-${n + 1}.jpg`;
+  }
+  const n = (id * 7 + i * 3 + String(brand || '').length * 5) % LOCAL_CAR_COUNT;
   return `/stock/cars/${n + 1}.jpg`;
 }
 

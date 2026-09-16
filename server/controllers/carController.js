@@ -57,18 +57,22 @@ function rewriteImageUrl(url, carId, index, category = 'passenger', meta = {}) {
   const cat = category || 'passenger';
   const raw = url == null ? '' : String(url);
   if (raw.startsWith('/uploads/')) return raw;
-  if (raw.startsWith('/stock/')) return raw;
-  if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw.replace(/^\/homes\//, '/stock/homes/');
-  if (raw.startsWith('/parts/') || raw.startsWith('/kamaz/') || raw.startsWith('/trucks/') || raw.startsWith('/cars/')) {
-    return `/stock${raw}`;
-  }
 
-  // Never keep IMAGE studio / picsum landscapes for passenger cars
-  if (cat === 'passenger' && meta.brand && meta.model) {
+  // Passenger listings always use brand-matched photos (never generic Mercedes stock)
+  if (cat === 'passenger' && meta.brand) {
     return carPhoto(meta.brand, meta.model, meta.year, carId, index);
   }
 
-  if (!raw || isStockRemoteImage(raw) || isImaginImage(raw)) {
+  if (raw.startsWith('/stock/brands/')) return raw;
+  if (raw.startsWith('/stock/parts/') || raw.startsWith('/stock/kamaz/') || raw.startsWith('/stock/trucks/') || raw.startsWith('/stock/homes/')) {
+    return raw;
+  }
+  if (raw.startsWith('/homes/') || raw === '/hero.jpg') return raw.replace(/^\/homes\//, '/stock/homes/');
+  if (raw.startsWith('/parts/') || raw.startsWith('/kamaz/') || raw.startsWith('/trucks/')) {
+    return `/stock${raw}`;
+  }
+
+  if (!raw || isStockRemoteImage(raw) || isImaginImage(raw) || raw.startsWith('/cars/') || raw.startsWith('/stock/cars/')) {
     return imageForVehicle(cat, carId, index, meta);
   }
   if (raw.startsWith('http://') || raw.startsWith('https://')) {

@@ -10,7 +10,7 @@ import { EmptyState, ErrorState } from '../components/EmptyState';
 import { api } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Car, Location, Paginated } from '../types';
-import { BRANDS, BODIES, FUELS } from '../types';
+import { BRANDS } from '../types';
 import { useI18n } from '../context/LocaleContext';
 import type { Msg } from '../i18n/dict';
 import { bodyMsg } from '../utils/vehicle';
@@ -87,10 +87,6 @@ export default function Cars() {
   const clearFilters = () => {
     const next = new URLSearchParams();
     if (cat) next.set('category', cat);
-    const body = params.get('body');
-    const fuel = params.get('fuel');
-    if (body) next.set('body', body);
-    if (fuel) next.set('fuel', fuel);
     setParams(next);
   };
 
@@ -100,25 +96,6 @@ export default function Cars() {
         <select className="input" value={params.get('brand') || ''} onChange={(e) => set('brand', e.target.value)}>
           <option value="">{t('allBrands')}</option>
           {BRANDS.map((b) => <option key={b}>{b}</option>)}
-        </select>
-      </Field>
-      <Field label={t('body')}>
-        <select className="input" value={params.get('body') || ''} onChange={(e) => set('body', e.target.value)}>
-          <option value="">{t('any')}</option>
-          {BODIES.map((b) => <option key={b} value={b}>{t(bodyMsg(b))}</option>)}
-        </select>
-      </Field>
-      <Field label={t('fuel')}>
-        <select className="input" value={params.get('fuel') || ''} onChange={(e) => set('fuel', e.target.value)}>
-          <option value="">{t('any')}</option>
-          {FUELS.map((f) => <option key={f} value={f}>{f}</option>)}
-        </select>
-      </Field>
-      <Field label={t('filterCondition')}>
-        <select className="input" value={params.get('condition') || ''} onChange={(e) => set('condition', e.target.value)}>
-          <option value="">{t('any')}</option>
-          <option value="new">{t('condNewShort')}</option>
-          <option value="used">{t('condUsedShort')}</option>
         </select>
       </Field>
       <Field label={t('city')}>

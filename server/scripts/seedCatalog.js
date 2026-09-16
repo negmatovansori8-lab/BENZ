@@ -253,13 +253,16 @@ function buildCar(g, model, year, cat, n, sellers, locs) {
   const body = safeBody(g.bodies ? g.bodies[n % g.bodies.length] : cat === 'parts' ? 'Sedan' : 'Pickup');
   const fuel = cat === 'parts'
     ? 'Petrol'
-    : ['Tesla', 'BYD'].includes(g.brand) || /EV|Ioniq|ID\.|Taycan|Seal|Han/i.test(model)
+    : ['Tesla', 'BYD'].includes(g.brand) || /EV|Ioniq|ID\.|Taycan|Seal|Han|EQS|EQE|Cybertruck|Atto/i.test(model)
       ? 'Electric'
       : cat === 'motorcycle' || cat === 'marine' || cat === 'aircraft'
         ? 'Petrol'
         : cat === 'kamaz' || cat === 'commercial' || cat === 'special' || cat === 'bus' || cat === 'agricultural'
           ? 'Diesel'
-          : n % 17 === 0 ? 'Electric' : n % 9 === 0 ? 'Hybrid' : n % 4 === 0 ? 'Diesel' : n % 5 === 0 ? 'Gas' : 'Petrol';
+          : /Hybrid|e-BOXER|PHEV|Plugin/i.test(model) || n % 11 === 0 ? 'Hybrid'
+            : n % 4 === 0 ? 'Diesel'
+              : n % 5 === 0 ? 'Gas'
+                : 'Petrol';
   const label = cat === 'parts'
     ? `${g.brand} ${model}. Қисми эҳтиётӣ, санҷидашуда. ${CITIES[n % CITIES.length]}.`
     : `${g.brand} ${model} ${year}. ${body}. ${CITIES[n % CITIES.length]}.`;

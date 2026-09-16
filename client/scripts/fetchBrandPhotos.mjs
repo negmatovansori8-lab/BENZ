@@ -35,7 +35,7 @@ const UNSPLASH = {
   mitsubishi: ['N4DbvTUDikw', 'YApiWkg0TxE', 'oqymye2oE9c'],
   volvo: ['a4SGRJb_mPk', '8eSrC43qyyo', 'oqymye2oE9c'],
   bentley: ['YApiWkg0TxE', 'N9Pc13yNy1o', 'VkwRmra3rqA'],
-  maserati: ['eqW1K-khLW8', 'Vn5VBVCA6Hg', 'tHlFrb-ZB7g'],
+  maserati: ['placeholder1', 'placeholder2', 'placeholder3'],
   dodge: ['VkwRmra3rqA', 'eqW1K-khLW8', 'N9Pc13yNy1o'],
   'rolls-royce': ['YApiWkg0TxE', 'N9Pc13yNy1o', 'VkwRmra3rqA'],
   cadillac: ['YApiWkg0TxE', 'N9Pc13yNy1o', 'N4DbvTUDikw'],
@@ -49,7 +49,7 @@ const UNSPLASH = {
   chery: ['oqymye2oE9c', 'a4SGRJb_mPk', 'N4DbvTUDikw'],
   genesis: ['a4SGRJb_mPk', 'YApiWkg0TxE', 'N9Pc13yNy1o'],
   infiniti: ['YApiWkg0TxE', 'N9Pc13yNy1o', 'oqymye2oE9c'],
-  acura: ['oqymye2oE9c', 'a4SGRJb_mPk', 'N4DbvTUDikw'],
+  acura: ['acura-mdx-1', 'acura-rdx-2', 'acura-tlx-3'],
 };
 
 const SEARCH = {
@@ -76,7 +76,7 @@ const SEARCH = {
   mitsubishi: ['Mitsubishi Pajero', 'Mitsubishi Outlander', 'Mitsubishi L200'],
   volvo: ['Volvo XC90', 'Volvo XC60', 'Volvo S90'],
   bentley: ['Bentley Continental GT', 'Bentley Bentayga', 'Bentley Flying Spur'],
-  maserati: ['Maserati Levante', 'Maserati Ghibli', 'Maserati MC20'],
+  maserati: ['Maserati MC20 coupe', 'Maserati Levante SUV street', 'Maserati Ghibli sedan front'],
   dodge: ['Dodge Challenger', 'Dodge Charger sedan', 'Dodge Durango'],
   'rolls-royce': ['Rolls-Royce Cullinan', 'Rolls-Royce Ghost', 'Rolls-Royce Phantom'],
   cadillac: ['Cadillac Escalade', 'Cadillac CT5', 'Cadillac XT5'],

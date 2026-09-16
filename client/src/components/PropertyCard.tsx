@@ -25,9 +25,6 @@ export function PropertyCard({ item }: { item: Property }) {
     <article className="card group flex flex-col">
       <Link to={`/homes/${item.id}`} className="relative block overflow-hidden bg-zinc-900">
         <SafeImg src={cover} seed={item.id} alt={item.title} className="h-44 w-full object-cover transition duration-500 group-hover:scale-105" />
-        {item.is_featured && (
-          <span className="absolute left-3 top-3 chip bg-gold-500 text-[10px] text-zinc-950">{t('curated')}</span>
-        )}
       </Link>
       <div className="flex flex-1 flex-col p-4">
         <p className="text-[10px] uppercase tracking-wider text-gold-600">{t(kind)}</p>

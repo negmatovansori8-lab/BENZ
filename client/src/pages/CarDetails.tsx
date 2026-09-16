@@ -154,8 +154,7 @@ export default function CarDetails() {
         </div>
 
         <aside className="card p-6">
-          {car.is_featured && <span className="chip bg-gold-500/15 text-gold-700">{t('badgeFeatured')}</span>}
-          <h1 className="font-display mt-2 text-2xl sm:text-3xl">{car.brand} {car.model}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl">{car.brand} {car.model}</h1>
           <p className="mt-1 text-[var(--ah-muted)]">{car.year} · {t(bodyMsg(car.body))}</p>
           <p className="mt-4 font-display text-3xl text-gold-600 sm:text-4xl">{formatPrice(car.price_usd, currency, rates)}</p>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-[var(--ah-muted)]">

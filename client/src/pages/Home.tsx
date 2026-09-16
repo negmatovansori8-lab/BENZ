@@ -16,7 +16,6 @@ export default function Home() {
   const { t } = useI18n();
   const { user } = useAuth();
   const [featured, setFeatured] = useState<Car[]>([]);
-  const [recent, setRecent] = useState<Car[]>([]);
   const [heavy, setHeavy] = useState<Car[]>([]);
   const [kamaz, setKamaz] = useState<Car[]>([]);
   const [parts, setParts] = useState<Car[]>([]);
@@ -26,13 +25,12 @@ export default function Home() {
   useEffect(() => {
     Promise.all([
       api.get('/cars/featured'),
-      api.get('/cars/recent'),
       api.get('/cars?category=heavy&limit=48'),
       api.get('/cars?category=kamaz&limit=48'),
       api.get('/cars?category=parts&limit=48'),
       api.get('/homes?limit=8'),
     ])
-      .then(([f, r, h, kamazRes, partsRes, homesRes]) => {
+      .then(([f, h, kamazRes, partsRes, homesRes]) => {
         const takeSection = (list: Car[], n = 16) => {
           const out: Car[] = [];
           const seen = new Set<string>();
@@ -48,7 +46,6 @@ export default function Home() {
           return out;
         };
         setFeatured(takeSection(f.data.data || [], 16));
-        setRecent(takeSection(r.data.data || [], 16));
         setHeavy(takeSection(h.data.data || [], 16));
         setKamaz(takeSection(kamazRes.data.data || [], 16));
         setParts(takeSection(partsRes.data.data || [], 16));
@@ -186,22 +183,6 @@ export default function Home() {
           </div>
         )}
         {!loading && !homes.length && <p className="text-sm text-[var(--ah-muted)]">{t('noHomes')}</p>}
-      </section>
-
-      <section className="container-ah pb-14">
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('fresh')}</p>
-          <h2 className="font-display text-2xl sm:text-3xl">{t('newArrivals')}</h2>
-        </div>
-        <Grid cars={recent} loading={loading} empty={t('noCars')} />
-      </section>
-
-      <section className="container-ah pb-14">
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('trending')}</p>
-          <h2 className="font-display text-2xl sm:text-3xl">{t('popular')}</h2>
-        </div>
-        <Grid cars={popular} loading={loading} empty={t('noCars')} />
       </section>
 
       <section className="container-ah pb-20">

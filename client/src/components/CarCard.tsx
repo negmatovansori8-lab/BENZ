@@ -81,7 +81,7 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
   ];
 
   return (
-    <article className={cn('card card-lift group relative flex flex-col', car.is_featured && 'ring-1 ring-gold-500/60')}>
+    <article className="card card-lift group relative flex flex-col">
       <div className="absolute right-3 top-3 z-10 flex gap-1.5">
         <IconButton
           icon={Heart}
@@ -116,7 +116,6 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
           />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
           <div className="absolute left-3 top-3 flex flex-wrap gap-1">
-            {car.is_featured && <span className="chip border-0 bg-gold-500 text-[10px] font-semibold text-zinc-950">{t('badgeFeatured')}</span>}
             {car.status === 'SOLD' && <span className="chip border-0 bg-zinc-950 text-[10px] text-white">{t('badgeSold')}</span>}
             {isEv && <span className="chip border-0 bg-emerald-500/90 text-[10px] font-semibold text-white">{car.fuel}</span>}
             {car.body && <span className="chip border-0 bg-black/55 text-[10px] text-white backdrop-blur">{car.body}</span>}

@@ -103,7 +103,8 @@ export function normalizePhone(raw?: string | null) {
 
 export function whatsappLink(raw?: string | null) {
   const n = normalizePhone(raw).replace(/\D/g, '');
-  return n ? `https://wa.me/${n}` : '';
+  // api.whatsapp.com works on desktop + mobile more reliably than wa.me alone
+  return n ? `https://api.whatsapp.com/send?phone=${n}` : '';
 }
 
 export function displayPhone(raw?: string | null) {

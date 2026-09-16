@@ -53,7 +53,11 @@ export default function HomeDetails() {
             {item.area_m2 ? <div className="flex justify-between"><dt className="text-[var(--ah-muted)]">{t('area')}</dt><dd>{item.area_m2}</dd></div> : null}
             {item.floor ? <div className="flex justify-between"><dt className="text-[var(--ah-muted)]">{t('floor')}</dt><dd>{item.floor} / {item.floors || '—'}</dd></div> : null}
           </dl>
-          <ContactActions className="mt-6" phone={item.phone || item.seller_phone} />
+          <ContactActions
+            className="mt-6"
+            phone={item.phone || item.seller_phone}
+            listingTitle={item.title}
+          />
           <p className="mt-4 text-sm text-[var(--ah-muted)]">{item.seller_name}</p>
         </aside>
       </div>

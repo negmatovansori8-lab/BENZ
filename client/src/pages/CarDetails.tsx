@@ -169,7 +169,10 @@ export default function CarDetails() {
             <button type="button" className="btn-ghost inline-flex items-center gap-2" onClick={() => { add(car); push(t('addedToCompare'), 'success'); }}>
               <Icon icon={Scale} size="sm" className={cn(has(car.id) && 'text-gold-500')} decorative /> {t('compareBtn')}
             </button>
-            <ContactActions phone={car.phone || car.seller_phone} />
+            <ContactActions
+              phone={car.phone || car.seller_phone}
+              listingTitle={`${car.brand} ${car.model} ${car.year}`}
+            />
           </div>
 
           <div className="mt-6 rounded-2xl border border-[var(--ah-line)] p-4">

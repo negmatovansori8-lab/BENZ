@@ -112,7 +112,7 @@ export default function Home() {
             <p className="text-xs uppercase tracking-[0.25em] text-gold-600">{t('curated')}</p>
             <h2 className="font-display text-2xl sm:text-3xl">{t('featured')}</h2>
           </div>
-          <Link to="/cars?featured=true" className="shrink-0 inline-flex items-center gap-1 text-sm text-gold-600">
+          <Link to="/cars?category=passenger&featured=true" className="shrink-0 inline-flex items-center gap-1 text-sm text-gold-600">
             {t('viewAll')} <Icon icon={ArrowRight} size="sm" decorative />
           </Link>
         </div>

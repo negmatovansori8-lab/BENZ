@@ -5,14 +5,14 @@
 
 const BRAND_PHOTO_COUNT = {
   toyota: 3,
-  audi: 3,
-  lamborghini: 3,
-  'mercedes-benz': 3,
-  bmw: 3,
-  porsche: 3,
-  ferrari: 3,
-  lexus: 3,
-  tesla: 3,
+  audi: 6,
+  lamborghini: 6,
+  'mercedes-benz': 6,
+  bmw: 6,
+  porsche: 6,
+  ferrari: 6,
+  lexus: 6,
+  tesla: 6,
   honda: 3,
   hyundai: 3,
   kia: 3,
@@ -20,16 +20,16 @@ const BRAND_PHOTO_COUNT = {
   chevrolet: 3,
   nissan: 3,
   volkswagen: 3,
-  'land-rover': 3,
+  'land-rover': 6,
   jeep: 3,
   mazda: 3,
   subaru: 3,
   mitsubishi: 3,
   volvo: 3,
-  bentley: 3,
-  maserati: 3,
+  bentley: 6,
+  maserati: 6,
   dodge: 3,
-  'rolls-royce': 3,
+  'rolls-royce': 6,
   cadillac: 3,
   peugeot: 3,
   renault: 3,
@@ -39,7 +39,7 @@ const BRAND_PHOTO_COUNT = {
   haval: 3,
   geely: 3,
   chery: 3,
-  genesis: 3,
+  genesis: 6,
   infiniti: 3,
   acura: 3,
 };
@@ -171,14 +171,12 @@ export function uniqueVehicles(rows = []) {
     const img = Array.isArray(row.images)
       ? (row.images[0]?.url || row.images[0])
       : null;
-    const s = img ? String(img) : '';
-    const imgKey = isLocalStockUrl(s) || s.startsWith('/uploads/')
-      ? null
-      : (s ? s.split('?')[0] : null);
-    if (imgKey && byImg.has(imgKey)) continue;
+    const s = img ? String(img).split('?')[0] : '';
+    // One listing per cover photo (brand stock + specialty) — no duplicate colors/shots
+    if (s && byImg.has(s)) continue;
     byId.add(row.id);
     byTwin.add(twin);
-    if (imgKey) byImg.add(imgKey);
+    if (s) byImg.add(s);
     out.push(row);
   }
   return out;

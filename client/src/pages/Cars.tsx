@@ -33,14 +33,14 @@ export default function Cars() {
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
-  const cat = params.get('category') || '';
+  const cat = params.get('category') || (params.get('fuel') ? '' : 'passenger');
   const q = params.get('q') || '';
   const pageTitle =
     cat === 'heavy' || cat === 'commercial' ? t('largeVehicles')
     : cat === 'special' ? t('catSpecial')
     : cat === 'kamaz' ? t('catKamaz')
     : cat === 'parts' ? t('catParts')
-    : cat === 'passenger' ? t('catPassenger')
+    : cat === 'passenger' ? t('buyCars')
     : cat === 'bus' ? t('catBus')
     : cat === 'motorcycle' ? t('catMotorcycle')
     : cat === 'agricultural' ? t('catAgricultural')
@@ -56,6 +56,10 @@ export default function Cars() {
     const p = new URLSearchParams(params);
     if (dq) p.set('q', dq);
     else p.delete('q');
+    // "Buy cars" = passenger only (heavy/kamaz via their own category links)
+    if (!p.get('category') && !p.get('fuel')) {
+      p.set('category', 'passenger');
+    }
     if (!p.get('limit')) p.set('limit', '36');
     return p.toString();
   }, [params, dq]);

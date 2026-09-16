@@ -305,6 +305,10 @@ function buildWhere(f) {
   } else if (cats && cats.length > 1) {
     where.push(`c.category = ANY($${i++}::text[])`);
     params.push(cats);
+  } else if (!f.category) {
+    // Default catalog = passenger cars only (not trucks/buses/kamaz)
+    where.push(`c.category = $${i++}`);
+    params.push('passenger');
   }
   if (f.country) {
     where.push(`l.country ILIKE $${i++}`);

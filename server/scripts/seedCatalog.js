@@ -443,7 +443,7 @@ async function fillCars(_need, sellers, locs) {
       WHEN 'agricultural' THEN '/stock/trucks/' || (((c.id * 29 + COALESCE(LENGTH(m.name), 0) * 11) % 36) + 1)::text || '.jpg'
       WHEN 'passenger' THEN '/stock/brands/' ||
         trim(both '-' from regexp_replace(lower(b.name), '[^a-z0-9]+', '-', 'g')) ||
-        '-' || ((((c.id * 7) + COALESCE(LENGTH(m.name), 0) * 3 + (c.year % 10)) % 3) + 1)::text || '.jpg'
+        '-' || ((((c.id * 7) + COALESCE(LENGTH(m.name), 0) * 3 + (c.year % 10)) % 6) + 1)::text || '.jpg'
       ELSE '/stock/cars/' || ((c.id % 8) + 1)::text || '.jpg'
     END
     FROM cars c
@@ -535,12 +535,13 @@ async function normalizePrices() {
     SET price_usd = GREATEST(6000, LEAST(95000, price_usd))
     WHERE price_usd > 95000
   `);
-  // Featured = dream cars people love to look at
+  // Featured = one dream car per brand (no 20 identical Lamborghinis)
   await query(`UPDATE cars SET is_featured = FALSE`);
   await query(`
     UPDATE cars SET is_featured = TRUE
     WHERE id IN (
-      SELECT c.id FROM cars c
+      SELECT DISTINCT ON (b.name) c.id
+      FROM cars c
       JOIN brands b ON b.id = c.brand_id
       JOIN models m ON m.id = c.model_id
       WHERE c.status = 'APPROVED' AND c.category = 'passenger'
@@ -548,15 +549,14 @@ async function normalizePrices() {
           'Lamborghini','Ferrari','Porsche','Bentley','Rolls-Royce','Maserati',
           'Mercedes-Benz','BMW','Audi','Lexus','Tesla','Land Rover','Genesis'
         )
-      ORDER BY
-        CASE b.name
-          WHEN 'Lamborghini' THEN 0 WHEN 'Ferrari' THEN 1 WHEN 'Porsche' THEN 2
-          WHEN 'Bentley' THEN 3 WHEN 'Rolls-Royce' THEN 4 WHEN 'Maserati' THEN 5
-          ELSE 10
+      ORDER BY b.name,
+        CASE
+          WHEN m.name ~* '(Huracan|Revuelto|Urus|SF90|Roma|911|GT|AMG|G-Class|Cullinan|MC20)' THEN 0
+          WHEN c.power >= 400 THEN 1
+          ELSE 2
         END,
-        c.power DESC NULLS LAST,
-        c.year DESC
-      LIMIT 40
+        c.year DESC,
+        c.power DESC NULLS LAST
     )
   `);
 }

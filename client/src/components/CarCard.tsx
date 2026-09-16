@@ -24,7 +24,6 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
   const [fav, setFav] = useState(!!car.is_favorite);
   const cover = coverImage(car.images, car.id);
   const power = car.power ? `${car.power} ${t('hp')}` : null;
-  const isEv = car.fuel === 'Electric' || car.fuel === 'Hybrid';
 
   const toggleFav = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -115,11 +114,11 @@ export function CarCard({ car, onFavorite }: { car: Car; onFavorite?: (id: numbe
             className="img-zoom h-full w-full object-cover"
           />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-          <div className="absolute left-3 top-3 flex flex-wrap gap-1">
-            {car.status === 'SOLD' && <span className="chip border-0 bg-zinc-950 text-[10px] text-white">{t('badgeSold')}</span>}
-            {isEv && <span className="chip border-0 bg-emerald-500/90 text-[10px] font-semibold text-white">{car.fuel}</span>}
-            {car.body && <span className="chip border-0 bg-black/55 text-[10px] text-white backdrop-blur">{car.body}</span>}
-          </div>
+          {car.status === 'SOLD' && (
+            <div className="absolute left-3 top-3">
+              <span className="chip border-0 bg-zinc-950 text-[10px] text-white">{t('badgeSold')}</span>
+            </div>
+          )}
           <p className="absolute bottom-3 left-3 font-display text-xl font-bold tracking-tight text-white drop-shadow sm:text-2xl">
             {formatPrice(car.price_usd, currency, rates)}
           </p>

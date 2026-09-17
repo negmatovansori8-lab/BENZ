@@ -16,6 +16,14 @@ import type { Msg } from '../i18n/dict';
 import { bodyMsg } from '../utils/vehicle';
 import { uniqueByIdAndImage } from '../utils/uniqueList';
 
+const HEAVY_BRANDS = new Set([
+  'MAN', 'DAF', 'Scania', 'Isuzu', 'HOWO', 'Shacman', 'FAW', 'KAMAZ', 'MAZ', 'Dongfeng', 'Iveco',
+  'JCB', 'Caterpillar', 'Komatsu', 'XCMG', 'Liebherr', 'Hitachi', 'John Deere', 'MTZ',
+  'PAZ', 'LiAZ', 'Yutong', 'King Long',
+]);
+
+const PASSENGER_BRANDS = BRANDS.filter((b) => !HEAVY_BRANDS.has(b) && b !== 'GAZ');
+
 const SORT_KEYS: { id: string; key: Msg }[] = [
   { id: 'newest', key: 'sortNewest' },
   { id: 'oldest', key: 'sortOldest' },
@@ -25,6 +33,15 @@ const SORT_KEYS: { id: string; key: Msg }[] = [
   { id: 'popular', key: 'sortPopular' },
 ];
 
+function isPassengerCar(c: Car) {
+  const cat = c.category || 'passenger';
+  if (cat !== 'passenger') return false;
+  if (HEAVY_BRANDS.has(c.brand)) return false;
+  if (c.brand === 'GAZ' && /cityride|vector|bus/i.test(c.model || '')) return false;
+  if (/truck|bus|coach|tractor|fire|ambulance|construction/i.test(c.body || '')) return false;
+  return true;
+}
+
 export default function Cars() {
   const { t } = useI18n();
   const [params, setParams] = useSearchParams();
@@ -33,6 +50,16 @@ export default function Cars() {
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
+
+  // Force buy-cars URL to passenger (heavy transport has its own links)
+  useEffect(() => {
+    if (!params.get('category') && !params.get('fuel')) {
+      const next = new URLSearchParams(params);
+      next.set('category', 'passenger');
+      setParams(next, { replace: true });
+    }
+  }, [params, setParams]);
+
   const cat = params.get('category') || (params.get('fuel') ? '' : 'passenger');
   const q = params.get('q') || '';
   const pageTitle =
@@ -56,7 +83,6 @@ export default function Cars() {
     const p = new URLSearchParams(params);
     if (dq) p.set('q', dq);
     else p.delete('q');
-    // "Buy cars" = passenger only (heavy/kamaz via their own category links)
     if (!p.get('category') && !p.get('fuel')) {
       p.set('category', 'passenger');
     }
@@ -74,11 +100,15 @@ export default function Cars() {
     api
       .get(`/cars?${queryString}`)
       .then((r) => {
-        setData({ ...r.data, data: uniqueByIdAndImage(r.data.data || []) });
+        let list = uniqueByIdAndImage(r.data.data || []);
+        if (cat === 'passenger' || (!params.get('category') && !params.get('fuel'))) {
+          list = list.filter(isPassengerCar);
+        }
+        setData({ ...r.data, data: list, pagination: { ...r.data.pagination, total: list.length } });
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [queryString]);
+  }, [queryString, cat, params]);
 
   const set = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -90,16 +120,18 @@ export default function Cars() {
 
   const clearFilters = () => {
     const next = new URLSearchParams();
-    if (cat) next.set('category', cat);
+    next.set('category', cat || 'passenger');
     setParams(next);
   };
+
+  const brandOptions = cat === 'passenger' || !cat ? PASSENGER_BRANDS : BRANDS;
 
   const filters = (
     <div className="space-y-3">
       <Field label={t('brand')}>
         <select className="input" value={params.get('brand') || ''} onChange={(e) => set('brand', e.target.value)}>
           <option value="">{t('allBrands')}</option>
-          {BRANDS.map((b) => <option key={b}>{b}</option>)}
+          {brandOptions.map((b) => <option key={b}>{b}</option>)}
         </select>
       </Field>
       <Field label={t('city')}>

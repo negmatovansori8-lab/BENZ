@@ -1,5 +1,5 @@
 import { query } from '../config/db.js';
-import { resolveCategoryFilter } from '../utils/catalogTaxonomy.js';
+import { resolveCategoryFilter, HEAVY_BRANDS, BUS_BRANDS } from '../utils/catalogTaxonomy.js';
 
 export const CAR_SELECT = `
   c.id, c.seller_id, c.brand_id, c.model_id, c.year, c.price_usd, c.mileage,
@@ -309,6 +309,19 @@ function buildWhere(f) {
     // Default catalog = passenger cars only (not trucks/buses/kamaz)
     where.push(`c.category = $${i++}`);
     params.push('passenger');
+  }
+
+  // Buy-cars safety: never return heavy/bus brands or truck bodies as "passenger"
+  const passengerMode =
+    (!f.category && !cats) ||
+    (cats && cats.length === 1 && cats[0] === 'passenger') ||
+    f.category === 'passenger';
+  if (passengerMode) {
+    const blocked = [...new Set([...HEAVY_BRANDS, ...BUS_BRANDS])];
+    where.push(`b.name <> ALL($${i++}::text[])`);
+    params.push(blocked);
+    where.push(`c.body NOT IN ('Truck', 'Heavy Truck', 'Bus', 'Coach', 'Tractor', 'Ambulance', 'Fire Truck', 'Police', 'Construction', 'Commercial Van')`);
+    where.push(`c.category = 'passenger'`);
   }
   if (f.country) {
     where.push(`l.country ILIKE $${i++}`);

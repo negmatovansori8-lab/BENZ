@@ -210,7 +210,49 @@ async function syncCategories() {
     UPDATE cars SET category = 'kamaz'
     WHERE category <> 'parts' AND brand_id IN (SELECT id FROM brands WHERE name = 'KAMAZ')
   `);
-  await query(`UPDATE cars SET category = 'commercial' WHERE category = 'bus'`);
+  await query(`
+    UPDATE cars SET category = 'bus'
+    WHERE category <> 'parts' AND brand_id IN (
+      SELECT id FROM brands WHERE name IN ('PAZ', 'LiAZ', 'Yutong', 'King Long')
+    )
+  `);
+  await query(`
+    UPDATE cars SET category = 'commercial'
+    WHERE category IN ('passenger', 'bus')
+      AND brand_id IN (
+        SELECT id FROM brands WHERE name IN (
+          'MAN', 'DAF', 'Scania', 'Isuzu', 'HOWO', 'Shacman', 'FAW', 'MAZ', 'Dongfeng', 'Iveco'
+        )
+      )
+  `);
+  await query(`
+    UPDATE cars SET category = 'special'
+    WHERE category = 'passenger'
+      AND brand_id IN (
+        SELECT id FROM brands WHERE name IN (
+          'JCB', 'Caterpillar', 'Komatsu', 'XCMG', 'Liebherr', 'Hitachi'
+        )
+      )
+  `);
+  await query(`
+    UPDATE cars c SET category = 'commercial'
+    FROM brands b
+    JOIN models m ON m.brand_id = b.id
+    WHERE c.brand_id = b.id AND c.model_id = m.id
+      AND c.category = 'passenger'
+      AND (
+        c.body IN ('Truck', 'Heavy Truck', 'Bus', 'Coach', 'Fire Truck', 'Ambulance', 'Construction', 'Commercial Van')
+        OR m.name ILIKE '%CityRide%' OR m.name ILIKE '%Bus%' OR m.name ILIKE '%Dump%' OR m.name ILIKE '%Mixer%'
+      )
+  `);
+  // GAZ buses / city rides → commercial (keep Gazelle as commercial too if body bus)
+  await query(`
+    UPDATE cars c SET category = 'commercial'
+    FROM brands b, models m
+    WHERE c.brand_id = b.id AND c.model_id = m.id AND b.name = 'GAZ'
+      AND c.category = 'passenger'
+      AND (c.body IN ('Bus', 'Coach', 'Truck', 'Commercial Van') OR m.name ILIKE '%CityRide%' OR m.name ILIKE '%Vector%')
+  `);
   const kamaz = await query(`SELECT COUNT(*)::int AS n FROM cars WHERE category = 'kamaz'`);
   if (Number(kamaz.rows[0]?.n || 0) < 4) await seedKamaz();
   await seedParts();

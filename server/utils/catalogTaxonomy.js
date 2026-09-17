@@ -60,6 +60,16 @@ export const WORLD_BRANDS = [
   'Harley-Davidson', 'Ducati', 'Boeing', 'Airbus', 'Yamaha Marine', 'BRP',
 ];
 
+/** Brands that must never appear under passenger / "buy cars". */
+export const HEAVY_BRANDS = [
+  'MAN', 'DAF', 'Scania', 'Isuzu', 'HOWO', 'Shacman', 'FAW', 'KAMAZ', 'MAZ', 'Dongfeng', 'Iveco',
+  'JCB', 'Caterpillar', 'Komatsu', 'XCMG', 'Liebherr', 'Hitachi', 'John Deere', 'MTZ', 'New Holland', 'Case IH', 'Claas',
+  'PAZ', 'LiAZ', 'Yutong', 'King Long',
+];
+
+/** GAZ passenger vans stay commercial when body is bus/van; brand alone is ambiguous. */
+export const BUS_BRANDS = ['PAZ', 'LiAZ', 'Yutong', 'King Long'];
+
 export function resolveCategoryFilter(category) {
   if (!category) return null;
   if (category === 'heavy') return CATEGORY_ALIASES.heavy;

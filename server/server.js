@@ -109,6 +109,30 @@ try {
   await UserModel.promoteOwnerAdmins();
   const removed = await UserModel.removeDemoAccounts();
   if (removed) console.log(`Removed ${removed} demo @autohub.tj accounts`);
+  // Keep passenger catalog clean of buses/trucks/specials
+  const { query } = await import('./config/db.js');
+  await query(`
+    UPDATE cars c SET category = 'bus'
+    FROM brands b
+    WHERE c.brand_id = b.id AND c.category = 'passenger'
+      AND b.name IN ('PAZ', 'LiAZ', 'Yutong', 'King Long')
+  `);
+  await query(`
+    UPDATE cars c SET category = 'commercial'
+    FROM brands b, models m
+    WHERE c.brand_id = b.id AND c.model_id = m.id AND c.category = 'passenger'
+      AND (
+        b.name IN ('MAN','DAF','Scania','Isuzu','HOWO','Shacman','FAW','MAZ','Dongfeng','Iveco')
+        OR c.body IN ('Truck','Heavy Truck','Bus','Coach','Fire Truck','Ambulance','Construction','Commercial Van')
+        OR (b.name = 'GAZ' AND (m.name ILIKE '%CityRide%' OR m.name ILIKE '%Vector%' OR c.body IN ('Bus','Coach')))
+      )
+  `);
+  await query(`
+    UPDATE cars c SET category = 'special'
+    FROM brands b
+    WHERE c.brand_id = b.id AND c.category = 'passenger'
+      AND b.name IN ('JCB','Caterpillar','Komatsu','XCMG','Liebherr','Hitachi')
+  `);
   console.log(`Database ready [${dbMode}]`);
 } catch (err) {
   console.error('Database init failed:', err.message);

@@ -360,9 +360,7 @@ function sortClause(sort) {
       return 'ORDER BY c.views DESC, c.favorites_count DESC';
     case 'newest':
     default:
-      return 'ORDER BY (c.id % 37), c.created_at DESC';
-    default:
-      // Mix brands on "newest" so one marque does not fill the whole first page
+      // Mix brands so one marque does not fill the first page
       return 'ORDER BY (c.id % 37), c.created_at DESC';
   }
 }

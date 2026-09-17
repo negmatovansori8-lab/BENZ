@@ -21,13 +21,13 @@ const BRAND_PHOTO_COUNT: Record<string, number> = {
 
 /** Near-duplicate truck shots — only one index from each family may appear in a list. */
 const TRUCK_FAMILIES: number[][] = [
-  [1, 13, 25], // orange dump + hues
+  [1, 13, 25],
   [2, 14, 26],
   [3, 15, 27],
   [4, 16, 28],
   [5, 17, 29],
   [6, 18, 30],
-  [7, 19, 31], // keep single fire look
+  [7, 19, 31],
   [8, 20, 32],
   [9, 21, 33],
   [10, 22, 34],
@@ -55,7 +55,6 @@ function coverUrl(c: Car) {
   return c.images?.[0]?.url ? String(c.images[0].url).split('?')[0] : '';
 }
 
-/** Prefer model-matched stock for heavy vehicles. */
 function preferredTruckIndex(car: Car): number | null {
   const m = `${car.brand} ${car.model} ${car.body}`.toLowerCase();
   if (/excavator|jcb|komatsu|caterpillar|xcmg|hitachi|liebherr|3cx|js220|pc200/.test(m)) return 3;
@@ -67,12 +66,14 @@ function preferredTruckIndex(car: Car): number | null {
   return null;
 }
 
-/** Unique by id, twin, and identical cover photo (only one of the same image/color). */
+/**
+ * Unique by id + brand|model|year|category.
+ * Specialty (trucks): also one cover family per list.
+ * Passenger: keep volume — do not drop cars just because brand stock repeats.
+ */
 export function uniqueByIdAndImage(rows: Car[]): Car[] {
   const ids = new Set<number>();
   const twins = new Set<string>();
-  const covers = new Set<string>();
-  const families = new Set<number>();
   const out: Car[] = [];
   for (const c of rows) {
     if (!c || ids.has(c.id)) continue;
@@ -83,8 +84,16 @@ export function uniqueByIdAndImage(rows: Car[]): Car[] {
     out.push(c);
   }
   const diversified = diversifyCovers(out);
+
+  const covers = new Set<string>();
+  const families = new Set<number>();
   const unique: Car[] = [];
   for (const c of diversified) {
+    const cat = c.category || 'passenger';
+    if (cat === 'passenger') {
+      unique.push(c);
+      continue;
+    }
     const url = coverUrl(c);
     if (url && covers.has(url)) continue;
     const m = url.match(/\/(\d+)\.jpg$/i);
@@ -99,13 +108,11 @@ export function uniqueByIdAndImage(rows: Car[]): Car[] {
   return unique;
 }
 
-/**
- * Distinct covers within this list for specialty + passenger brand stock.
- */
 export function diversifyCovers(rows: Car[]): Car[] {
   const usedSpecialty = new Map<string, Set<number>>();
   const usedFamilies = new Map<string, Set<number>>();
   const usedBrandShot = new Set<string>();
+  const usedCarPool = new Set<number>();
 
   return rows.map((car, i) => {
     const cat = car.category || 'passenger';
@@ -137,7 +144,6 @@ export function diversifyCovers(rows: Car[]): Car[] {
 
       if (used.has(idx) || famUsed.has(familyOf(idx))) {
         let picked = false;
-        // Prefer base shots 1..12 first (more visually distinct than hue copies)
         for (let n = 1; n <= Math.min(12, pool.count); n++) {
           if (tryPick(n)) {
             picked = true;
@@ -146,10 +152,7 @@ export function diversifyCovers(rows: Car[]): Car[] {
         }
         if (!picked) {
           for (let n = 1; n <= pool.count; n++) {
-            if (tryPick(n)) {
-              picked = true;
-              break;
-            }
+            if (tryPick(n)) break;
           }
         }
       }
@@ -157,12 +160,14 @@ export function diversifyCovers(rows: Car[]): Car[] {
       used.add(idx);
       famUsed.add(familyOf(idx));
       const cover = `/stock/${pool.folder}/${idx}.jpg`;
-      const gallery = [
-        { id: 0, url: cover, sort_order: 0 },
-        { id: 0, url: `/stock/${pool.folder}/${((idx - 1 + 5) % pool.count) + 1}.jpg`, sort_order: 1 },
-        { id: 0, url: `/stock/${pool.folder}/${((idx - 1 + 11) % pool.count) + 1}.jpg`, sort_order: 2 },
-      ];
-      return { ...car, images: gallery, cover_hue: undefined };
+      return {
+        ...car,
+        images: [
+          { id: 0, url: cover, sort_order: 0 },
+          { id: 0, url: `/stock/${pool.folder}/${((idx - 1 + 5) % pool.count) + 1}.jpg`, sort_order: 1 },
+          { id: 0, url: `/stock/${pool.folder}/${((idx - 1 + 11) % pool.count) + 1}.jpg`, sort_order: 2 },
+        ],
+      };
     }
 
     if (cat === 'passenger') {
@@ -177,24 +182,33 @@ export function diversifyCovers(rows: Car[]): Car[] {
             break;
           }
         }
-        if (!shot) {
-          shot = ((Math.abs(Number(car.id)) + i) % count) + 1;
-        } else {
+        if (shot) {
           usedBrandShot.add(`${slug}-${shot}`);
+          return {
+            ...car,
+            images: Array.from({ length: Math.min(3, count) }, (_, g) => ({
+              id: 0,
+              url: `/stock/brands/${slug}-${((shot - 1 + g) % count) + 1}.jpg`,
+              sort_order: g,
+            })),
+          };
         }
-        const gallery = Array.from({ length: Math.min(3, count) }, (_, g) => ({
-          id: 0,
-          url: `/stock/brands/${slug}-${((shot - 1 + g) % count) + 1}.jpg`,
-          sort_order: g,
-        }));
-        return { ...car, images: gallery, cover_hue: undefined };
       }
-      const carIdx = ((Math.abs(Number(car.id)) + i * 3) % 8) + 1;
-      const cover = `/stock/cars/${carIdx}.jpg`;
-      if (!usedBrandShot.has(cover)) usedBrandShot.add(cover);
+      // Brand stock exhausted — fall back to generic pool so listings stay visible
+      let carIdx = ((Math.abs(Number(car.id)) + i * 3) % 8) + 1;
+      for (let n = 1; n <= 8; n++) {
+        const cand = ((carIdx - 1 + n) % 8) + 1;
+        if (!usedCarPool.has(cand)) {
+          carIdx = cand;
+          break;
+        }
+      }
+      usedCarPool.add(carIdx);
+      const hue = ((Math.abs(Number(car.id)) * 47 + i * 13) % 280) + 20;
       return {
         ...car,
-        images: [{ id: 0, url: cover, sort_order: 0 }],
+        images: [{ id: 0, url: `/stock/cars/${carIdx}.jpg`, sort_order: 0 }],
+        cover_hue: hue,
       };
     }
 
@@ -202,5 +216,4 @@ export function diversifyCovers(rows: Car[]): Car[] {
   });
 }
 
-/** @deprecated alias */
 export const diversifyStockCovers = diversifyCovers;

@@ -86,7 +86,7 @@ export default function Cars() {
     if (!p.get('category') && !p.get('fuel')) {
       p.set('category', 'passenger');
     }
-    if (!p.get('limit')) p.set('limit', '36');
+    if (!p.get('limit')) p.set('limit', '48');
     return p.toString();
   }, [params, dq]);
 
@@ -104,7 +104,15 @@ export default function Cars() {
         if (cat === 'passenger' || (!params.get('category') && !params.get('fuel'))) {
           list = list.filter(isPassengerCar);
         }
-        setData({ ...r.data, data: list, pagination: { ...r.data.pagination, total: list.length } });
+        // Keep server total (catalog size), not the post-filter page length
+        setData({
+          ...r.data,
+          data: list,
+          pagination: {
+            ...r.data.pagination,
+            total: Math.max(r.data.pagination?.total ?? list.length, list.length),
+          },
+        });
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));

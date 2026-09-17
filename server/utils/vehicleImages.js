@@ -168,15 +168,17 @@ export function uniqueVehicles(rows = []) {
     if (!row || byId.has(row.id)) continue;
     const twin = `${row.brand || ''}|${row.model || ''}|${row.year || ''}|${row.category || ''}`.toLowerCase();
     if (byTwin.has(twin)) continue;
+    const cat = row.category || 'passenger';
     const img = Array.isArray(row.images)
       ? (row.images[0]?.url || row.images[0])
       : null;
     const s = img ? String(img).split('?')[0] : '';
-    // One listing per cover photo (brand stock + specialty) — no duplicate colors/shots
-    if (s && byImg.has(s)) continue;
+    // Passenger: keep all model/year variants (photos may reuse brand stock).
+    // Specialty: one listing per cover so trucks don't look identical.
+    if (cat !== 'passenger' && s && byImg.has(s)) continue;
     byId.add(row.id);
     byTwin.add(twin);
-    if (s) byImg.add(s);
+    if (cat !== 'passenger' && s) byImg.add(s);
     out.push(row);
   }
   return out;
